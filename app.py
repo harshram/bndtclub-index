@@ -27,48 +27,40 @@ Employment_data = process_import_data(Employment_data_import, date_start)
 Labour_demand_ICT_data = process_ICT_labour_import_data(Labour_demand_ICT_data_import, date_start)
 
 # Display the melted DataFrame to verify the structure
-st.write("Melted DataFrame:")
+#st.write("Melted DataFrame:")
 #st.dataframe(GVA_data_import)
 #st.dataframe(GVA_data_melted.sample(1000))
-st.dataframe(GVA_data[(GVA_data['nace_r2'] == 'J')])
-st.dataframe(Employment_data[(Employment_data['nace_r2']=='J') & (Employment_data['unit']=='PC_TOT_PER')])
-st.dataframe(Labour_demand_ICT_data)
+#st.dataframe(GVA_data[(GVA_data['nace_r2'] == 'J')])
+#st.dataframe(Employment_data[(Employment_data['nace_r2']=='J') & (Employment_data['unit']=='PC_TOT_PER')])
+#st.dataframe(Labour_demand_ICT_data)
 
 ### Testing plotting functinality 
 
 # Filter data for nace_r2 = 'J' and unit = 'PC_TOT_PER'
-filtered_data = Employment_data[(Employment_data['nace_r2'] == 'J') & (Employment_data['unit'] == 'PC_TOT_PER') & (Employment_data['geo'] == 'IT')]
+filtered_data = Employment_data[(Employment_data['nace_r2'] == 'J') & 
+                                (Employment_data['unit'] == 'PC_TOT_PER') & 
+                                (Employment_data['geo'] == 'IT') & 
+                                (Employment_data['na_item'] == 'EMP_DC') &
+                                (Employment_data['s_adj'] == 'NSA')]
 
-# Convert 'quarter' to datetime format for filtering
-filtered_data['quarter'] = pd.PeriodIndex(filtered_data['quarter'], freq='Q').to_timestamp()
-filtered_data['quarter'] = filtered_data['quarter'].dt.date  # Conversion to datetime.date
 
-# Create a time range slider
-min_time = filtered_data['quarter'].min()
-max_time = filtered_data['quarter'].max()
-
-selected_time_range = st.slider(
-    "Select time range",
-    min_value=min_time,
-    max_value=max_time,
-    value=(min_time, max_time)
-)
-
-# Filter data based on the selected time range
-time_filtered_data = filtered_data[
-    (filtered_data['quarter'] >= selected_time_range[0]) & 
-    (filtered_data['quarter'] <= selected_time_range[1])
-]
+# Convert 'quarter' to string format for proper labeling
+filtered_data['quarter'] = filtered_data['quarter'].astype(str)
 
 # Plot the data
-st.write("Line Graph for Employment Data")
-plt.figure(figsize=(10, 6))
-plt.plot(time_filtered_data['quarter'], time_filtered_data['value'])
-plt.xlabel('Time')
-plt.ylabel('Value')
-plt.title('Employment Data for nace_r2 = J and unit = PC_TOT_PER')
-plt.xticks(rotation=45)
-plt.grid(True)
+#st.write("Line Graph for Employment Data")
+#plt.figure(figsize=(10, 6))
+#plt.plot(time_filtered_data['quarter'], time_filtered_data['value'])
+#plt.xlabel('Time')
+#plt.ylabel('Value')
+#plt.title('Employment Data for nace_r2 = J and unit = PC_TOT_PER')
+#plt.xticks(rotation=45)
+#plt.grid(True)
 
 # Display the plot
-st.pyplot(plt)
+#st.pyplot(plt)
+
+st.write("Melted DataFrame:")
+st.dataframe(filtered_data, use_container_width=True)
+
+st.line_chart(data=filtered_data.set_index('quarter')['value'])
