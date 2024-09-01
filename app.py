@@ -10,7 +10,7 @@ data = 'Index.xlsx'
 
 
 #'''
-# hold approach by getting data from excel. Now data direclty from eurostat API
+# old approach by getting data from excel. Now data direclty from eurostat API
 #Employment_ICT = pd.read_excel(data, sheet_name='Employment_ICT', skiprows=11, usecols="B:N")
 #ICT_labour_demand = pd.read_excel(data, sheet_name='ICT_labor_demand', skiprows=8, usecols="B:L")
 #GVA_ICT_perc_of_total = pd.read_excel(data, sheet_name='ICT_GVA_perc_of_total', skiprows=11, usecols="B:M")
