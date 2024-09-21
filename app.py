@@ -77,7 +77,7 @@ st.write('DTPI3: Balances components multiplicatively, reducing extreme impacts.
 st.latex(r'''
     DTPI_3 = GVA_{\text{norm}} \times \left( 1 + \text{Emp}_{\text{norm}} + \text{Demand}_{\text{norm}} \right)
     ''')
-st.write('Digital Transformation Potential Index (DTPI)')
+st.write('###Digital Transformation Potential Index (DTPI)')
 
 # Create two columns for the plots
 col1, col2, col3 = st.columns(3)
