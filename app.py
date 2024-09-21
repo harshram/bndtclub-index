@@ -34,14 +34,20 @@ def load_data():
                                                (Employment_data['na_item'] == 'EMP_DC') & 
                                                (Employment_data['s_adj'] == 'NSA')]
 
-    return filtered_gva_data, filtered_employment_data
+    filtered_labour_demand_data = Labour_demand_ICT_data[(Labour_demand_ICT_data['geo'] == 'IT') &
+                                                          (Labour_demand_ICT_data['unit'] == 'PC')]
+
+
+    return filtered_gva_data, filtered_employment_data, filtered_labour_demand_data
 
 # Load the data from the cached function
-filtered_gva_data, filtered_employment_data = load_data()
+filtered_gva_data, filtered_employment_data, filtered_labour_demand_data = load_data()
 
 # Convert 'quarter' from Period to string format for proper labeling
 filtered_gva_data['quarter'] = filtered_gva_data['quarter'].dt.strftime('%Y-Q%q')
 filtered_employment_data['quarter'] = filtered_employment_data['quarter'].dt.strftime('%Y-Q%q')
+filtered_labour_demand_data['quarter'] = filtered_labour_demand_data['quarter'].dt.strftime('%Y-Q%q')
+
 
 # Plot Employment data
 plt.figure(figsize=(10, 6))
@@ -61,6 +67,18 @@ plt.plot(filtered_gva_data['quarter'], filtered_gva_data['value'], marker='o')
 plt.title('GVA Data for IT (Industry J)')
 plt.xlabel('Quarter')
 plt.ylabel('Percentage of GDP')
+plt.xticks(rotation=45)
+plt.grid(True)
+
+# Display the GVA plot in the Streamlit app
+st.pyplot(plt)
+
+# Plot labour demand data
+plt.figure(figsize=(10, 6))
+plt.plot(filtered_labour_demand_data['quarter'], filtered_labour_demand_data['value'], marker='o')
+plt.title('Labour demand for IT (Industry J)')
+plt.xlabel('Quarter')
+plt.ylabel('Percentage of total job advertisement online')
 plt.xticks(rotation=45)
 plt.grid(True)
 
