@@ -1,0 +1,5 @@
+streamlit
+eurostat
+matplotlib
+pandas
+scikit-learn
