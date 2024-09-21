@@ -45,7 +45,7 @@ filtered_data = Employment_data[(Employment_data['nace_r2'] == 'J') &
 
 
 # Convert 'quarter' to string format for proper labeling
-filtered_data['quarter'] = filtered_data['quarter'].astype(str)
+filtered_data.loc[:, 'quarter'] = filtered_data['quarter'].astype(str)
 
 # Plot the data
 #st.write("Line Graph for Employment Data")
@@ -57,10 +57,23 @@ filtered_data['quarter'] = filtered_data['quarter'].astype(str)
 #plt.xticks(rotation=45)
 #plt.grid(True)
 
-# Display the plot
 #st.pyplot(plt)
 
 st.write("Melted DataFrame:")
 st.dataframe(filtered_data, use_container_width=True)
 
-st.line_chart(data=filtered_data.set_index('quarter')['value'])
+#st.line_chart(data=filtered_data)
+filtered_data['quarter'] = filtered_data['quarter'].astype(str)
+
+# Create the plot
+plt.figure(figsize=(10, 6))
+plt.plot(filtered_data['quarter'], filtered_data['value'])
+plt.title('Employment Data for IT (Industry J)')
+plt.xlabel('Time')
+plt.ylabel('Value')
+plt.xticks(rotation=45)
+plt.grid(True)
+
+# Display the plot in the Streamlit app
+st.pyplot(plt)
+
