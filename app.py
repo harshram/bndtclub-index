@@ -8,6 +8,9 @@ from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-sc
 # Normalize the data using Min-Max scaling
 scaler = MinMaxScaler()
 
+# List of countries for which to process and plot data
+countries = ['IT', 'FR', 'DE']  # Italy, France, and Germany
+
 # Caching data to save time in loading data from API call
 @st.cache_data
 def load_data():
@@ -24,139 +27,192 @@ def load_data():
     Employment_data = process_import_data(Employment_data_import, date_start)
     Labour_demand_ICT_data = process_ICT_labour_import_data(Labour_demand_ICT_data_import, date_start)
 
-    # Filter GVA data for nace_r2 = 'J' and unit = 'PC_GDP' where J = ICT
-    filtered_gva_data = GVA_data[(GVA_data['nace_r2'] == 'J') & 
-                                 (GVA_data['unit'] == 'PC_GDP') & 
-                                 (GVA_data['geo'] == 'IT') & 
-                                 (GVA_data['na_item'] == 'B1G') & 
-                                 (GVA_data['s_adj'] == 'NSA')]
-
-    # Filter Employment data for nace_r2 = 'J' and unit = 'PC_TOT_PER' (ICT industry)
-    filtered_employment_data = Employment_data[(Employment_data['nace_r2'] == 'J') & 
-                                               (Employment_data['unit'] == 'PC_TOT_PER') & 
-                                               (Employment_data['geo'] == 'IT') & 
-                                               (Employment_data['na_item'] == 'EMP_DC') & 
-                                               (Employment_data['s_adj'] == 'NSA')]
-
-    filtered_labour_demand_data = Labour_demand_ICT_data[(Labour_demand_ICT_data['geo'] == 'IT') &
-                                                          (Labour_demand_ICT_data['unit'] == 'PC')]
-
-
-    return filtered_gva_data, filtered_employment_data, filtered_labour_demand_data
+    return GVA_data, Employment_data, Labour_demand_ICT_data
 
 # Load the data from the cached function
-filtered_gva_data, filtered_employment_data, filtered_labour_demand_data = load_data()
+GVA_data, Employment_data, Labour_demand_ICT_data = load_data()
 
-# Convert 'quarter' from Period to string format for proper labeling
-filtered_gva_data['quarter'] = filtered_gva_data['quarter'].dt.strftime('%Y-Q%q')
-filtered_employment_data['quarter'] = filtered_employment_data['quarter'].dt.strftime('%Y-Q%q')
-filtered_labour_demand_data['quarter'] = filtered_labour_demand_data['quarter'].dt.strftime('%Y-Q%q')
+# Initialize dictionaries to hold country-specific filtered data
+filtered_data = {'GVA': {}, 'Employment': {}, 'LabourDemand': {}}
 
-filtered_employment_data['normalized_value'] = scaler.fit_transform(filtered_employment_data[['value']])
-filtered_gva_data['normalized_value'] = scaler.fit_transform(filtered_gva_data[['value']])
-filtered_labour_demand_data['normalized_value'] = scaler.fit_transform(filtered_labour_demand_data[['value']])
+# Filter data for each country and normalize
+for country in countries:
+    filtered_data['GVA'][country] = GVA_data[(GVA_data['nace_r2'] == 'J') & 
+                                             (GVA_data['unit'] == 'PC_GDP') & 
+                                             (GVA_data['geo'] == country) & 
+                                             (GVA_data['na_item'] == 'B1G') & 
+                                             (GVA_data['s_adj'] == 'NSA')].copy()
 
-# Create two columns
-col1, col2 = st.columns(2)
+    filtered_data['Employment'][country] = Employment_data[(Employment_data['nace_r2'] == 'J') & 
+                                                           (Employment_data['unit'] == 'PC_TOT_PER') & 
+                                                           (Employment_data['geo'] == country) & 
+                                                           (Employment_data['na_item'] == 'EMP_DC') & 
+                                                           (Employment_data['s_adj'] == 'NSA')].copy()
 
+    filtered_data['LabourDemand'][country] = Labour_demand_ICT_data[(Labour_demand_ICT_data['geo'] == country) &
+                                                                    (Labour_demand_ICT_data['unit'] == 'PC')].copy()
+
+    # Convert 'quarter' from Period to string format for proper labeling
+    filtered_data['GVA'][country]['quarter'] = filtered_data['GVA'][country]['quarter'].dt.strftime('%Y-Q%q')
+    filtered_data['Employment'][country]['quarter'] = filtered_data['Employment'][country]['quarter'].dt.strftime('%Y-Q%q')
+    filtered_data['LabourDemand'][country]['quarter'] = filtered_data['LabourDemand'][country]['quarter'].dt.strftime('%Y-Q%q')
+
+    # Normalize the data
+    filtered_data['GVA'][country]['normalized_value'] = scaler.fit_transform(filtered_data['GVA'][country][['value']])
+    filtered_data['Employment'][country]['normalized_value'] = scaler.fit_transform(filtered_data['Employment'][country][['value']])
+    filtered_data['LabourDemand'][country]['normalized_value'] = scaler.fit_transform(filtered_data['LabourDemand'][country][['value']])
+
+#st.write("## Index Formula:")
+st.latex(r'''
+            DTPI_1 =  \frac{1}{3} \times GVA_{\text{norm}} \times \frac{1}{3} \text{Emp}_{\text{norm}} + \frac{1}{3} \text{Demand}_{\text{norm}}
+            ''')
+st.latex(r'''
+    DTPI_2 = GVA_{\text{norm}} \times \left( \text{Emp}_{\text{norm}} + \text{Demand}_{\text{norm}} \right)
+    ''')
+st.latex(r'''
+    DTPI_3 = GVA_{\text{norm}} \times \left( 1 + \text{Emp}_{\text{norm}} + \text{Demand}_{\text{norm}} \right)
+    ''')
+st.write('Digital Transformation Potential Index (DTPI)')
+
+# Create two columns for the plots
+col1, col2, col3 = st.columns(3)
+
+
+# Plot overlapping Employment, GVA, and Labour demand data for all countries
 with col1:
-    # Plot Employment data
-    plt.figure(figsize=(10, 6))
-    plt.plot(filtered_employment_data['quarter'], filtered_employment_data['value'], marker='o')
-    plt.title('Employment Data for IT (Industry J)')
+    # Plot Employment data for all countries
+    plt.figure(figsize=(15, 8))
+    for country in countries:
+        plt.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['value'], marker='o', label=f'Employment - {country}')
+    plt.title('Employment Data for IT, FR, DE (Industry J)')
     plt.xlabel('Quarter')
     plt.ylabel('Percentage of Total Employees')
     plt.xticks(rotation=45)
     plt.grid(True)
-
-    # Display the Employment plot in the Streamlit app
+    plt.legend()
     st.pyplot(plt)
 
-    # Plot GVA data
-    plt.figure(figsize=(10, 6))
-    plt.plot(filtered_gva_data['quarter'], filtered_gva_data['value'], marker='o')
-    plt.title('GVA Data for IT (Industry J)')
+    # Plot GVA data for all countries
+    plt.figure(figsize=(15, 8))
+    for country in countries:
+        plt.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o', label=f'GVA - {country}')
+    plt.title('GVA Data for IT, FR, DE (Industry J)')
     plt.xlabel('Quarter')
     plt.ylabel('Percentage of GDP')
     plt.xticks(rotation=45)
     plt.grid(True)
-
-    # Display the GVA plot in the Streamlit app
+    plt.legend()
     st.pyplot(plt)
 
-    # Plot labour demand data
-    plt.figure(figsize=(10, 6))
-    plt.plot(filtered_labour_demand_data['quarter'], filtered_labour_demand_data['value'], marker='o')
-    plt.title('Labour demand for IT (Industry J)')
+    # Plot Labour demand data for all countries
+    plt.figure(figsize=(15, 8))
+    for country in countries:
+        plt.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o', label=f'Labour Demand - {country}')
+    plt.title('Labour Demand for IT, FR, DE (Industry J)')
     plt.xlabel('Quarter')
     plt.ylabel('Percentage of total job advertisement online')
     plt.xticks(rotation=45)
     plt.grid(True)
-
-    # Display the GVA plot in the Streamlit app
+    plt.legend()
     st.pyplot(plt)
 
 with col2:
-
-    # Plot Employment data normalized
-    plt.figure(figsize=(10, 6))
-    plt.plot(filtered_employment_data['quarter'], filtered_employment_data['normalized_value'], marker='o')
-    plt.title('Employment Data for IT (Industry J) - Normalized')
+    # Plot Normalized Employment data for all countries
+    plt.figure(figsize=(15, 8))
+    for country in countries:
+        plt.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['normalized_value'], marker='o', label=f'Normalized Employment - {country}')
+    plt.title('Normalized Employment Data for IT, FR, DE (Industry J)')
     plt.xlabel('Quarter')
     plt.ylabel('Normalized Percentage of Total Employees')
     plt.xticks(rotation=45)
     plt.grid(True)
-
-    # Display the Employment plot in the Streamlit app
+    plt.legend()
     st.pyplot(plt)
 
-    # Plot Normalized GVA data
-    plt.figure(figsize=(10, 6))
-    plt.plot(filtered_gva_data['quarter'], filtered_gva_data['normalized_value'], marker='o')
-    plt.title('GVA Data for IT (Industry J) - Normalized')
+    # Plot Normalized GVA data for all countries
+    plt.figure(figsize=(15, 8))
+    for country in countries:
+        plt.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['normalized_value'], marker='o', label=f'Normalized GVA - {country}')
+    plt.title('Normalized GVA Data for IT, FR, DE (Industry J)')
     plt.xlabel('Quarter')
     plt.ylabel('Normalized Percentage of GDP')
     plt.xticks(rotation=45)
     plt.grid(True)
-
-    # Display the GVA plot in the Streamlit app
+    plt.legend()
     st.pyplot(plt)
 
-    # Plot normalized labour demand data
-    plt.figure(figsize=(10, 6))
-    plt.plot(filtered_labour_demand_data['quarter'], filtered_labour_demand_data['normalized_value'], marker='o')
-    plt.title('Labour demand for IT (Industry J) - Normalized')
+    # Plot Normalized Labour demand data for all countries
+    plt.figure(figsize=(15, 8))
+    for country in countries:
+        plt.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['normalized_value'], marker='o', label=f'Normalized Labour Demand - {country}')
+    plt.title('Normalized Labour Demand for IT, FR, DE (Industry J)')
     plt.xlabel('Quarter')
     plt.ylabel('Normalized Percentage of total job advertisement online')
     plt.xticks(rotation=45)
     plt.grid(True)
-
-    # Display the GVA plot in the Streamlit app
+    plt.legend()
     st.pyplot(plt)
-        
 
-# Merge the three datasets on the 'quarter' column to align them
-merged_data = pd.merge(filtered_employment_data[['quarter', 'normalized_value']], 
-                       filtered_gva_data[['quarter', 'normalized_value']], 
-                       on='quarter', suffixes=('_employment', '_gva'))
+# Merging the datasets for IT, FR, and DE
+merged_data = pd.DataFrame()
+for country in countries:
+    temp = pd.merge(filtered_data['Employment'][country][['quarter', 'normalized_value']], 
+                    filtered_data['GVA'][country][['quarter', 'normalized_value']], 
+                    on='quarter', suffixes=('_employment', '_gva'))
 
-merged_data = pd.merge(merged_data, 
-                       filtered_labour_demand_data[['quarter', 'normalized_value']], 
-                       on='quarter')
+    temp = pd.merge(temp, 
+                    filtered_data['LabourDemand'][country][['quarter', 'normalized_value']], 
+                    on='quarter')
 
-# Calculate the Index after aligning the data
-merged_data['Index'] = merged_data['normalized_value_employment'] * (
-    merged_data['normalized_value'] + merged_data['normalized_value'])
+    temp['Index1'] = 0.333*temp['normalized_value_employment'] + 0.333*temp['normalized_value_gva'] + 0.333*temp['normalized_value']
+    temp['Index2'] = temp['normalized_value_employment'] * (temp['normalized_value_gva'] + temp['normalized_value'])
+    temp['Index3'] = temp['normalized_value_employment'] * (1 + temp['normalized_value_gva'] + temp['normalized_value'])
 
-# Now plot the Index using the aligned data
-plt.figure(figsize=(10, 6))
-plt.plot(merged_data['quarter'], merged_data['Index'], marker='o')
-plt.title('Index')
-plt.xlabel('Quarter')
-plt.ylabel('[-]')
-plt.xticks(rotation=45)
-plt.grid(True)
+    temp['country'] = country
+    merged_data = pd.concat([merged_data, temp])
 
-# Display the Index plot in the Streamlit app
-st.pyplot(plt)
+# Display the index 1 formula before plotting
 
+
+with col3:
+
+    # Plot Index for all countries
+    plt.figure(figsize=(15, 8))
+    for country in countries:
+        country_data = merged_data[merged_data['country'] == country]
+        plt.plot(country_data['quarter'], country_data['Index1'], marker='o', label=f'Index - {country}')
+    plt.title('DTPI1 for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('[-]')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    
+    # Plot Index for all countries
+    plt.figure(figsize=(15, 8))
+    for country in countries:
+        country_data = merged_data[merged_data['country'] == country]
+        plt.plot(country_data['quarter'], country_data['Index2'], marker='o', label=f'Index - {country}')
+    plt.title('DTPI2 for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('[-]')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+ 
+    # Plot Index for all countries
+    plt.figure(figsize=(15, 8))
+    for country in countries:
+        country_data = merged_data[merged_data['country'] == country]
+        plt.plot(country_data['quarter'], country_data['Index3'], marker='o', label=f'Index - {country}')
+    plt.title('DTPI3 for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('[-]')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
