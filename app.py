@@ -4,76 +4,65 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from data_processing import process_import_data, process_ICT_labour_import_data
 
-st.write("Hello World!")
+# Caching data to save time in loading data from API call
+@st.cache_data
+def load_data():
+    # Load the raw data from Eurostat API
+    GVA_data_import = eurostat.get_data_df('namq_10_a10')
+    Employment_data_import = eurostat.get_data_df('namq_10_a10_e')
+    Labour_demand_ICT_data_import = eurostat.get_data_df('isoc_sk_oja1')
 
-data = 'Index.xlsx'
+    # Define the starting quarter for filtering data
+    date_start = '2019Q4'
 
+    # Process the raw data
+    GVA_data = process_import_data(GVA_data_import, date_start)
+    Employment_data = process_import_data(Employment_data_import, date_start)
+    Labour_demand_ICT_data = process_ICT_labour_import_data(Labour_demand_ICT_data_import, date_start)
 
-#'''
-# old approach by getting data from excel. Now data direclty from eurostat API
-#Employment_ICT = pd.read_excel(data, sheet_name='Employment_ICT', skiprows=11, usecols="B:N")
-#ICT_labour_demand = pd.read_excel(data, sheet_name='ICT_labor_demand', skiprows=8, usecols="B:L")
-#GVA_ICT_perc_of_total = pd.read_excel(data, sheet_name='ICT_GVA_perc_of_total', skiprows=11, usecols="B:M")
-#'''
+    # Filter GVA data for nace_r2 = 'J' and unit = 'PC_GDP' where J = ICT
+    filtered_gva_data = GVA_data[(GVA_data['nace_r2'] == 'J') & 
+                                 (GVA_data['unit'] == 'PC_GDP') & 
+                                 (GVA_data['geo'] == 'IT') & 
+                                 (GVA_data['na_item'] == 'B1G') & 
+                                 (GVA_data['s_adj'] == 'NSA')]
 
-# Load the dataset
-GVA_data_import = eurostat.get_data_df('namq_10_a10_e')
-Employment_data_import = eurostat.get_data_df('namq_10_a10_e')
-Labour_demand_ICT_data_import = eurostat.get_data_df('isoc_sk_oja1')
+    # Filter Employment data for nace_r2 = 'J' and unit = 'PC_TOT_PER' (ICT industry)
+    filtered_employment_data = Employment_data[(Employment_data['nace_r2'] == 'J') & 
+                                               (Employment_data['unit'] == 'PC_TOT_PER') & 
+                                               (Employment_data['geo'] == 'IT') & 
+                                               (Employment_data['na_item'] == 'EMP_DC') & 
+                                               (Employment_data['s_adj'] == 'NSA')]
 
-date_start = '2019Q4'
-GVA_data = process_import_data(GVA_data_import, date_start)
-Employment_data = process_import_data(Employment_data_import, date_start)
-Labour_demand_ICT_data = process_ICT_labour_import_data(Labour_demand_ICT_data_import, date_start)
+    return filtered_gva_data, filtered_employment_data
 
-# Display the melted DataFrame to verify the structure
-#st.write("Melted DataFrame:")
-#st.dataframe(GVA_data_import)
-#st.dataframe(GVA_data_melted.sample(1000))
-#st.dataframe(GVA_data[(GVA_data['nace_r2'] == 'J')])
-#st.dataframe(Employment_data[(Employment_data['nace_r2']=='J') & (Employment_data['unit']=='PC_TOT_PER')])
-#st.dataframe(Labour_demand_ICT_data)
+# Load the data from the cached function
+filtered_gva_data, filtered_employment_data = load_data()
 
-### Testing plotting functinality 
+# Convert 'quarter' from Period to string format for proper labeling
+filtered_gva_data['quarter'] = filtered_gva_data['quarter'].dt.strftime('%Y-Q%q')
+filtered_employment_data['quarter'] = filtered_employment_data['quarter'].dt.strftime('%Y-Q%q')
 
-# Filter data for nace_r2 = 'J' and unit = 'PC_TOT_PER'
-filtered_data = Employment_data[(Employment_data['nace_r2'] == 'J') & 
-                                (Employment_data['unit'] == 'PC_TOT_PER') & 
-                                (Employment_data['geo'] == 'IT') & 
-                                (Employment_data['na_item'] == 'EMP_DC') &
-                                (Employment_data['s_adj'] == 'NSA')]
-
-
-# Convert 'quarter' to string format for proper labeling
-filtered_data.loc[:, 'quarter'] = filtered_data['quarter'].astype(str)
-
-# Plot the data
-#st.write("Line Graph for Employment Data")
-#plt.figure(figsize=(10, 6))
-#plt.plot(time_filtered_data['quarter'], time_filtered_data['value'])
-#plt.xlabel('Time')
-#plt.ylabel('Value')
-#plt.title('Employment Data for nace_r2 = J and unit = PC_TOT_PER')
-#plt.xticks(rotation=45)
-#plt.grid(True)
-
-#st.pyplot(plt)
-
-st.write("Melted DataFrame:")
-st.dataframe(filtered_data, use_container_width=True)
-
-#st.line_chart(data=filtered_data)
-filtered_data['quarter'] = filtered_data['quarter'].astype(str)
-
-# Create the plot
+# Plot Employment data
 plt.figure(figsize=(10, 6))
-plt.plot(filtered_data['quarter'], filtered_data['value'])
+plt.plot(filtered_employment_data['quarter'], filtered_employment_data['value'], marker='o')
 plt.title('Employment Data for IT (Industry J)')
-plt.xlabel('Time')
-plt.ylabel('Value')
+plt.xlabel('Quarter')
+plt.ylabel('Percentage of Total Employees')
 plt.xticks(rotation=45)
 plt.grid(True)
 
-# Display the plot in the Streamlit app
+# Display the Employment plot in the Streamlit app
 st.pyplot(plt)
 
+# Plot GVA data
+plt.figure(figsize=(10, 6))
+plt.plot(filtered_gva_data['quarter'], filtered_gva_data['value'], marker='o')
+plt.title('GVA Data for IT (Industry J)')
+plt.xlabel('Quarter')
+plt.ylabel('Percentage of GDP')
+plt.xticks(rotation=45)
+plt.grid(True)
+
+# Display the GVA plot in the Streamlit app
+st.pyplot(plt)
