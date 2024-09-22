@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from data_processing import process_import_data, process_ICT_labour_import_data
 from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
+import numpy as np
 
 # Normalize the data using Min-Max scaling
 scaler = MinMaxScaler()
@@ -165,7 +166,8 @@ for country in countries:
     temp['Index1'] = 0.333*temp['normalized_value_employment'] + 0.333*temp['normalized_value_gva'] + 0.333*temp['normalized_value_labour_demand']
     temp['Index2'] = temp['normalized_value_gva'] * (temp['normalized_value_employment'] + temp['normalized_value_labour_demand'])
     temp['Index3'] = temp['normalized_value_gva'] * (1 + temp['normalized_value_employment'] + temp['normalized_value_labour_demand'])
-    temp['Index4'] = (temp['normalized_value_gva']/(temp['normalized_value_employment']+1))*temp['delta_normalized_labour_demand']
+    temp['Index4'] = (temp['normalized_value_gva']/(temp['normalized_value_employment']+0.001))*(1+temp['delta_normalized_labour_demand'])
+    temp['Index5'] = np.log((temp['normalized_value_gva'] + 1)/(temp['normalized_value_employment']+0.001))*(1+temp['delta_normalized_labour_demand'])
 
     temp['country'] = country
     merged_data = pd.concat([merged_data, temp])
@@ -230,8 +232,9 @@ st.pyplot(plt)
 
 st.write('DTPI4: Uses variation of labour demand and divides GVA by employment to scale effect of GVA over number people in the workforce')
 st.latex(r'''
-    \text{DTPI}_4 = \left( \frac{\text{GVA}_{\text{norm}}} {\text{Emp}_{\text{norm}}+1} \right) \times \Delta \text{Demand}_{\text{norm}}
+    \text{DTPI}_4 = \frac{\text{GVA}_{\text{norm}}}{\text{Emp}_{\text{norm}} + \epsilon} \times (1 + \Delta \text{Demand}_{\text{norm}})
 ''')
+st.write('epsilo = 0.001')
 
 
 # Plot Index for all countries
@@ -246,4 +249,59 @@ plt.xticks(rotation=45)
 plt.grid(True)
 plt.legend()
 st.pyplot(plt)
+
+
+st.write('DTPI5: Uses variation of labour demand and divides GVA by employment to scale effect of GVA over number people in the workforce')
+st.latex(r'''
+    \text{DTPI}_5 = \log\left( \frac{\text{GVA}_{\text{norm}} + 1}{\text{Emp}_{\text{norm}} + \epsilon} \right) \times (1 + \Delta \text{Demand}_{\text{norm}})
+''')
+st.write('epsilo = 0.001')
+st.write("""
+### Index Explanation:
+
+- **Efficiency:** The term \\(\\frac{\\text{GVA}_{\\text{norm}} + 1}{\\text{Emp}_{\\text{norm}} + \\epsilon}\\) measures how efficiently value is created with the available workforce. A higher result means better efficiency, indicating more value is created with fewer workers.
+  
+- **Logarithmic Transformation:** The efficiency term is inside a log to prevent extreme values, especially when employment is low. The log compresses large values, ensuring smoother, more stable results and focusing on proportional differences rather than absolute ones. This prevents the index from being skewed by outliers.
+
+- **+1 in GVA:** Adding +1 ensures the log function works even when GVA is small or zero, avoiding calculation errors and keeping the index meaningful.
+
+- **Future Potential:** The term \\(1 + \\Delta \\text{Demand}_{\\text{norm}}\\) reflects labor demand trends, indicating the sector's future growth potential based on increasing or decreasing demand.
+
+- **Numerical Stability:** The small constant \\(\\epsilon\\) in the denominator prevents division by zero, ensuring stable and robust calculations.
+""")
+
+
+# Plot Index for all countries
+plt.figure(figsize=(15, 8))
+for country in countries:
+    country_data = merged_data[merged_data['country'] == country]
+    plt.plot(country_data['quarter'], country_data['Index5'], marker='o', label=f'Index - {country}')
+plt.title('DTPI5 for IT, FR, DE')
+plt.xlabel('Quarter')
+plt.ylabel('[-]')
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.legend()
+st.pyplot(plt)
+
+st.write("""
+### Italy (Index - IT):
+Italy starts with moderate values early in 2020 but shows significant fluctuations through the later periods.  
+Peaks in Q4 2020 and Q4 2021 suggest that in these periods, Italy had high relative GVA efficiency (likely higher GVA with moderate or lower workforce size) combined with rising labor demand, leading to a positive outlook.  
+However, after these spikes, the index values drop dramatically, suggesting labor demand stagnated or decreased, impacting future prospects despite stable or improved efficiency.
+
+### France (Index - FR):
+France shows a steep decline early in 2020, starting at a high point and dropping sharply by Q2 2020.  
+This could indicate an initial period of higher GVA with lower workforce followed by a rapid drop in labor demand or worsening efficiency.  
+The trend stabilizes in 2021 and 2022, with lower but consistent values. This suggests that France had relatively stable, albeit lower, efficiency and labor demand after the initial decline, with no major growth prospects in the near future.
+
+### Germany (Index - DE):
+Germany’s index starts high in Q1 2020, similar to Italy and France, but maintains a more consistent performance compared to the others.  
+While Germany does have a notable drop after Q1 2020, it doesn't experience the dramatic fluctuations seen in Italy. Instead, the index remains fairly steady, hovering around moderate values.  
+This suggests that Germany maintained stable efficiency (GVA-to-workforce ratio) with relatively consistent labor demand trends. The lack of major peaks or valleys implies neither a significant boom nor bust in its digital transformation potential over time.
+
+### Overall Trend:
+Italy and France show more volatile trends, indicating fluctuating GVA efficiency and labor demand. Italy has strong spikes but also rapid drops, suggesting inconsistent future prospects.  
+Germany shows more stability in its digital transformation potential, implying a more gradual, consistent development without major volatility in efficiency or demand trends.
+""")
 

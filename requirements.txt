@@ -3,3 +3,4 @@ eurostat
 matplotlib
 pandas
 scikit-learn
+numpy
