@@ -6,6 +6,30 @@ from data_processing import process_import_data, process_ICT_labour_import_data
 from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
 import numpy as np
 
+# Set the page configuration at the top of the script
+st.set_page_config(
+    page_title="Digital Transformation Index",  # Optional: Give your app a title
+    layout="centered"  # Using the centered layout
+)
+
+# Inject custom CSS to control the width of the centered layout
+st.markdown(
+    """
+    <style>
+    /* Adjust the width of the block-container class */
+    .block-container {
+        max-width: 1500px;  /* Adjust this value to control the width */
+        padding-top: 1rem;
+        padding-right: 1rem;
+        padding-left: 1rem;
+        padding-bottom: 1rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 # Normalize the data using Min-Max scaling
 scaler = MinMaxScaler()
 
@@ -63,16 +87,18 @@ for country in countries:
     filtered_data['Employment'][country]['normalized_value'] = scaler.fit_transform(filtered_data['Employment'][country][['value']])
     filtered_data['LabourDemand'][country]['normalized_value'] = scaler.fit_transform(filtered_data['LabourDemand'][country][['value']])
 
+# Set global font size for plots
+plt.rcParams.update({'font.size': 12})
 
 # Create two columns for the plots
-col1, col2 = st.columns(2)
+col1, col2 = st.columns([4, 4])
 
 
 # Plot overlapping Employment, GVA, and Labour demand data for all countries
 with col1:
     st.write('Ordinary values')
     # Plot Employment data for all countries
-    plt.figure(figsize=(15, 8))
+    plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
         plt.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['value'], marker='o', label=f'Employment - {country}')
     plt.title('Employment Data for IT, FR, DE (Industry J)')
@@ -84,7 +110,7 @@ with col1:
     st.pyplot(plt)
 
     # Plot GVA data for all countries
-    plt.figure(figsize=(15, 8))
+    plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
         plt.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o', label=f'GVA - {country}')
     plt.title('GVA Data for IT, FR, DE (Industry J)')
@@ -96,7 +122,7 @@ with col1:
     st.pyplot(plt)
 
     # Plot Labour demand data for all countries
-    plt.figure(figsize=(15, 8))
+    plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
         plt.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o', label=f'Labour Demand - {country}')
     plt.title('Labour Demand for IT, FR, DE (Industry J)')
@@ -110,7 +136,7 @@ with col1:
 with col2:
     st.write('Normalized values')
     # Plot Normalized Employment data for all countries
-    plt.figure(figsize=(15, 8))
+    plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
         plt.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['normalized_value'], marker='o', label=f'Normalized Employment - {country}')
     plt.title('Normalized Employment Data for IT, FR, DE (Industry J)')
@@ -122,7 +148,7 @@ with col2:
     st.pyplot(plt)
 
     # Plot Normalized GVA data for all countries
-    plt.figure(figsize=(15, 8))
+    plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
         plt.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['normalized_value'], marker='o', label=f'Normalized GVA - {country}')
     plt.title('Normalized GVA Data for IT, FR, DE (Industry J)')
@@ -134,7 +160,7 @@ with col2:
     st.pyplot(plt)
 
     # Plot Normalized Labour demand data for all countries
-    plt.figure(figsize=(15, 8))
+    plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
         plt.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['normalized_value'], marker='o', label=f'Normalized Labour Demand - {country}')
     plt.title('Normalized Labour Demand for IT, FR, DE (Industry J)')
@@ -172,6 +198,9 @@ for country in countries:
     temp['country'] = country
     merged_data = pd.concat([merged_data, temp])
 
+# Divider before the "Index Tests" section
+st.divider()
+
 # Display the index 1 formula before plotting
 st.write('Index tests')
 #st.write("## Index Formula:")
@@ -183,7 +212,7 @@ st.latex(r'''
             ''')
 
 # Plot Index for all countries
-plt.figure(figsize=(15, 8))
+plt.figure(figsize=(12, 8), dpi=100)
 for country in countries:
     country_data = merged_data[merged_data['country'] == country]
     plt.plot(country_data['quarter'], country_data['Index1'], marker='o', label=f'Index - {country}')
@@ -201,7 +230,7 @@ st.latex(r'''
     DTPI_2 = GVA_{\text{norm}} \times \left( \text{Emp}_{\text{norm}} + \text{Demand}_{\text{norm}} \right)
     ''')
 # Plot Index for all countries
-plt.figure(figsize=(15, 8))
+plt.figure(figsize=(12, 8), dpi=100)
 for country in countries:
     country_data = merged_data[merged_data['country'] == country]
     plt.plot(country_data['quarter'], country_data['Index2'], marker='o', label=f'Index - {country}')
@@ -218,7 +247,7 @@ st.latex(r'''
     DTPI_3 = GVA_{\text{norm}} \times \left( 1 + \text{Emp}_{\text{norm}} + \text{Demand}_{\text{norm}} \right)
     ''')
 # Plot Index for all countries
-plt.figure(figsize=(15, 8))
+plt.figure(figsize=(12, 8), dpi=100)
 for country in countries:
     country_data = merged_data[merged_data['country'] == country]
     plt.plot(country_data['quarter'], country_data['Index3'], marker='o', label=f'Index - {country}')
@@ -238,7 +267,7 @@ st.write('epsilo = 0.001')
 
 
 # Plot Index for all countries
-plt.figure(figsize=(15, 8))
+plt.figure(figsize=(12, 8), dpi=100)
 for country in countries:
     country_data = merged_data[merged_data['country'] == country]
     plt.plot(country_data['quarter'], country_data['Index4'], marker='o', label=f'Index - {country}')
@@ -272,7 +301,7 @@ st.write("""
 
 
 # Plot Index for all countries
-plt.figure(figsize=(15, 8))
+plt.figure(figsize=(12, 8), dpi=100)
 for country in countries:
     country_data = merged_data[merged_data['country'] == country]
     plt.plot(country_data['quarter'], country_data['Index5'], marker='o', label=f'Index - {country}')
