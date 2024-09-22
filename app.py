@@ -388,8 +388,9 @@ with col3:
     plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
         # Moving Derivative with Window = 2
-        moving_derivative_2 = (filtered_data['Employment'][country]['normalized_value'].shift(-2) - filtered_data['Employment'][country]['normalized_value']) / 2
-        plt.plot(filtered_data['Employment'][country]['quarter'], moving_derivative_2, marker='o', label=f'Moving Derivative Employment (w=2) - {country}')
+        moving_derivative_2 = (filtered_data['Employment'][country]['normalized_value'].shift(2) - filtered_data['Employment'][country]['normalized_value']) / 2
+        moving_derivative_2 = moving_derivative_2.dropna()  # Drop NaN values
+        plt.plot(filtered_data['Employment'][country]['quarter'][:len(moving_derivative_2)], moving_derivative_2, marker='o', label=f'Moving Derivative Employment (w=2) - {country}')
     plt.title('Moving Derivative of Employment (window = 2) for IT, FR, DE')
     plt.xlabel('Quarter')
     plt.ylabel('Moving Derivative')
@@ -400,8 +401,9 @@ with col3:
 
     plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
-        moving_derivative_2 = (filtered_data['GVA'][country]['normalized_value'].shift(-2) - filtered_data['GVA'][country]['normalized_value']) / 2
-        plt.plot(filtered_data['GVA'][country]['quarter'], moving_derivative_2, marker='o', label=f'Moving Derivative GVA (w=2) - {country}')
+        moving_derivative_2 = (filtered_data['GVA'][country]['normalized_value'].shift(2) - filtered_data['GVA'][country]['normalized_value']) / 2
+        moving_derivative_2 = moving_derivative_2.dropna()  # Drop NaN values
+        plt.plot(filtered_data['GVA'][country]['quarter'][:len(moving_derivative_2)], moving_derivative_2, marker='o', label=f'Moving Derivative GVA (w=2) - {country}')
     plt.title('Moving Derivative of GVA (window = 2) for IT, FR, DE')
     plt.xlabel('Quarter')
     plt.ylabel('Moving Derivative')
@@ -412,8 +414,9 @@ with col3:
 
     plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
-        moving_derivative_2 = (filtered_data['LabourDemand'][country]['normalized_value'].shift(-2) - filtered_data['LabourDemand'][country]['normalized_value']) / 2
-        plt.plot(filtered_data['LabourDemand'][country]['quarter'], moving_derivative_2, marker='o', label=f'Moving Derivative Labour Demand (w=2) - {country}')
+        moving_derivative_2 = (filtered_data['LabourDemand'][country]['normalized_value'].shift(2) - filtered_data['LabourDemand'][country]['normalized_value']) / 2
+        moving_derivative_2 = moving_derivative_2.dropna()  # Drop NaN values
+        plt.plot(filtered_data['LabourDemand'][country]['quarter'][:len(moving_derivative_2)], moving_derivative_2, marker='o', label=f'Moving Derivative Labour Demand (w=2) - {country}')
     plt.title('Moving Derivative of Labour Demand (window = 2) for IT, FR, DE')
     plt.xlabel('Quarter')
     plt.ylabel('Moving Derivative')
@@ -429,8 +432,9 @@ with col4:
     plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
         # Moving Derivative with Window = 3
-        moving_derivative_3 = (filtered_data['Employment'][country]['normalized_value'].shift(-3) - filtered_data['Employment'][country]['normalized_value']) / 3
-        plt.plot(filtered_data['Employment'][country]['quarter'], moving_derivative_3, marker='o', label=f'Moving Derivative Employment (w=3) - {country}')
+        moving_derivative_3 = (filtered_data['Employment'][country]['normalized_value'].shift(3) - filtered_data['Employment'][country]['normalized_value']) / 3
+        moving_derivative_3 = moving_derivative_3.dropna()  # Drop NaN values
+        plt.plot(filtered_data['Employment'][country]['quarter'][:len(moving_derivative_3)], moving_derivative_3, marker='o', label=f'Moving Derivative Employment (w=3) - {country}')
     plt.title('Moving Derivative of Employment (window = 3) for IT, FR, DE')
     plt.xlabel('Quarter')
     plt.ylabel('Moving Derivative')
@@ -441,8 +445,9 @@ with col4:
 
     plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
-        moving_derivative_3 = (filtered_data['GVA'][country]['normalized_value'].shift(-3) - filtered_data['GVA'][country]['normalized_value']) / 3
-        plt.plot(filtered_data['GVA'][country]['quarter'], moving_derivative_3, marker='o', label=f'Moving Derivative GVA (w=3) - {country}')
+        moving_derivative_3 = (filtered_data['GVA'][country]['normalized_value'].shift(3) - filtered_data['GVA'][country]['normalized_value']) / 3
+        moving_derivative_3 = moving_derivative_3.dropna()  # Drop NaN values
+        plt.plot(filtered_data['GVA'][country]['quarter'][:len(moving_derivative_3)], moving_derivative_3, marker='o', label=f'Moving Derivative GVA (w=3) - {country}')
     plt.title('Moving Derivative of GVA (window = 3) for IT, FR, DE')
     plt.xlabel('Quarter')
     plt.ylabel('Moving Derivative')
@@ -453,8 +458,9 @@ with col4:
 
     plt.figure(figsize=(12, 8), dpi=100)
     for country in countries:
-        moving_derivative_3 = (filtered_data['LabourDemand'][country]['normalized_value'].shift(-3) - filtered_data['LabourDemand'][country]['normalized_value']) / 3
-        plt.plot(filtered_data['LabourDemand'][country]['quarter'], moving_derivative_3, marker='o', label=f'Moving Derivative Labour Demand (w=3) - {country}')
+        moving_derivative_3 = (filtered_data['LabourDemand'][country]['normalized_value'].shift(3) - filtered_data['LabourDemand'][country]['normalized_value']) / 3
+        moving_derivative_3 = moving_derivative_3.dropna()  # Drop NaN values
+        plt.plot(filtered_data['LabourDemand'][country]['quarter'][:len(moving_derivative_3)], moving_derivative_3, marker='o', label=f'Moving Derivative Labour Demand (w=3) - {country}')
     plt.title('Moving Derivative of Labour Demand (window = 3) for IT, FR, DE')
     plt.xlabel('Quarter')
     plt.ylabel('Moving Derivative')
@@ -462,7 +468,6 @@ with col4:
     plt.grid(True)
     plt.legend()
     st.pyplot(plt)
-
 
 
 
