@@ -85,6 +85,7 @@ col1, col2, col3 = st.columns(3)
 
 # Plot overlapping Employment, GVA, and Labour demand data for all countries
 with col1:
+    st.write('Ordinary values')
     # Plot Employment data for all countries
     plt.figure(figsize=(15, 8))
     for country in countries:
@@ -122,6 +123,7 @@ with col1:
     st.pyplot(plt)
 
 with col2:
+    st.write('Normalized values')
     # Plot Normalized Employment data for all countries
     plt.figure(figsize=(15, 8))
     for country in countries:
@@ -180,7 +182,7 @@ for country in countries:
 
 
 with col3:
-
+    st.write('Index tests')
     # Plot Index for all countries
     plt.figure(figsize=(15, 8))
     for country in countries:
