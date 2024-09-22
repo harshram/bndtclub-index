@@ -18,7 +18,7 @@ st.markdown(
     <style>
     /* Adjust the width of the block-container class */
     .block-container {
-        max-width: 1500px;  /* Adjust this value to control the width */
+        max-width: 1200px;  /* Adjust this value to control the width */
         padding-top: 1rem;
         padding-right: 1rem;
         padding-left: 1rem;
