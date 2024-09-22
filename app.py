@@ -91,7 +91,7 @@ for country in countries:
 plt.rcParams.update({'font.size': 12})
 
 # Create two columns for the plots
-col1, col2 = st.columns([4, 4])
+col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 2, 2])
 
 
 # Plot overlapping Employment, GVA, and Labour demand data for all countries
@@ -170,6 +170,298 @@ with col2:
     plt.grid(True)
     plt.legend()
     st.pyplot(plt)
+
+# Plot moving averages with window=2 in col3
+with col3:
+    st.write('Moving averages (window = 2)')
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_avg = filtered_data['Employment'][country]['normalized_value'].rolling(window=2).mean()
+        plt.plot(filtered_data['Employment'][country]['quarter'], moving_avg, marker='o', label=f'Moving Avg Employment (w=2) - {country}')
+    plt.title('Moving Average of Employment for IT, FR, DE (window = 2)')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Average')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_avg = filtered_data['GVA'][country]['normalized_value'].rolling(window=2).mean()
+        plt.plot(filtered_data['GVA'][country]['quarter'], moving_avg, marker='o', label=f'Moving Avg GVA (w=2) - {country}')
+    plt.title('Moving Average of GVA for IT, FR, DE (window = 2)')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Average')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_avg = filtered_data['LabourDemand'][country]['normalized_value'].rolling(window=2).mean()
+        plt.plot(filtered_data['LabourDemand'][country]['quarter'], moving_avg, marker='o', label=f'Moving Avg Labour Demand (w=2) - {country}')
+    plt.title('Moving Average of Labour Demand for IT, FR, DE (window = 2)')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Average')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+# Plot moving averages with window=3 in col4
+with col4:
+    st.write('Moving averages (window = 3)')
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_avg = filtered_data['Employment'][country]['normalized_value'].rolling(window=3).mean()
+        plt.plot(filtered_data['Employment'][country]['quarter'], moving_avg, marker='o', label=f'Moving Avg Employment (w=3) - {country}')
+    plt.title('Moving Average of Employment for IT, FR, DE (window = 3)')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Average')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_avg = filtered_data['GVA'][country]['normalized_value'].rolling(window=3).mean()
+        plt.plot(filtered_data['GVA'][country]['quarter'], moving_avg, marker='o', label=f'Moving Avg GVA (w=3) - {country}')
+    plt.title('Moving Average of GVA for IT, FR, DE (window = 3)')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Average')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_avg = filtered_data['LabourDemand'][country]['normalized_value'].rolling(window=3).mean()
+        plt.plot(filtered_data['LabourDemand'][country]['quarter'], moving_avg, marker='o', label=f'Moving Avg Labour Demand (w=3) - {country}')
+    plt.title('Moving Average of Labour Demand for IT, FR, DE (window = 3)')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Average')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+# Plot moving averages with window=4 in col5
+with col5:
+    st.write('Moving averages (window = 4)')
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_avg = filtered_data['Employment'][country]['normalized_value'].rolling(window=4).mean()
+        plt.plot(filtered_data['Employment'][country]['quarter'], moving_avg, marker='o', label=f'Moving Avg Employment (w=4) - {country}')
+    plt.title('Moving Average of Employment for IT, FR, DE (window = 4)')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Average')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_avg = filtered_data['GVA'][country]['normalized_value'].rolling(window=4).mean()
+        plt.plot(filtered_data['GVA'][country]['quarter'], moving_avg, marker='o', label=f'Moving Avg GVA (w=4) - {country}')
+    plt.title('Moving Average of GVA for IT, FR, DE (window = 4)')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Average')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_avg = filtered_data['LabourDemand'][country]['normalized_value'].rolling(window=4).mean()
+        plt.plot(filtered_data['LabourDemand'][country]['quarter'], moving_avg, marker='o', label=f'Moving Avg Labour Demand (w=4) - {country}')
+    plt.title('Moving Average of Labour Demand for IT, FR, DE (window = 4)')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Average')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+st.divider()
+st.latex(r'''
+\text{Derivative}(t) = \frac{x(t+1) - x(t)}{t_{i+1} - t_i}
+''')
+
+st.latex(r'''
+\text{Moving Derivative (Window = 2)} = \frac{1}{2} \sum_{i=t}^{t+1} \frac{x(i+1) - x(i)}{t_{i+1} - t_i}
+''')
+
+st.latex(r'''
+\text{Moving Derivative (Window = 3)} = \frac{1}{3} \sum_{i=t}^{t+2} \frac{x(i+1) - x(i)}{t_{i+1} - t_i}
+''')
+
+# Create four columns for the plots
+col1, col2, col3, col4 = st.columns([4, 4, 4, 4])
+
+# Plot normalized values in col1
+with col1:
+    st.write('Normalized values')
+    
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        plt.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['normalized_value'], marker='o', label=f'Normalized Employment - {country}')
+    plt.title('Normalized Employment Data for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Normalized Value')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        plt.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['normalized_value'], marker='o', label=f'Normalized GVA - {country}')
+    plt.title('Normalized GVA Data for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Normalized Value')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        plt.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['normalized_value'], marker='o', label=f'Normalized Labour Demand - {country}')
+    plt.title('Normalized Labour Demand Data for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Normalized Value')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+# Plot derivatives in col2
+with col2:
+    st.write('Derivatives')
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        derivative = np.gradient(filtered_data['Employment'][country]['normalized_value'], edge_order=2)
+        plt.plot(filtered_data['Employment'][country]['quarter'], derivative, marker='o', label=f'Derivative Employment - {country}')
+    plt.title('Derivative of Employment for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Derivative')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        derivative = np.gradient(filtered_data['GVA'][country]['normalized_value'], edge_order=2)
+        plt.plot(filtered_data['GVA'][country]['quarter'], derivative, marker='o', label=f'Derivative GVA - {country}')
+    plt.title('Derivative of GVA for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Derivative')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        derivative = np.gradient(filtered_data['LabourDemand'][country]['normalized_value'], edge_order=2)
+        plt.plot(filtered_data['LabourDemand'][country]['quarter'], derivative, marker='o', label=f'Derivative Labour Demand - {country}')
+    plt.title('Derivative of Labour Demand for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Derivative')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+# Plot moving derivative with window=2 in col3
+with col3:
+    st.write('Moving Derivative (window = 2)')
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_derivative_2 = filtered_data['Employment'][country]['normalized_value'].diff().rolling(window=2).mean()
+        plt.plot(filtered_data['Employment'][country]['quarter'], moving_derivative_2, marker='o', label=f'Moving Derivative Employment (w=2) - {country}')
+    plt.title('Moving Derivative of Employment (window = 2) for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Derivative')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_derivative_2 = filtered_data['GVA'][country]['normalized_value'].diff().rolling(window=2).mean()
+        plt.plot(filtered_data['GVA'][country]['quarter'], moving_derivative_2, marker='o', label=f'Moving Derivative GVA (w=2) - {country}')
+    plt.title('Moving Derivative of GVA (window = 2) for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Derivative')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_derivative_2 = filtered_data['LabourDemand'][country]['normalized_value'].diff().rolling(window=2).mean()
+        plt.plot(filtered_data['LabourDemand'][country]['quarter'], moving_derivative_2, marker='o', label=f'Moving Derivative Labour Demand (w=2) - {country}')
+    plt.title('Moving Derivative of Labour Demand (window = 2) for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Derivative')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+# Plot moving derivative with window=3 in col4
+with col4:
+    st.write('Moving Derivative (window = 3)')
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_derivative_3 = filtered_data['Employment'][country]['normalized_value'].diff().rolling(window=3).mean()
+        plt.plot(filtered_data['Employment'][country]['quarter'], moving_derivative_3, marker='o', label=f'Moving Derivative Employment (w=3) - {country}')
+    plt.title('Moving Derivative of Employment (window = 3) for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Derivative')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_derivative_3 = filtered_data['GVA'][country]['normalized_value'].diff().rolling(window=3).mean()
+        plt.plot(filtered_data['GVA'][country]['quarter'], moving_derivative_3, marker='o', label=f'Moving Derivative GVA (w=3) - {country}')
+    plt.title('Moving Derivative of GVA (window = 3) for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Derivative')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+    plt.figure(figsize=(12, 8), dpi=100)
+    for country in countries:
+        moving_derivative_3 = filtered_data['LabourDemand'][country]['normalized_value'].diff().rolling(window=3).mean()
+        plt.plot(filtered_data['LabourDemand'][country]['quarter'], moving_derivative_3, marker='o', label=f'Moving Derivative Labour Demand (w=3) - {country}')
+    plt.title('Moving Derivative of Labour Demand (window = 3) for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Moving Derivative')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+    st.pyplot(plt)
+
+
 
 # Merging the datasets for IT, FR, and DE
 merged_data = pd.DataFrame()
