@@ -172,8 +172,9 @@ for country in countries:
                     on='quarter')
 
     temp['Index1'] = 0.333*temp['normalized_value_employment'] + 0.333*temp['normalized_value_gva'] + 0.333*temp['normalized_value']
-    temp['Index2'] = temp['normalized_value_employment'] * (temp['normalized_value_gva'] + temp['normalized_value'])
-    temp['Index3'] = temp['normalized_value_employment'] * (1 + temp['normalized_value_gva'] + temp['normalized_value'])
+    temp['Index2'] = temp['normalized_value_gva'] * (temp['normalized_value_employment'] + temp['normalized_value'])
+    temp['Index3'] = temp['normalized_value_gva'] * (1 + temp['normalized_value_employment'] + temp['normalized_value'])
+    #temp['Index4'] = (temp['normalized_value_gva']/temp['normalized_value_employment'])
 
     temp['country'] = country
     merged_data = pd.concat([merged_data, temp])
