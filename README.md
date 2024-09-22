@@ -1,15 +1,19 @@
-# B-DT_indicator
-Overview
+# bndt-indicator
+
+# Overview
+
 This Streamlit app calculates and visualizes the Digital Transformation Potential Index (DTPI) for selected European countries. The app fetches data from Eurostat, processes it, and presents both raw and normalized values of ICT-related metrics such as Gross Value Added (GVA), Employment, and Labor Demand. It also computes five variations of the DTPI based on different combinations of these metrics.
 
-Data Sources
+## Data Sources
 The app pulls the following datasets from Eurostat:
 
-Gross Value Added (GVA) data (namq_10_a10)
+## Gross Value Added (GVA) data (namq_10_a10)
 Employment data (namq_10_a10_e)
 ICT Labor Demand data (isoc_sk_oja1)
 App Features
 Raw and Normalized Data Visualization:
+
+## About the App
 
 The app provides two-column side-by-side plots for Employment, GVA, and Labor Demand across Italy, France, and Germany.
 It visualizes both the original data and its normalized versions for easier comparison.
@@ -35,13 +39,16 @@ The app uses matplotlib to create time series plots of both the raw and normaliz
 It also calculates and plots the various indices to show how GVA, Employment, and Labor Demand evolve over time.
 Index Calculations:
 
+## Index Alternatives
+
 DTPI1: Assumes equal contributions from all factors.
 DTPI2: Highlights the impact of GVA with employment and demand trends.
 DTPI3: Balances components multiplicatively.
 DTPI4: Scales GVA by employment, incorporating changes in labor demand.
 DTPI5: Uses logarithmic scaling to balance GVA and employment while considering labor demand trends.
 Setup Instructions
-Dependencies:
+
+# Dependencies:
 
 Streamlit
 Eurostat API
@@ -50,16 +57,15 @@ Matplotlib
 Scikit-learn
 Installation: Install the required Python libraries using pip:
 
-bash
-Copy code
+```bash
+# To install the dependencies
 pip install streamlit eurostat pandas matplotlib scikit-learn
-Running the App: To run the app locally, use the following command:
-
-bash
-Copy code
+# Running the App: To run the app locally, use the following commmand
 streamlit run app.py
-Customization:
+```
 
+## Customization
 The app can be easily extended to include other countries or additional metrics by modifying the countries list or the Eurostat dataset codes.
 Acknowledgments
+
 The app uses publicly available datasets from Eurostat to provide insights into the digital transformation potential of European countries. Special thanks to the developers of the Eurostat API and the data processing libraries used in the app.
