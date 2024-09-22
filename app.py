@@ -62,25 +62,9 @@ for country in countries:
     filtered_data['Employment'][country]['normalized_value'] = scaler.fit_transform(filtered_data['Employment'][country][['value']])
     filtered_data['LabourDemand'][country]['normalized_value'] = scaler.fit_transform(filtered_data['LabourDemand'][country][['value']])
 
-#st.write("## Index Formula:")
-st.write('DTPI1: Simple, assumes equal contribution of all factors. Easy to understand but treats components as fully substitutable.')
-st.latex(r'''
-            DTPI_1 =  \frac{1}{3} \times GVA_{\text{norm}} \times \frac{1}{3} \text{Emp}_{\text{norm}} + \frac{1}{3} \text{Demand}_{\text{norm}}
-            ''')
-
-st.write('DTPI2: Highlights GVA’s impact with employment/demand trends. More sensitive to extreme values, emphasizing magnitude and trends.')
-st.latex(r'''
-    DTPI_2 = GVA_{\text{norm}} \times \left( \text{Emp}_{\text{norm}} + \text{Demand}_{\text{norm}} \right)
-    ''')
-
-st.write('DTPI3: Balances components multiplicatively, reducing extreme impacts. Reflects that all areas must perform well for higher scores.')
-st.latex(r'''
-    DTPI_3 = GVA_{\text{norm}} \times \left( 1 + \text{Emp}_{\text{norm}} + \text{Demand}_{\text{norm}} \right)
-    ''')
-st.write('###Digital Transformation Potential Index (DTPI)')
 
 # Create two columns for the plots
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 
 # Plot overlapping Employment, GVA, and Labour demand data for all countries
@@ -167,60 +151,99 @@ for country in countries:
                     filtered_data['GVA'][country][['quarter', 'normalized_value']], 
                     on='quarter', suffixes=('_employment', '_gva'))
 
-    temp = pd.merge(temp, 
-                    filtered_data['LabourDemand'][country][['quarter', 'normalized_value']], 
-                    on='quarter')
+    # Rename the normalized_value column before merging
+    filtered_data['LabourDemand'][country] = filtered_data['LabourDemand'][country].rename(columns={'normalized_value': 'normalized_value_labour_demand'})
 
-    temp['Index1'] = 0.333*temp['normalized_value_employment'] + 0.333*temp['normalized_value_gva'] + 0.333*temp['normalized_value']
-    temp['Index2'] = temp['normalized_value_gva'] * (temp['normalized_value_employment'] + temp['normalized_value'])
-    temp['Index3'] = temp['normalized_value_gva'] * (1 + temp['normalized_value_employment'] + temp['normalized_value'])
-    #temp['Index4'] = (temp['normalized_value_gva']/temp['normalized_value_employment'])
+    # Merge the DataFrames
+    temp = pd.merge(temp, 
+                filtered_data['LabourDemand'][country][['quarter', 'normalized_value_labour_demand']], 
+                on='quarter')
+
+    
+    temp['delta_normalized_labour_demand'] = temp['normalized_value_labour_demand'].shift(1) - temp['normalized_value_labour_demand']
+
+    temp['Index1'] = 0.333*temp['normalized_value_employment'] + 0.333*temp['normalized_value_gva'] + 0.333*temp['normalized_value_labour_demand']
+    temp['Index2'] = temp['normalized_value_gva'] * (temp['normalized_value_employment'] + temp['normalized_value_labour_demand'])
+    temp['Index3'] = temp['normalized_value_gva'] * (1 + temp['normalized_value_employment'] + temp['normalized_value_labour_demand'])
+    temp['Index4'] = (temp['normalized_value_gva']/(temp['normalized_value_employment']+1))*temp['delta_normalized_labour_demand']
 
     temp['country'] = country
     merged_data = pd.concat([merged_data, temp])
 
 # Display the index 1 formula before plotting
+st.write('Index tests')
+#st.write("## Index Formula:")
+st.write('###Digital Transformation Potential Index (DTPI)')
+
+st.write('DTPI1: Simple, assumes equal contribution of all factors. Easy to understand but treats components as fully substitutable.')
+st.latex(r'''
+            DTPI_1 =  \frac{1}{3} \times GVA_{\text{norm}} \times \frac{1}{3} \text{Emp}_{\text{norm}} + \frac{1}{3} \text{Demand}_{\text{norm}}
+            ''')
+
+# Plot Index for all countries
+plt.figure(figsize=(15, 8))
+for country in countries:
+    country_data = merged_data[merged_data['country'] == country]
+    plt.plot(country_data['quarter'], country_data['Index1'], marker='o', label=f'Index - {country}')
+plt.title('DTPI1 for IT, FR, DE')
+plt.xlabel('Quarter')
+plt.ylabel('[-]')
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.legend()
+st.pyplot(plt)
 
 
-with col3:
-    st.write('Index tests')
-    # Plot Index for all countries
-    plt.figure(figsize=(15, 8))
-    for country in countries:
-        country_data = merged_data[merged_data['country'] == country]
-        plt.plot(country_data['quarter'], country_data['Index1'], marker='o', label=f'Index - {country}')
-    plt.title('DTPI1 for IT, FR, DE')
-    plt.xlabel('Quarter')
-    plt.ylabel('[-]')
-    plt.xticks(rotation=45)
-    plt.grid(True)
-    plt.legend()
-    st.pyplot(plt)
+st.write('DTPI2: Highlights GVA’s impact with employment/demand trends. More sensitive to extreme values, emphasizing magnitude and trends.')
+st.latex(r'''
+    DTPI_2 = GVA_{\text{norm}} \times \left( \text{Emp}_{\text{norm}} + \text{Demand}_{\text{norm}} \right)
+    ''')
+# Plot Index for all countries
+plt.figure(figsize=(15, 8))
+for country in countries:
+    country_data = merged_data[merged_data['country'] == country]
+    plt.plot(country_data['quarter'], country_data['Index2'], marker='o', label=f'Index - {country}')
+plt.title('DTPI2 for IT, FR, DE')
+plt.xlabel('Quarter')
+plt.ylabel('[-]')
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.legend()
+st.pyplot(plt)
 
-    
-    # Plot Index for all countries
-    plt.figure(figsize=(15, 8))
-    for country in countries:
-        country_data = merged_data[merged_data['country'] == country]
-        plt.plot(country_data['quarter'], country_data['Index2'], marker='o', label=f'Index - {country}')
-    plt.title('DTPI2 for IT, FR, DE')
-    plt.xlabel('Quarter')
-    plt.ylabel('[-]')
-    plt.xticks(rotation=45)
-    plt.grid(True)
-    plt.legend()
-    st.pyplot(plt)
+st.write('DTPI3: Balances components multiplicatively, reducing extreme impacts. Reflects that all areas must perform well for higher scores.')
+st.latex(r'''
+    DTPI_3 = GVA_{\text{norm}} \times \left( 1 + \text{Emp}_{\text{norm}} + \text{Demand}_{\text{norm}} \right)
+    ''')
+# Plot Index for all countries
+plt.figure(figsize=(15, 8))
+for country in countries:
+    country_data = merged_data[merged_data['country'] == country]
+    plt.plot(country_data['quarter'], country_data['Index3'], marker='o', label=f'Index - {country}')
+plt.title('DTPI3 for IT, FR, DE')
+plt.xlabel('Quarter')
+plt.ylabel('[-]')
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.legend()
+st.pyplot(plt)
 
- 
-    # Plot Index for all countries
-    plt.figure(figsize=(15, 8))
-    for country in countries:
-        country_data = merged_data[merged_data['country'] == country]
-        plt.plot(country_data['quarter'], country_data['Index3'], marker='o', label=f'Index - {country}')
-    plt.title('DTPI3 for IT, FR, DE')
-    plt.xlabel('Quarter')
-    plt.ylabel('[-]')
-    plt.xticks(rotation=45)
-    plt.grid(True)
-    plt.legend()
-    st.pyplot(plt)
+st.write('DTPI4: Uses variation of labour demand and divides GVA by employment to scale effect of GVA over number people in the workforce')
+st.latex(r'''
+    \text{DTPI}_4 = \left( \frac{\text{GVA}_{\text{norm}}} {\text{Emp}_{\text{norm}}+1} \right) \times \Delta \text{Demand}_{\text{norm}}
+''')
+
+
+# Plot Index for all countries
+plt.figure(figsize=(15, 8))
+for country in countries:
+    country_data = merged_data[merged_data['country'] == country]
+    plt.plot(country_data['quarter'], country_data['Index4'], marker='o', label=f'Index - {country}')
+plt.title('DTPI4 for IT, FR, DE')
+plt.xlabel('Quarter')
+plt.ylabel('[-]')
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.legend()
+st.pyplot(plt)
+
