@@ -1,14 +1,17 @@
-import streamlit as st
-import eurostat
-import pandas as pd
 import matplotlib.pyplot as plt
-from data_processing import process_import_data, process_ICT_labour_import_data
-from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
+import streamlit as st
+import pandas as pd
 import numpy as np
+
+import eurostat
+
+from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
+
+from data_processing import process_import_data, process_ICT_labour_import_data
 
 # Set the page configuration at the top of the script
 st.set_page_config(
-    page_title="Digital Transformation Index",  # Optional: Give your app a title
+    page_title="B&DT Club Digital Transformation Index",  # Optional: Give your app a title
     layout="centered"  # Using the centered layout
 )
 
