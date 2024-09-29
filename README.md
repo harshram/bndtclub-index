@@ -1,5 +1,8 @@
 # bndt-indicator
 
+# Requirements
+Python version should be at least 3.11.
+
 # Overview
 
 This Streamlit app calculates and visualizes the Digital Transformation Potential Index (DTPI) for selected European countries. The app fetches data from Eurostat, processes it, and presents both raw and normalized values of ICT-related metrics such as Gross Value Added (GVA), Employment, and Labor Demand. It also computes five variations of the DTPI based on different combinations of these metrics.
