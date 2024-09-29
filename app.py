@@ -3,6 +3,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import ternary
+import mpltern
+import matplotlib.cm as cm 
 
 import eurostat
 
@@ -25,8 +27,9 @@ st.set_page_config(
 # Sidebar for navigation
 page1 = "DTPI vesion 0"
 page2 = "DTPI version 0.1"
+page3 = "DTPI deployment test"
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", [page1, page2])
+page = st.sidebar.radio("Go to", [page1, page2, page3])
 
 
 # Inject custom CSS to control the width of the centered layout
@@ -114,6 +117,62 @@ print("Filtered and normalised all values")
 # Set global font size for plots
 plt.rcParams.update({'font.size': 12})
 
+# Parametrizable window for gradient calculation
+window = st.sidebar.slider("Select Gradient Window", 1, 10, 2)  # Slider to select the window size
+def custom_gradient(data, window):
+    return (data - data.shift(window)) / window
+
+# Initialize an empty DataFrame to hold raw and normalized custom gradients
+custom_gradients_df = pd.DataFrame()
+
+for country in countries:
+    # Set 'quarter' as the index for each dataset
+    employment_data = filtered_data['Employment'][country].set_index('quarter')
+    GVA_data = filtered_data['GVA'][country].set_index('quarter')
+    labour_data = filtered_data['LabourDemand'][country].set_index('quarter')  # Ensure correct LabourDemand key
+
+    # Define a dictionary to store raw and normalized gradients for each dataset
+    gradients = {}
+
+    # List of datasets to loop over
+    datasets = {
+        'employment': employment_data,
+        'GVA': GVA_data,
+        'labour': labour_data
+    }
+
+    # Loop over each dataset and calculate the raw and normalized gradients
+    for data_key, data in datasets.items():
+        # Calculate the custom gradient for the current dataset
+        custom_grad = custom_gradient(data['value'], window).dropna()
+
+        # Normalize the custom gradient using MinMaxScaler
+        normalized_grad = scaler.fit_transform(custom_grad.values.reshape(-1, 1)).flatten()
+
+        # Store the raw and normalized gradients in the gradients dictionary
+        gradients[f'{data_key}_grad_{country}'] = pd.Series(custom_grad, index=custom_grad.index)
+        gradients[f'normalized_{data_key}_grad_{country}'] = pd.Series(normalized_grad, index=custom_grad.index)
+
+    # Create a DataFrame for this country’s gradients
+    country_gradients_df = pd.DataFrame(gradients)
+
+    # Concatenate the current country's DataFrame with the main DataFrame
+    # Align on the 'quarter' index using axis=1 to ensure each country gets its own columns
+    custom_gradients_df = pd.concat([custom_gradients_df, country_gradients_df], axis=1)
+
+# Initialize an empty DataFrame to hold the index values for all countries
+index_data = pd.DataFrame()
+
+plt.figure(figsize=(4, 3), dpi=150)
+
+for country in countries:    
+    index_data[country] = custom_gradients_df[f'normalized_employment_grad_{country}']*custom_gradients_df[f'normalized_GVA_grad_{country}']*custom_gradients_df[f'normalized_labour_grad_{country}']
+    index_data.index = custom_gradients_df.index
+
+
+# The final DataFrame will automatically handle different lengths because of concatenation
+#st.write('Custom gradients (raw and normalized) for Employment, GVA, and Labour Demand across countries')
+#st.dataframe(custom_gradients_df)
 
 if page == page1:
     # Create two columns for the plots
@@ -670,7 +729,6 @@ if page == page1:
 elif page == page2:
 
     st.title("Version 0.1: multipliers-based")
-
     # Create three columns
     col1, col2, col3 = st.columns(3)
 
@@ -712,270 +770,368 @@ elif page == page2:
         plt.legend()
         st.pyplot(plt)
 
-# Parametrizable window for gradient calculation
-window = st.sidebar.slider("Select Gradient Window", 1, 10, 2)  # Slider to select the window size
-def custom_gradient(data, window):
-    return (data - data.shift(window)) / window
 
-with col2:
-    st.write(f"**Gradient with Window = {window} for ICT Employment Data**")
-    plt.figure(figsize=(8, 6))
-    for country in countries:
-        employment_data = filtered_data['Employment'][country]['value']
-        custom_grad = custom_gradient(employment_data, window)
-        plt.plot(filtered_data['Employment'][country]['quarter'], custom_grad, marker='o', label=f'{country}')
-    plt.title(f'ICT Employment Gradient for IT, FR, DE (Window = {window})')
-    plt.xlabel('Quarter')
-    plt.ylabel(' Gradient')
-    plt.xticks(rotation=45)
-    plt.grid(True)
-    plt.legend()
-    st.pyplot(plt)
-
-    st.write(f"** Gradient with Window = {window} for GVA Data**")
-    plt.figure(figsize=(8, 6))
-    for country in countries:
-        gva_data = filtered_data['GVA'][country]['value']
-        custom_grad = custom_gradient(gva_data, window)
-        plt.plot(filtered_data['GVA'][country]['quarter'], custom_grad, marker='o', label=f'{country}')
-    plt.title(f'GVA Gradient for IT, FR, DE (Window = {window})')
-    plt.xlabel('Quarter')
-    plt.ylabel('Gradient')
-    plt.xticks(rotation=45)
-    plt.grid(True)
-    plt.legend()
-    st.pyplot(plt)
-
-    st.write(f"**Gradient with Window = {window} for Labour Demand Data**")
-    plt.figure(figsize=(8, 6))
-    for country in countries:
-        labour_data = filtered_data['LabourDemand'][country]['value']
-        custom_grad = custom_gradient(labour_data, window)
-        plt.plot(filtered_data['LabourDemand'][country]['quarter'], custom_grad, marker='o', label=f'{country}')
-    plt.title(f'Labour Demand Gradient for IT, FR, DE (Window = {window})')
-    plt.xlabel('Quarter')
-    plt.ylabel('Gradient')
-    plt.xticks(rotation=45)
-    plt.grid(True)
-    plt.legend()
-    st.pyplot(plt)
-
-
-    # Column 3: Normalized custom gradient values using MinMaxScaler
-with col3:
-    st.write(f"**Normalized Gradient with Window = {window} for ICT Employment Data**")
-    plt.figure(figsize=(8, 6))
-    scaler = MinMaxScaler()
-    for country in countries:
-        employment_data = filtered_data['Employment'][country]['value']
-        custom_grad = custom_gradient(employment_data, window)
-        normalized_grad = scaler.fit_transform(custom_grad.values.reshape(-1, 1))  # Normalize the gradient
-        plt.plot(filtered_data['Employment'][country]['quarter'], normalized_grad, marker='o', label=f'{country}')
-    plt.title(f'Normalized ICT Employment Gradient for IT, FR, DE (Window = {window})')
-    plt.xlabel('Quarter')
-    plt.ylabel('Normalized Gradient')
-    plt.xticks(rotation=45)
-    plt.grid(True)
-    plt.legend()
-    st.pyplot(plt)
-
-    st.write(f"**Normalized Gradient with Window = {window} for GVA Data**")
-    plt.figure(figsize=(8, 6))
-    for country in countries:
-        gva_data = filtered_data['GVA'][country]['value']
-        custom_grad = custom_gradient(gva_data, window)
-        normalized_grad = scaler.fit_transform(custom_grad.values.reshape(-1, 1))  # Normalize the gradient
-        plt.plot(filtered_data['GVA'][country]['quarter'], normalized_grad, marker='o', label=f'{country}')
-    plt.title(f'Normalized GVA Gradient for IT, FR, DE (Window = {window})')
-    plt.xlabel('Quarter')
-    plt.ylabel('Normalized Gradient')
-    plt.xticks(rotation=45)
-    plt.grid(True)
-    plt.legend()
-    st.pyplot(plt)
-
-    st.write(f"**Normalized Gradient with Window = {window} for Labour Demand Data**")
-    plt.figure(figsize=(8, 6))
-    for country in countries:
-        labour_data = filtered_data['LabourDemand'][country]['value']
-        custom_grad = custom_gradient(labour_data, window)
-        normalized_grad = scaler.fit_transform(custom_grad.values.reshape(-1, 1))  # Normalize the gradient
-        plt.plot(filtered_data['LabourDemand'][country]['quarter'], normalized_grad, marker='o', label=f'{country}')
-    plt.title(f'Normalized Labour Demand Gradient for IT, FR, DE (Window = {window})')
-    plt.xlabel('Quarter')
-    plt.ylabel('Normalized Gradient')
-    plt.xticks(rotation=45)
-    plt.grid(True)
-    plt.legend()
-    st.pyplot(plt)
-
-st.write(f"**Index Calculation (Normalized ICT Employment × Normalized GVA × Normalized Labour Demand)**")
-
-# Initialize an empty DataFrame to hold the index values for all countries
-index_data = pd.DataFrame()
-
-plt.figure(figsize=(8, 6))
-
-# Initialize an empty DataFrame to hold the index values for all countries
-index_data = pd.DataFrame()
-
-plt.figure(figsize=(8, 6))
-
-for country in countries:
-    # Get the employment, GVA, and labour demand data for the current country
-    employment_data = filtered_data['Employment'][country]['value']
-    gva_data = filtered_data['GVA'][country]['value']
-    labour_data = filtered_data['LabourDemand'][country]['value']
-
-    # Apply the custom gradient to the original data first
-    custom_grad_employment = custom_gradient(pd.Series(employment_data), window).dropna()
-    custom_grad_gva = custom_gradient(pd.Series(gva_data), window).dropna()
-    custom_grad_labour = custom_gradient(pd.Series(labour_data), window).dropna()
-
-    # Ensure all arrays are of the same length by trimming to the minimum length
-    min_length = min(len(custom_grad_employment), len(custom_grad_gva), len(custom_grad_labour))
-
-    custom_grad_employment = custom_grad_employment[:min_length]
-    custom_grad_gva = custom_grad_gva[:min_length]
-    custom_grad_labour = custom_grad_labour[:min_length]
-
-    # Normalize the original data before applying the gradient
-    normalized_grad_employment = scaler.fit_transform(custom_grad_employment.values.reshape(-1, 1)).flatten()[:min_length]
-    normalized_grad_gva = scaler.fit_transform(custom_grad_gva.values.reshape(-1, 1)).flatten()[:min_length]
-    normalized_grad_labour = scaler.fit_transform(custom_grad_labour.values.reshape(-1, 1)).flatten()[:min_length]
-
-    # Trim the quarter data to match the new length after applying the gradient
-    quarters = filtered_data['Employment'][country]['quarter'].iloc[-min_length:]
-
-    # Calculate the Index as the product of the normalized gradients
-    index = normalized_grad_employment * normalized_grad_gva * normalized_grad_labour
-
-    # Add the calculated index to the DataFrame
-    index_data[country] = index
-
-    # Plot the index values for this country
-    plt.plot(quarters, index, marker='o', label=f'{country}')
-
-
-# Set the plot title and labels outside the loop
-plt.title('Index for IT, FR, DE')
-plt.xlabel('Quarter')
-plt.ylabel('Index Value')
-plt.xticks(rotation=45)
-plt.grid(True)
-plt.legend()
-
-# Display the plot in Streamlit
-st.pyplot(plt)
-
-# Trim the quarters data to match the new length after applying the gradient
-quarters_IT = filtered_data['Employment']['IT']['quarter'].iloc[-min_length:].values
-
-# Create a DataFrame for the table
-table_data_IT = pd.DataFrame({
-    'Quarter': quarters_IT,
-    'GVA Custom Gradient': normalized_grad_gva,
-    'ICT Employment Custom Gradient': normalized_grad_employment,
-    'Labour Demand Custom Gradient': normalized_grad_labour,
-    'Index': index
-})
-
-# Display the table in Streamlit
-st.write(f"**Custom Gradients and Index for Italy (IT)**")
-st.dataframe(table_data_IT)
-
-col_GVA, col_indx = st.columns(2)
-
-country_titles = ['Italy (IT)', 'France (FR)', 'Germany (DE)']
-
-# In the left column, plot GVA data
-with col_GVA:
-    st.write("**GVA Data for IT, FR, DE**")
-    for i, country in enumerate(countries):
-        gva_data = filtered_data['GVA'][country]['value']
-        quarter = filtered_data['GVA'][country]['quarter']
-
+    with col2:
+        st.write(f"**Gradient with Window = {window} for ICT Employment Data**")
         plt.figure(figsize=(8, 6))
-        plt.plot(quarter, gva_data, marker='o', label=f'{country} GVA', color='blue')
-        plt.title(f'GVA for {country_titles[i]}')
+        for country in countries:
+            plt.plot(custom_gradients_df.index, custom_gradients_df[f'employment_grad_{country}'], marker='o', label=f'{country}')
+        plt.title(f'ICT Employment Gradient for IT, FR, DE (Window = {window})')
         plt.xlabel('Quarter')
-        plt.ylabel('GVA (% of GDP)')
-        plt.grid(True)
+        plt.ylabel(' Gradient')
         plt.xticks(rotation=45)
+        plt.grid(True)
         plt.legend()
         st.pyplot(plt)
 
-# In the right column, plot the precomputed custom index
-with col_indx:
-    st.write("**Custom Index for IT, FR, DE**")
-    for i, country in enumerate(countries):
-        # Use the precomputed custom index from the previous code
-        index = index_data[country]  # Assuming you have stored the precomputed index in a dictionary or similar structure
+        st.write(f"**Gradient with Window = {window} for GVA Data**")
+        plt.figure(figsize=(8, 6))
+        for country in countries:
+            plt.plot(custom_gradients_df.index, custom_gradients_df[f'GVA_grad_{country}'], marker='o', label=f'{country}')
+        plt.title(f'GVA Gradient for IT, FR, DE (Window = {window})')
+        plt.xlabel('Quarter')
+        plt.ylabel('Gradient')
+        plt.xticks(rotation=45)
+        plt.grid(True)
+        plt.legend()
+        st.pyplot(plt)
+
+        st.write(f"**Gradient with Window = {window} for Labour Demand Data**")
+        plt.figure(figsize=(8, 6))
+        for country in countries:
+            plt.plot(custom_gradients_df.index, custom_gradients_df[f'labour_grad_{country}'], marker='o', label=f'{country}')
+        plt.title(f'Labour Demand Gradient for IT, FR, DE (Window = {window})')
+        plt.xlabel('Quarter')
+        plt.ylabel('Gradient')
+        plt.xticks(rotation=45)
+        plt.grid(True)
+        plt.legend()
+        st.pyplot(plt)
+
+
+        # Column 3: Normalized custom gradient values using MinMaxScaler
+    with col3:
+        st.write(f"**Normalized Gradient with Window = {window} for ICT Employment Data**")
+        plt.figure(figsize=(8, 6))
+        scaler = MinMaxScaler()
+        for country in countries:
+            plt.plot(custom_gradients_df.index, custom_gradients_df[f'normalized_employment_grad_{country}'], marker='o', label=f'{country}')
+        plt.title(f'Normalized ICT Employment Gradient for IT, FR, DE (Window = {window})')
+        plt.xlabel('Quarter')
+        plt.ylabel('Normalized Gradient')
+        plt.xticks(rotation=45)
+        plt.grid(True)
+        plt.legend()
+        st.pyplot(plt)
+
+        st.write(f"**Normalized Gradient with Window = {window} for GVA Data**")
+        plt.figure(figsize=(8, 6))
+        for country in countries:
+            plt.plot(custom_gradients_df.index, custom_gradients_df[f'normalized_GVA_grad_{country}'], marker='o', label=f'{country}')
+        plt.title(f'Normalized GVA Gradient for IT, FR, DE (Window = {window})')
+        plt.xlabel('Quarter')
+        plt.ylabel('Normalized Gradient')
+        plt.xticks(rotation=45)
+        plt.grid(True)
+        plt.legend()
+        st.pyplot(plt)
+
+        st.write(f"**Normalized Gradient with Window = {window} for Labour Demand Data**")
+        plt.figure(figsize=(8, 6))
+        for country in countries:
+            plt.plot(custom_gradients_df.index, custom_gradients_df[f'normalized_labour_grad_{country}'], marker='o', label=f'{country}')
+        plt.title(f'Normalized Labour Demand Gradient for IT, FR, DE (Window = {window})')
+        plt.xlabel('Quarter')
+        plt.ylabel('Normalized Gradient')
+        plt.xticks(rotation=45)
+        plt.grid(True)
+        plt.legend()
+        st.pyplot(plt)
+
+    st.write(f"**Index Calculation (Normalized ICT Employment × Normalized GVA × Normalized Labour Demand)**")
+    # Initialize an empty DataFrame to hold the index values for all countries
+
+    plt.figure(figsize=(4, 3), dpi=150)
+
+    for country in countries:
+      # Plot the index values for this country
+        plt.plot(index_data.index, index_data[f'{country}'], marker='o', label=f'{country}')
+
+
+    # Set the plot title and labels outside the loop
+    plt.title('Index for IT, FR, DE')
+    plt.xlabel('Quarter')
+    plt.ylabel('Index Value')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.legend()
+
+    # Display the plot in Streamlit
+    st.pyplot(plt)
+
+    col_GVA, col_indx = st.columns(2)
+
+    country_titles = ['Italy (IT)', 'France (FR)', 'Germany (DE)']
+
+    # In the left column, plot GVA data
+    with col_GVA:
+        st.write("**GVA Data for IT, FR, DE**")
+        for i, country in enumerate(countries):
+            gva_data = filtered_data['GVA'][country]['value']
+            quarter = filtered_data['GVA'][country]['quarter']
+
+            plt.figure(figsize=(8, 6))
+            plt.plot(quarter, gva_data, marker='o', label=f'{country} GVA', color='blue')
+            plt.title(f'GVA for {country_titles[i]}')
+            plt.xlabel('Quarter')
+            plt.ylabel('GVA (% of GDP)')
+            plt.grid(True)
+            plt.xticks(rotation=45)
+            plt.legend()
+            st.pyplot(plt)
+
+    # In the right column, plot the precomputed custom index
+    with col_indx:
+        st.write("**Custom Index for IT, FR, DE**")
+        for i, country in enumerate(countries):
+            # Use the precomputed custom index from the previous code
+            #index = index_data[country]  # Assuming you have stored the precomputed index in a dictionary or similar structure
+            
+
+            # Plot the custom index
+            plt.figure(figsize=(8, 6))
+            plt.plot(index_data.index, index_data[f'{country}'], marker='o', label=f'{country} Index', color='green')
+            plt.title(f'Custom Index for {country_titles[i]}')
+            plt.xlabel('Quarter')
+            plt.ylabel('Custom Index')
+            plt.grid(True)
+            plt.xticks(rotation=45)
+            plt.legend()
+            st.pyplot(plt)
+
+elif page==page3:
+
+    st.title("DTPI - Selected countries")
+
+    # Create three tabs, one for each country
+    tab1, tab2, tab3, tab4 = st.tabs(["DTPI - what is it", "Italy (IT)", "France (FR)", "Germany (DE)"])
+
+    with tab1:
+        st.title("Digital Transformation Potential Index (DTPI)")
+
+        st.write("""
+        The **Digital Transformation Potential Index (DTPI)** is a composite measure designed to assess a country’s capability to drive economic and social development through digital innovation. The index leverages three key indicators from the ICT sector:
         
+        1. **Gross Value Added (GVA)** – This measures the economic value generated by the ICT sector. High GVA suggests a country is deriving significant value from its digital industries.
+    
+        2. **ICT Employment** – This captures the proportion of the workforce employed in ICT-related sectors. A larger ICT workforce indicates a higher engagement with digital technologies and services, though this must be balanced with the efficiency seen in GVA.
 
-        # Plot the custom index
-        plt.figure(figsize=(8, 6))
-        plt.plot(quarters, index, marker='o', label=f'{country} Index', color='green')
-        plt.title(f'Custom Index for {country_titles[i]}')
+        3. **Labor Demand Trends** – This tracks shifts in the demand for ICT-related skills, providing insights into how future-ready a country’s workforce is for digital transformation.
+        
+        ### Key Features of the Index:
+        - **GVA Efficiency**: The index favors countries with high GVA but relatively low ICT workforce, highlighting those that achieve more with fewer resources. Conversely, a large ICT workforce paired with low GVA indicates inefficiencies.
+    
+        - **Labor Demand as a Future Indicator**: Countries with rising demand for ICT skills are seen as having greater potential for future digital transformation. This measure accounts for the evolving needs of the digital economy, reflecting how well-positioned a country’s workforce is to meet these demands.
+
+        ### What the DTPI Delivers:
+        By combining these indicators, the DTPI provides a holistic view of a country’s digital transformation readiness, helping stakeholders understand where to invest, which countries are leading the digital revolution, and where challenges might lie. This index can serve policymakers, businesses, and researchers looking to understand the economic impacts of ICT development on a macro level.
+        """)
+
+        st.write("""
+        This application visualizes these indicators for selected countries and offers different index calculations to provide insights into how GVA, ICT Employment, and Labor Demand Trends impact digital transformation readiness.
+        """)
+
+    # Tab 1: Italy (IT)
+    with tab2:
+        st.write("### Italy (IT)")
+        
+        col1, col2 = st.columns([1, 2])
+        
+        # Column 1: ICT Employment Data
+        with col1:
+            st.write("**ICT Employment Data**")
+            plt.figure(figsize=(8, 6))
+            country = 'IT'
+            plt.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['value'], marker='o', label=f'{country}')
+            plt.title(f'ICT Employment Data for {country}')
+            plt.xlabel('Quarter')
+            plt.ylabel('Percentage of Total Employees')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
+        
+            st.write("**GVA Data**")
+            plt.figure(figsize=(8, 6))
+            plt.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o', label=f'{country}')
+            plt.title(f'GVA Data for {country}')
+            plt.xlabel('Quarter')
+            plt.ylabel('Percentage of GDP')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
+            
+            st.write("**Labour Demand Data**")
+            plt.figure(figsize=(8, 6))
+            plt.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o', label=f'{country}')
+            plt.title(f'Labour Demand Data for {country}')
+            plt.xlabel('Quarter')
+            plt.ylabel('Percentage of Total Job Advertisements Online')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
+
+        with col2:
+            # Plot the index for France (FR)
+            plt.figure(figsize=(6, 10 ), dpi=150)
+            plt.plot(index_data.index, index_data['IT'], marker='o', label='Italy (IT)')
+            plt.title('Index for Italy (IT)')
+            plt.xlabel('Quarter')
+            plt.ylabel('Index Value')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
+
+        st.write('##Ternary graph')
+        # Set up the ternary plot
+        fig = plt.figure(figsize=(4, 4))  # Adjust the size as needed
+        ax = fig.add_subplot(111, projection='ternary')
+
+        # Generate a colormap for the quarters
+        cmap = cm.get_cmap('tab10')  # Use a colormap, 'tab10' provides 10 distinct colors
+        num_quarters = len(index_data.index)
+        colors = cmap(np.linspace(0, 1, num_quarters))  # Generate colors for each quarter
+
+        # Loop through the index data for Italy and plot the points with different colors
+        for i, quarter in enumerate(index_data.index):
+            # Get the normalized employment, GVA, and labour demand values for the current quarter
+            employment_val = custom_gradients_df.loc[quarter, 'normalized_employment_grad_IT']
+            GVA_val = custom_gradients_df.loc[quarter, 'normalized_GVA_grad_IT']
+            labour_val = custom_gradients_df.loc[quarter, 'normalized_labour_grad_IT']
+            
+            # Plot the point on the ternary plot, using the color from the colormap
+            ax.plot([GVA_val], [labour_val], [employment_val], 'o', color=colors[i], markersize=6, label=quarter)
+
+        # Set axis labels with the new names and smaller font sizes
+        ax.set_tlabel('Normalized GVA gradient', fontsize=8)
+        ax.set_llabel('Normalized Labour Demand gradient', fontsize=8)
+        ax.set_rlabel('Normalized Employment gradient', fontsize=8)
+
+        # Adjust the tick label size (axis numbers)
+        ax.tick_params(labelsize=6)
+
+        # Set title with a smaller font size
+        plt.title('Ternary Plot for Italy (IT) with Index Data', fontsize=8)
+
+        # Create a legend with the quarter labels, using the same colors
+        ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1), fontsize=6, title='Quarter', title_fontsize=8)
+
+        # Display the plot
+        st.pyplot(fig)
+
+    # Tab 2: France (FR)
+    with tab3:
+        st.write("### France (FR)")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        # Column 1: ICT Employment Data
+        with col1:
+            st.write("**ICT Employment Data**")
+            plt.figure(figsize=(8, 6))
+            country = 'FR'
+            plt.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['value'], marker='o', label=f'{country}')
+            plt.title(f'ICT Employment Data for {country}')
+            plt.xlabel('Quarter')
+            plt.ylabel('Percentage of Total Employees')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
+        
+        # Column 2: GVA Data
+        with col2:
+            st.write("**GVA Data**")
+            plt.figure(figsize=(8, 6))
+            plt.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o', label=f'{country}')
+            plt.title(f'GVA Data for {country}')
+            plt.xlabel('Quarter')
+            plt.ylabel('Percentage of GDP')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
+
+        # Column 3: Labour Demand Data
+        with col3:
+            st.write("**Labour Demand Data**")
+            plt.figure(figsize=(8, 6))
+            plt.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o', label=f'{country}')
+            plt.title(f'Labour Demand Data for {country}')
+            plt.xlabel('Quarter')
+            plt.ylabel('Percentage of Total Job Advertisements Online')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
+
+        # Plot the index for France (FR)
+        plt.figure(figsize=(4, 3), dpi=150)
+        plt.plot(index_data.index, index_data['FR'], marker='o', label='France (FR)')
+        plt.title('Index for France (FR)')
         plt.xlabel('Quarter')
-        plt.ylabel('Custom Index')
-        plt.grid(True)
+        plt.ylabel('Index Value')
         plt.xticks(rotation=45)
-        plt.legend()
+        plt.grid(True)
         st.pyplot(plt)
 
-# In the right column, plot the precomputed custom index
-st.write("**Custom Index for IT, FR, DE**")
-for i, country in enumerate(countries):
-    # Use the precomputed custom index from the previous code
-    index = index_data[country]  # Assuming you have stored the precomputed index in a dictionary or similar structure
-    
-    # Create a dataset with uncertainty by adding random noise with an uncertainty level of 0.5
-    uncertainty = 0.5
-    index_with_uncertainty = [np.random.normal(loc=value, scale=uncertainty, size=10) for value in index] # Simulating 10 samples for each quarter
-    
-    # Plot the custom index as a box plot
-    plt.figure(figsize=(8, 6))
-    plt.boxplot(index_with_uncertainty, labels=quarters)
-    plt.title(f'Custom Index with Uncertainty for {country_titles[i]}')
-    plt.xlabel('Quarter')
-    plt.ylabel('Custom Index')
-    plt.grid(True, axis='y')
-    plt.xticks(rotation=45)
-    st.pyplot(plt)
+    # Tab 3: Germany (DE)
+    with tab4:
+        st.write("### Germany (DE)")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        # Column 1: ICT Employment Data
+        with col1:
+            st.write("**ICT Employment Data**")
+            plt.figure(figsize=(8, 6))
+            country = 'DE'
+            plt.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['value'], marker='o', label=f'{country}')
+            plt.title(f'ICT Employment Data for {country}')
+            plt.xlabel('Quarter')
+            plt.ylabel('Percentage of Total Employees')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
+        
+        # Column 2: GVA Data
+        with col2:
+            st.write("**GVA Data**")
+            plt.figure(figsize=(8, 6))
+            plt.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o', label=f'{country}')
+            plt.title(f'GVA Data for {country}')
+            plt.xlabel('Quarter')
+            plt.ylabel('Percentage of GDP')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
 
+        # Column 3: Labour Demand Data
+        with col3:
+            st.write("**Labour Demand Data**")
+            plt.figure(figsize=(8, 6))
+            plt.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o', label=f'{country}')
+            plt.title(f'Labour Demand Data for {country}')
+            plt.xlabel('Quarter')
+            plt.ylabel('Percentage of Total Job Advertisements Online')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
 
-# Create a ternary plot for normalized ICT employment, GVA, and labour demand
-st.write("**Ternary Plot for Index Components (Normalized ICT Employment, GVA, Labour Demand)**")
+        # Plot the index for Germany (DE)
+        plt.figure(figsize=(4, 3), dpi=150)
+        plt.plot(index_data.index, index_data['DE'], marker='o', label='Germany (DE)')
+        plt.title('Index for Germany (DE)')
+        plt.xlabel('Quarter')
+        plt.ylabel('Index Value')
+        plt.xticks(rotation=45)
+        plt.grid(True)
+        st.pyplot(plt)
 
-# Initialize the figure for ternary plot
-figure, tax = ternary.figure(scale=1.0)
-figure.set_size_inches(8, 6)
-
-# Set up the ternary axis limits and gridlines
-tax.boundary()
-tax.gridlines(multiple=0.1, color="blue")
-
-# Labels for the axes
-tax.left_axis_label("Normalized GVA", offset=0.16)
-tax.right_axis_label("Normalized Labour Demand", offset=0.16)
-tax.bottom_axis_label("Normalized ICT Employment", offset=0.06)
-
-# Loop through the countries and plot their normalized components in the ternary plot
-for country in countries:
-    # Get the normalized gradients for the current country
-    employment_data = normalized_grad_employment
-    gva_data = normalized_grad_gva
-    labour_data = normalized_grad_labour
-
-    # Prepare the data for the ternary plot
-    points = np.vstack((gva_data, labour_data, employment_data)).T
-
-    # Plot the points on the ternary plot
-    tax.scatter(points, marker='o', label=f'{country}', s=50)
-
-# Add a legend
-tax.legend()
-
-# Show the plot in Streamlit
-st.pyplot(figure)
+        
