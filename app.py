@@ -52,8 +52,11 @@ countries = ['IT', 'FR', 'DE']  # Italy, France, and Germany
 def load_data():
     # Load the raw data from Eurostat API
     GVA_data_import = eurostat.get_data_df('namq_10_a10')
+    print("Got GVA data")
     Employment_data_import = eurostat.get_data_df('namq_10_a10_e')
+    print("Got Employment data")
     Labour_demand_ICT_data_import = eurostat.get_data_df('isoc_sk_oja1')
+    print("Got Labour Demand data")
 
     # Define the starting quarter for filtering data
     date_start = '2019Q4'
@@ -67,6 +70,8 @@ def load_data():
 
 # Load the data from the cached function
 GVA_data, Employment_data, Labour_demand_ICT_data = load_data()
+
+print("All data has been loaded")
 
 # Initialize dictionaries to hold country-specific filtered data
 filtered_data = {'GVA': {}, 'Employment': {}, 'LabourDemand': {}}
@@ -97,6 +102,8 @@ for country in countries:
     filtered_data['GVA'][country]['normalized_value'] = scaler.fit_transform(filtered_data['GVA'][country][['value']])
     filtered_data['Employment'][country]['normalized_value'] = scaler.fit_transform(filtered_data['Employment'][country][['value']])
     filtered_data['LabourDemand'][country]['normalized_value'] = scaler.fit_transform(filtered_data['LabourDemand'][country][['value']])
+
+print("Filtered and normalised all values")
 
 # Set global font size for plots
 plt.rcParams.update({'font.size': 12})
