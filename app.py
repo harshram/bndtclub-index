@@ -114,6 +114,52 @@ print("Filtered and normalised all values")
 # Set global font size for plots
 plt.rcParams.update({'font.size': 12})
 
+# Parametrizable window for gradient calculation
+window = st.sidebar.slider("Select Gradient Window", 1, 10, 2)  # Slider to select the window size
+def custom_gradient(data, window):
+    return (data - data.shift(window)) / window
+
+# Initialize an empty DataFrame to hold raw and normalized custom gradients
+custom_gradients_df = pd.DataFrame()
+
+for country in countries:
+    # Set 'quarter' as the index for each dataset
+    employment_data = filtered_data['Employment'][country].set_index('quarter')
+    GVA_data = filtered_data['GVA'][country].set_index('quarter')
+    labour_data = filtered_data['LabourDemand'][country].set_index('quarter')  # Ensure correct LabourDemand key
+
+    # Define a dictionary to store raw and normalized gradients for each dataset
+    gradients = {}
+
+    # List of datasets to loop over
+    datasets = {
+        'employment': employment_data,
+        'GVA': GVA_data,
+        'labour': labour_data
+    }
+
+    # Loop over each dataset and calculate the raw and normalized gradients
+    for data_key, data in datasets.items():
+        # Calculate the custom gradient for the current dataset
+        custom_grad = custom_gradient(data['value'], window).dropna()
+
+        # Normalize the custom gradient using MinMaxScaler
+        normalized_grad = scaler.fit_transform(custom_grad.values.reshape(-1, 1)).flatten()
+
+        # Store the raw and normalized gradients in the gradients dictionary
+        gradients[f'{data_key}_grad_{country}'] = pd.Series(custom_grad, index=custom_grad.index)
+        gradients[f'normalized_{data_key}_grad_{country}'] = pd.Series(normalized_grad, index=custom_grad.index)
+
+    # Create a DataFrame for this country’s gradients
+    country_gradients_df = pd.DataFrame(gradients)
+
+    # Concatenate the current country's DataFrame with the main DataFrame
+    # Align on the 'quarter' index using axis=1 to ensure each country gets its own columns
+    custom_gradients_df = pd.concat([custom_gradients_df, country_gradients_df], axis=1)
+
+# The final DataFrame will automatically handle different lengths because of concatenation
+st.write('Custom gradients (raw and normalized) for Employment, GVA, and Labour Demand across countries')
+st.dataframe(custom_gradients_df)
 
 if page == page1:
     # Create two columns for the plots
@@ -670,7 +716,6 @@ if page == page1:
 elif page == page2:
 
     st.title("Version 0.1: multipliers-based")
-
     # Create three columns
     col1, col2, col3 = st.columns(3)
 
@@ -712,18 +757,12 @@ elif page == page2:
         plt.legend()
         st.pyplot(plt)
 
-# Parametrizable window for gradient calculation
-window = st.sidebar.slider("Select Gradient Window", 1, 10, 2)  # Slider to select the window size
-def custom_gradient(data, window):
-    return (data - data.shift(window)) / window
 
 with col2:
     st.write(f"**Gradient with Window = {window} for ICT Employment Data**")
     plt.figure(figsize=(8, 6))
     for country in countries:
-        employment_data = filtered_data['Employment'][country]['value']
-        custom_grad = custom_gradient(employment_data, window)
-        plt.plot(filtered_data['Employment'][country]['quarter'], custom_grad, marker='o', label=f'{country}')
+        plt.plot(custom_gradients_df.index, custom_gradients_df[f'employment_grad_{country}'], marker='o', label=f'{country}')
     plt.title(f'ICT Employment Gradient for IT, FR, DE (Window = {window})')
     plt.xlabel('Quarter')
     plt.ylabel(' Gradient')
@@ -732,12 +771,10 @@ with col2:
     plt.legend()
     st.pyplot(plt)
 
-    st.write(f"** Gradient with Window = {window} for GVA Data**")
+    st.write(f"**Gradient with Window = {window} for GVA Data**")
     plt.figure(figsize=(8, 6))
     for country in countries:
-        gva_data = filtered_data['GVA'][country]['value']
-        custom_grad = custom_gradient(gva_data, window)
-        plt.plot(filtered_data['GVA'][country]['quarter'], custom_grad, marker='o', label=f'{country}')
+        plt.plot(custom_gradients_df.index, custom_gradients_df[f'GVA_grad_{country}'], marker='o', label=f'{country}')
     plt.title(f'GVA Gradient for IT, FR, DE (Window = {window})')
     plt.xlabel('Quarter')
     plt.ylabel('Gradient')
@@ -749,9 +786,7 @@ with col2:
     st.write(f"**Gradient with Window = {window} for Labour Demand Data**")
     plt.figure(figsize=(8, 6))
     for country in countries:
-        labour_data = filtered_data['LabourDemand'][country]['value']
-        custom_grad = custom_gradient(labour_data, window)
-        plt.plot(filtered_data['LabourDemand'][country]['quarter'], custom_grad, marker='o', label=f'{country}')
+       plt.plot(custom_gradients_df.index, custom_gradients_df[f'labour_grad_{country}'], marker='o', label=f'{country}')
     plt.title(f'Labour Demand Gradient for IT, FR, DE (Window = {window})')
     plt.xlabel('Quarter')
     plt.ylabel('Gradient')
@@ -767,10 +802,7 @@ with col3:
     plt.figure(figsize=(8, 6))
     scaler = MinMaxScaler()
     for country in countries:
-        employment_data = filtered_data['Employment'][country]['value']
-        custom_grad = custom_gradient(employment_data, window)
-        normalized_grad = scaler.fit_transform(custom_grad.values.reshape(-1, 1))  # Normalize the gradient
-        plt.plot(filtered_data['Employment'][country]['quarter'], normalized_grad, marker='o', label=f'{country}')
+        plt.plot(custom_gradients_df.index, custom_gradients_df[f'normalized_employment_grad_{country}'], marker='o', label=f'{country}')
     plt.title(f'Normalized ICT Employment Gradient for IT, FR, DE (Window = {window})')
     plt.xlabel('Quarter')
     plt.ylabel('Normalized Gradient')
@@ -782,10 +814,7 @@ with col3:
     st.write(f"**Normalized Gradient with Window = {window} for GVA Data**")
     plt.figure(figsize=(8, 6))
     for country in countries:
-        gva_data = filtered_data['GVA'][country]['value']
-        custom_grad = custom_gradient(gva_data, window)
-        normalized_grad = scaler.fit_transform(custom_grad.values.reshape(-1, 1))  # Normalize the gradient
-        plt.plot(filtered_data['GVA'][country]['quarter'], normalized_grad, marker='o', label=f'{country}')
+        plt.plot(custom_gradients_df.index, custom_gradients_df[f'normalized_GVA_grad_{country}'], marker='o', label=f'{country}')
     plt.title(f'Normalized GVA Gradient for IT, FR, DE (Window = {window})')
     plt.xlabel('Quarter')
     plt.ylabel('Normalized Gradient')
@@ -797,10 +826,7 @@ with col3:
     st.write(f"**Normalized Gradient with Window = {window} for Labour Demand Data**")
     plt.figure(figsize=(8, 6))
     for country in countries:
-        labour_data = filtered_data['LabourDemand'][country]['value']
-        custom_grad = custom_gradient(labour_data, window)
-        normalized_grad = scaler.fit_transform(custom_grad.values.reshape(-1, 1))  # Normalize the gradient
-        plt.plot(filtered_data['LabourDemand'][country]['quarter'], normalized_grad, marker='o', label=f'{country}')
+        plt.plot(custom_gradients_df.index, custom_gradients_df[f'normalized_labour_grad_{country}'], marker='o', label=f'{country}')
     plt.title(f'Normalized Labour Demand Gradient for IT, FR, DE (Window = {window})')
     plt.xlabel('Quarter')
     plt.ylabel('Normalized Gradient')
@@ -822,39 +848,11 @@ index_data = pd.DataFrame()
 plt.figure(figsize=(8, 6))
 
 for country in countries:
-    # Get the employment, GVA, and labour demand data for the current country
-    employment_data = filtered_data['Employment'][country]['value']
-    gva_data = filtered_data['GVA'][country]['value']
-    labour_data = filtered_data['LabourDemand'][country]['value']
-
-    # Apply the custom gradient to the original data first
-    custom_grad_employment = custom_gradient(pd.Series(employment_data), window).dropna()
-    custom_grad_gva = custom_gradient(pd.Series(gva_data), window).dropna()
-    custom_grad_labour = custom_gradient(pd.Series(labour_data), window).dropna()
-
-    # Ensure all arrays are of the same length by trimming to the minimum length
-    min_length = min(len(custom_grad_employment), len(custom_grad_gva), len(custom_grad_labour))
-
-    custom_grad_employment = custom_grad_employment[:min_length]
-    custom_grad_gva = custom_grad_gva[:min_length]
-    custom_grad_labour = custom_grad_labour[:min_length]
-
-    # Normalize the original data before applying the gradient
-    normalized_grad_employment = scaler.fit_transform(custom_grad_employment.values.reshape(-1, 1)).flatten()[:min_length]
-    normalized_grad_gva = scaler.fit_transform(custom_grad_gva.values.reshape(-1, 1)).flatten()[:min_length]
-    normalized_grad_labour = scaler.fit_transform(custom_grad_labour.values.reshape(-1, 1)).flatten()[:min_length]
-
-    # Trim the quarter data to match the new length after applying the gradient
-    quarters = filtered_data['Employment'][country]['quarter'].iloc[-min_length:]
-
-    # Calculate the Index as the product of the normalized gradients
-    index = normalized_grad_employment * normalized_grad_gva * normalized_grad_labour
-
-    # Add the calculated index to the DataFrame
-    index_data[country] = index
-
+    
+    index_data[country] = custom_gradients_df[f'normalized_employment_grad_{country}']*custom_gradients_df[f'normalized_GVA_grad_{country}']*custom_gradients_df[f'normalized_labour_grad_{country}']
+    index_data.index = custom_gradients_df.index
     # Plot the index values for this country
-    plt.plot(quarters, index, marker='o', label=f'{country}')
+    plt.plot(index_data.index, index_data[f'{country}'], marker='o', label=f'{country}')
 
 
 # Set the plot title and labels outside the loop
@@ -867,22 +865,6 @@ plt.legend()
 
 # Display the plot in Streamlit
 st.pyplot(plt)
-
-# Trim the quarters data to match the new length after applying the gradient
-quarters_IT = filtered_data['Employment']['IT']['quarter'].iloc[-min_length:].values
-
-# Create a DataFrame for the table
-table_data_IT = pd.DataFrame({
-    'Quarter': quarters_IT,
-    'GVA Custom Gradient': normalized_grad_gva,
-    'ICT Employment Custom Gradient': normalized_grad_employment,
-    'Labour Demand Custom Gradient': normalized_grad_labour,
-    'Index': index
-})
-
-# Display the table in Streamlit
-st.write(f"**Custom Gradients and Index for Italy (IT)**")
-st.dataframe(table_data_IT)
 
 col_GVA, col_indx = st.columns(2)
 
@@ -915,7 +897,7 @@ with col_indx:
 
         # Plot the custom index
         plt.figure(figsize=(8, 6))
-        plt.plot(quarters, index, marker='o', label=f'{country} Index', color='green')
+        plt.plot(index_data.index, index_data[f'{country}'], marker='o', label=f'{country} Index', color='green')
         plt.title(f'Custom Index for {country_titles[i]}')
         plt.xlabel('Quarter')
         plt.ylabel('Custom Index')
@@ -924,58 +906,4 @@ with col_indx:
         plt.legend()
         st.pyplot(plt)
 
-# In the right column, plot the precomputed custom index
-st.write("**Custom Index for IT, FR, DE**")
-for i, country in enumerate(countries):
-    # Use the precomputed custom index from the previous code
-    index = index_data[country]  # Assuming you have stored the precomputed index in a dictionary or similar structure
-    
-    # Create a dataset with uncertainty by adding random noise with an uncertainty level of 0.5
-    uncertainty = 0.5
-    index_with_uncertainty = [np.random.normal(loc=value, scale=uncertainty, size=10) for value in index] # Simulating 10 samples for each quarter
-    
-    # Plot the custom index as a box plot
-    plt.figure(figsize=(8, 6))
-    plt.boxplot(index_with_uncertainty, labels=quarters)
-    plt.title(f'Custom Index with Uncertainty for {country_titles[i]}')
-    plt.xlabel('Quarter')
-    plt.ylabel('Custom Index')
-    plt.grid(True, axis='y')
-    plt.xticks(rotation=45)
-    st.pyplot(plt)
-
-
-# Create a ternary plot for normalized ICT employment, GVA, and labour demand
-st.write("**Ternary Plot for Index Components (Normalized ICT Employment, GVA, Labour Demand)**")
-
-# Initialize the figure for ternary plot
-figure, tax = ternary.figure(scale=1.0)
-figure.set_size_inches(8, 6)
-
-# Set up the ternary axis limits and gridlines
-tax.boundary()
-tax.gridlines(multiple=0.1, color="blue")
-
-# Labels for the axes
-tax.left_axis_label("Normalized GVA", offset=0.16)
-tax.right_axis_label("Normalized Labour Demand", offset=0.16)
-tax.bottom_axis_label("Normalized ICT Employment", offset=0.06)
-
-# Loop through the countries and plot their normalized components in the ternary plot
-for country in countries:
-    # Get the normalized gradients for the current country
-    employment_data = normalized_grad_employment
-    gva_data = normalized_grad_gva
-    labour_data = normalized_grad_labour
-
-    # Prepare the data for the ternary plot
-    points = np.vstack((gva_data, labour_data, employment_data)).T
-
-    # Plot the points on the ternary plot
-    tax.scatter(points, marker='o', label=f'{country}', s=50)
-
-# Add a legend
-tax.legend()
-
-# Show the plot in Streamlit
-st.pyplot(figure)
+#
