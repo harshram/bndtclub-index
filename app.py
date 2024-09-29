@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
 import numpy as np
-import ternary
+#import ternary
 
 import eurostat
 
@@ -915,31 +915,3 @@ with col_indx:
         plt.legend()
         st.pyplot(plt)
 
-
-# Convert the Series to NumPy arrays and then flatten them
-custom_grad_employment = custom_grad_employment.to_numpy().flatten()
-custom_grad_gva = custom_grad_gva.to_numpy().flatten()
-custom_grad_labour = custom_grad_labour.to_numpy().flatten()
-
-# Prepare data for ternary plot
-ternary_data = list(zip(custom_grad_employment, custom_grad_gva, custom_grad_labour))
-
-# Create a ternary plot
-figure, tax = ternary.figure(scale=1.0)
-tax.boundary(linewidth=1.5)  # Removed the color argument to avoid the conflict
-tax.gridlines(color="black", multiple=0.1)
-
-# Labels for the corners
-tax.left_axis_label("GVA", offset=0.16)
-tax.right_axis_label("Labour", offset=0.16)
-tax.bottom_axis_label("ICT Employment", offset=0.04)
-
-# Plot the data points
-tax.scatter(ternary_data, marker='o', color='blue')
-
-# Display plot
-tax.ticks(axis='lbr', linewidth=1, multiple=0.1)
-tax.show()
-
-# Show plot in Streamlit
-st.pyplot(figure)
