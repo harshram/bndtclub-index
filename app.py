@@ -821,15 +821,10 @@ for country in countries:
     gva_data = filtered_data['GVA'][country]['value']
     labour_data = filtered_data['LabourDemand'][country]['value']
 
-    # Normalize the original data before applying the gradient
-    normalized_employment = scaler.fit_transform(employment_data.values.reshape(-1, 1)).flatten()
-    normalized_gva = scaler.fit_transform(gva_data.values.reshape(-1, 1)).flatten()
-    normalized_labour = scaler.fit_transform(labour_data.values.reshape(-1, 1)).flatten()
-
-    # Apply the custom gradient to the normalized data
-    custom_grad_employment = custom_gradient(pd.Series(normalized_employment), window).dropna()
-    custom_grad_gva = custom_gradient(pd.Series(normalized_gva), window).dropna()
-    custom_grad_labour = custom_gradient(pd.Series(normalized_labour), window).dropna()
+    # Apply the custom gradient to the original data first
+    custom_grad_employment = custom_gradient(pd.Series(employment_data), window).dropna()
+    custom_grad_gva = custom_gradient(pd.Series(gva_data), window).dropna()
+    custom_grad_labour = custom_gradient(pd.Series(labour_data), window).dropna()
 
     # Ensure all arrays are of the same length by trimming to the minimum length
     min_length = min(len(custom_grad_employment), len(custom_grad_gva), len(custom_grad_labour))
@@ -838,17 +833,23 @@ for country in countries:
     custom_grad_gva = custom_grad_gva[:min_length]
     custom_grad_labour = custom_grad_labour[:min_length]
 
+    # Normalize the original data before applying the gradient
+    normalized_grad_employment = scaler.fit_transform(custom_grad_employment.values.reshape(-1, 1)).flatten()[:min_length]
+    normalized_grad_gva = scaler.fit_transform(custom_grad_gva.values.reshape(-1, 1)).flatten()[:min_length]
+    normalized_grad_labour = scaler.fit_transform(custom_grad_labour.values.reshape(-1, 1)).flatten()[:min_length]
+
     # Trim the quarter data to match the new length after applying the gradient
     quarters = filtered_data['Employment'][country]['quarter'].iloc[-min_length:]
 
     # Calculate the Index as the product of the normalized gradients
-    index = custom_grad_employment.values * custom_grad_gva.values * custom_grad_labour.values
+    index = normalized_grad_employment * normalized_grad_gva * normalized_grad_labour
 
     # Add the calculated index to the DataFrame
     index_data[country] = index
 
     # Plot the index values for this country
     plt.plot(quarters, index, marker='o', label=f'{country}')
+
 
 # Set the plot title and labels outside the loop
 plt.title('Index for IT, FR, DE')
@@ -867,9 +868,9 @@ quarters_IT = filtered_data['Employment']['IT']['quarter'].iloc[-min_length:].va
 # Create a DataFrame for the table
 table_data_IT = pd.DataFrame({
     'Quarter': quarters_IT,
-    'GVA Custom Gradient': custom_grad_gva.values,
-    'ICT Employment Custom Gradient': custom_grad_employment.values,
-    'Labour Demand Custom Gradient': custom_grad_labour.values,
+    'GVA Custom Gradient': normalized_grad_gva,
+    'ICT Employment Custom Gradient': normalized_grad_employment,
+    'Labour Demand Custom Gradient': normalized_grad_labour,
     'Index': index
 })
 
