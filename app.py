@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
 import numpy as np
-#import ternary
+import ternary
 
 import eurostat
 
@@ -879,7 +879,9 @@ st.write(f"**Custom Gradients and Index for Italy (IT)**")
 st.dataframe(table_data_IT)
 
 col_GVA, col_indx = st.columns(2)
+
 country_titles = ['Italy (IT)', 'France (FR)', 'Germany (DE)']
+
 # In the left column, plot GVA data
 with col_GVA:
     st.write("**GVA Data for IT, FR, DE**")
@@ -916,3 +918,58 @@ with col_indx:
         plt.legend()
         st.pyplot(plt)
 
+# In the right column, plot the precomputed custom index
+st.write("**Custom Index for IT, FR, DE**")
+for i, country in enumerate(countries):
+    # Use the precomputed custom index from the previous code
+    index = index_data[country]  # Assuming you have stored the precomputed index in a dictionary or similar structure
+    
+    # Create a dataset with uncertainty by adding random noise with an uncertainty level of 0.5
+    uncertainty = 0.5
+    index_with_uncertainty = [np.random.normal(loc=value, scale=uncertainty, size=10) for value in index] # Simulating 10 samples for each quarter
+    
+    # Plot the custom index as a box plot
+    plt.figure(figsize=(8, 6))
+    plt.boxplot(index_with_uncertainty, labels=quarters)
+    plt.title(f'Custom Index with Uncertainty for {country_titles[i]}')
+    plt.xlabel('Quarter')
+    plt.ylabel('Custom Index')
+    plt.grid(True, axis='y')
+    plt.xticks(rotation=45)
+    st.pyplot(plt)
+
+
+# Create a ternary plot for normalized ICT employment, GVA, and labour demand
+st.write("**Ternary Plot for Index Components (Normalized ICT Employment, GVA, Labour Demand)**")
+
+# Initialize the figure for ternary plot
+figure, tax = ternary.figure(scale=1.0)
+figure.set_size_inches(8, 6)
+
+# Set up the ternary axis limits and gridlines
+tax.boundary()
+tax.gridlines(multiple=0.1, color="blue")
+
+# Labels for the axes
+tax.left_axis_label("Normalized GVA", offset=0.16)
+tax.right_axis_label("Normalized Labour Demand", offset=0.16)
+tax.bottom_axis_label("Normalized ICT Employment", offset=0.06)
+
+# Loop through the countries and plot their normalized components in the ternary plot
+for country in countries:
+    # Get the normalized gradients for the current country
+    employment_data = normalized_grad_employment
+    gva_data = normalized_grad_gva
+    labour_data = normalized_grad_labour
+
+    # Prepare the data for the ternary plot
+    points = np.vstack((gva_data, labour_data, employment_data)).T
+
+    # Plot the points on the ternary plot
+    tax.scatter(points, marker='o', label=f'{country}', s=50)
+
+# Add a legend
+tax.legend()
+
+# Show the plot in Streamlit
+st.pyplot(figure)
