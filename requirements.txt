@@ -4,4 +4,5 @@ numpy==2.1.0
 pandas==2.2.2
 scikit-learn==1.5.2
 streamlit==1.37.1
+python-ternary == 1.0.8
 [01;31m[Kwatchdog[m[K==5.0.3
