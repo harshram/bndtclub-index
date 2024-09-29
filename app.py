@@ -10,6 +10,12 @@ from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-sc
 
 from data_processing import process_import_data, process_ICT_labour_import_data
 
+import eurostat
+
+from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
+
+from data_processing import process_import_data, process_ICT_labour_import_data
+
 # Set the page configuration at the top of the script
 st.set_page_config(
     page_title="B&DT Club Digital Transformation Index",  # Optional: Give your app a title
