@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from data_processing import process_import_data, process_ICT_labour_import_data
 from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
 import numpy as np
+import ternary
 
 # Set the page configuration at the top of the script
 st.set_page_config(
@@ -850,6 +851,22 @@ plt.legend()
 # Display the plot in Streamlit
 st.pyplot(plt)
 
+# Trim the quarters data to match the new length after applying the gradient
+quarters_IT = filtered_data['Employment']['IT']['quarter'].iloc[-min_length:].values
+
+# Create a DataFrame for the table
+table_data_IT = pd.DataFrame({
+    'Quarter': quarters_IT,
+    'GVA Custom Gradient': custom_grad_gva.values,
+    'ICT Employment Custom Gradient': custom_grad_employment.values,
+    'Labour Demand Custom Gradient': custom_grad_labour.values,
+    'Index': index
+})
+
+# Display the table in Streamlit
+st.write(f"**Custom Gradients and Index for Italy (IT)**")
+st.dataframe(table_data_IT)
+
 col_GVA, col_indx = st.columns(2)
 country_titles = ['Italy (IT)', 'France (FR)', 'Germany (DE)']
 # In the left column, plot GVA data
@@ -887,3 +904,32 @@ with col_indx:
         plt.xticks(rotation=45)
         plt.legend()
         st.pyplot(plt)
+
+
+# Convert the Series to NumPy arrays and then flatten them
+custom_grad_employment = custom_grad_employment.to_numpy().flatten()
+custom_grad_gva = custom_grad_gva.to_numpy().flatten()
+custom_grad_labour = custom_grad_labour.to_numpy().flatten()
+
+# Prepare data for ternary plot
+ternary_data = list(zip(custom_grad_employment, custom_grad_gva, custom_grad_labour))
+
+# Create a ternary plot
+figure, tax = ternary.figure(scale=1.0)
+tax.boundary(linewidth=1.5)  # Removed the color argument to avoid the conflict
+tax.gridlines(color="black", multiple=0.1)
+
+# Labels for the corners
+tax.left_axis_label("GVA", offset=0.16)
+tax.right_axis_label("Labour", offset=0.16)
+tax.bottom_axis_label("ICT Employment", offset=0.04)
+
+# Plot the data points
+tax.scatter(ternary_data, marker='o', color='blue')
+
+# Display plot
+tax.ticks(axis='lbr', linewidth=1, multiple=0.1)
+tax.show()
+
+# Show plot in Streamlit
+st.pyplot(figure)
