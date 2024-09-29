@@ -4,5 +4,10 @@ numpy==2.1.0
 pandas==2.2.2
 scikit-learn==1.5.2
 streamlit==1.37.1
+<<<<<<< HEAD
 ternary == 0.1
 mpltern == 1.0.4
+=======
+python-ternary==1.0.8
+ternary==0.1
+>>>>>>> 9db467e9 (Added missing requirements for the ternary plot)
