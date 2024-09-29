@@ -4,3 +4,5 @@ numpy==2.1.0
 pandas==2.2.2
 scikit-learn==1.5.2
 streamlit==1.37.1
+ternary == 0.1
+mpltern == 1.0.4
