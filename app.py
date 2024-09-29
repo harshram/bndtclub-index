@@ -861,7 +861,6 @@ plt.legend()
 # Display the plot in Streamlit
 st.pyplot(plt)
 
-<<<<<<< HEAD
 # Trim the quarters data to match the new length after applying the gradient
 quarters_IT = filtered_data['Employment']['IT']['quarter'].iloc[-min_length:].values
 
@@ -897,27 +896,6 @@ with col_GVA:
         plt.legend()
         st.pyplot(plt)
 
-=======
-col_GVA, col_indx = st.columns(2)
-country_titles = ['Italy (IT)', 'France (FR)', 'Germany (DE)']
-# In the left column, plot GVA data
-with col_GVA:
-    st.write("**GVA Data for IT, FR, DE**")
-    for i, country in enumerate(countries):
-        gva_data = filtered_data['GVA'][country]['value']
-        quarter = filtered_data['GVA'][country]['quarter']
-
-        plt.figure(figsize=(8, 6))
-        plt.plot(quarter, gva_data, marker='o', label=f'{country} GVA', color='blue')
-        plt.title(f'GVA for {country_titles[i]}')
-        plt.xlabel('Quarter')
-        plt.ylabel('GVA (% of GDP)')
-        plt.grid(True)
-        plt.xticks(rotation=45)
-        plt.legend()
-        st.pyplot(plt)
-
->>>>>>> 191ea3a7 (added a second page with new index approach calculation)
 # In the right column, plot the precomputed custom index
 with col_indx:
     st.write("**Custom Index for IT, FR, DE**")
@@ -925,7 +903,6 @@ with col_indx:
         # Use the precomputed custom index from the previous code
         index = index_data[country]  # Assuming you have stored the precomputed index in a dictionary or similar structure
         
-<<<<<<< HEAD
 
         # Plot the custom index
         plt.figure(figsize=(8, 6))
@@ -966,16 +943,3 @@ tax.show()
 
 # Show plot in Streamlit
 st.pyplot(figure)
-=======
-
-        # Plot the custom index
-        plt.figure(figsize=(8, 6))
-        plt.plot(quarters, index, marker='o', label=f'{country} Index', color='green')
-        plt.title(f'Custom Index for {country_titles[i]}')
-        plt.xlabel('Quarter')
-        plt.ylabel('Custom Index')
-        plt.grid(True)
-        plt.xticks(rotation=45)
-        plt.legend()
-        st.pyplot(plt)
->>>>>>> 191ea3a7 (added a second page with new index approach calculation)
