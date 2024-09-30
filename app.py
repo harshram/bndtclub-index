@@ -5,6 +5,7 @@ import numpy as np
 import ternary
 import mpltern
 import matplotlib.cm as cm 
+import plotly.express as px
 
 import eurostat
 
@@ -990,51 +991,42 @@ elif page==page3:
             plt.xticks(rotation=45)
             plt.grid(True)
             st.pyplot(plt)
+        st.dataframe(custom_gradients_df)
+        st.scatter_chart(custom_gradients_df,
+                        x = 'normalized_employment_grad_IT',
+                        y = 'normalized_labour_grad_IT',
+                        size = 'normalized_GVA_grad_IT',)
+        
+        # Temporarily add the index (quarters) as a column for hover_name
+        custom_gradients_df_with_index = custom_gradients_df.reset_index().rename(columns={'index': 'quarter'})
+        st.write("""
+        This animated bubble plot visualizes how the employment, labor, and Gross Value Added (GVA) metrics evolve over time for various countries.
 
-        st.write('##Ternary graph')
-        # Set up the ternary plot
-        fig = plt.figure(figsize=(4, 4))  # Adjust the size as needed
-        ax = fig.add_subplot(111, projection='ternary')
+        - **X-axis**: Represents the normalized employment growth in the IT sector.
+        - **Y-axis**: Represents the normalized labor growth in the IT sector.
+        - **Bubble Size**: Reflects the normalized GVA (Gross Value Added) in the IT sector for each country.
+        - **Color (WILL BE)**: The color of each bubble corresponds to an index value derived from another dataset, indicating the performance or digital transformation potential of each country.
+        - **Animation**: The plot is animated over time, with each frame representing a different quarter. You can see how the metrics for each country change across quarters, providing insights into trends and shifts over time.
 
-        # Generate a colormap for the quarters
-        cmap = cm.get_cmap('tab10')  # Use a colormap, 'tab10' provides 10 distinct colors
-        num_quarters = len(index_data.index)
-        colors = cmap(np.linspace(0, 1, num_quarters))  # Generate colors for each quarter
-
-        # Loop through the index data for Italy and plot the points with different colors
-        for i, quarter in enumerate(index_data.index):
-            # Get the normalized employment, GVA, and labour demand values for the current quarter
-            employment_val = custom_gradients_df.loc[quarter, 'normalized_employment_grad_IT']
-            GVA_val = custom_gradients_df.loc[quarter, 'normalized_GVA_grad_IT']
-            labour_val = custom_gradients_df.loc[quarter, 'normalized_labour_grad_IT']
-            
-            # Plot the point on the ternary plot, using the color from the colormap
-            ax.plot([GVA_val], [labour_val], [employment_val], 'o', color=colors[i], markersize=6, label=quarter)
-
-        # Set axis labels with the new names and smaller font sizes
-        ax.set_tlabel('Normalized GVA gradient', fontsize=8)
-        ax.set_llabel('Normalized Labour Demand gradient', fontsize=8)
-        ax.set_rlabel('Normalized Employment gradient', fontsize=8)
-
-        # Adjust the tick label size (axis numbers)
-        ax.tick_params(labelsize=6)
-
-        # Set title with a smaller font size
-        plt.title('Ternary Plot for Italy (IT) with Index Data', fontsize=8)
-
-        # Create a legend with the quarter labels, using the same colors
-        ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1), fontsize=6, title='Quarter', title_fontsize=8)
-
-        # Display the plot
-        st.pyplot(fig)
+        Hover over the bubbles to see details about the specific quarter and country data.
+        """)
+        fig = px.scatter(
+            custom_gradients_df_with_index,  # Reset index temporarily for the plot
+            x='normalized_employment_grad_IT',
+            y='normalized_labour_grad_IT',
+            size='normalized_GVA_grad_IT',
+            hover_name='quarter',
+            animation_frame='quarter'
+            )
+        st.plotly_chart(fig)
 
     # Tab 2: France (FR)
     with tab3:
         st.write("### France (FR)")
         
-        col1, col2, col3 = st.columns(3)
+        col1, col2= st.columns([1,2])
         
-        # Column 1: ICT Employment Data
+        # Column 1: 
         with col1:
             st.write("**ICT Employment Data**")
             plt.figure(figsize=(8, 6))
@@ -1047,8 +1039,6 @@ elif page==page3:
             plt.grid(True)
             st.pyplot(plt)
         
-        # Column 2: GVA Data
-        with col2:
             st.write("**GVA Data**")
             plt.figure(figsize=(8, 6))
             plt.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o', label=f'{country}')
@@ -1059,8 +1049,6 @@ elif page==page3:
             plt.grid(True)
             st.pyplot(plt)
 
-        # Column 3: Labour Demand Data
-        with col3:
             st.write("**Labour Demand Data**")
             plt.figure(figsize=(8, 6))
             plt.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o', label=f'{country}')
@@ -1070,24 +1058,58 @@ elif page==page3:
             plt.xticks(rotation=45)
             plt.grid(True)
             st.pyplot(plt)
+        
+        with col2:
+            # Plot the index for France (FR)
+            plt.figure(figsize=(6, 10), dpi=150)
+            plt.plot(index_data.index, index_data['FR'], marker='o', label='France (FR)')
+            plt.title('Index for France (FR)')
+            plt.xlabel('Quarter')
+            plt.ylabel('Index Value')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
 
-        # Plot the index for France (FR)
-        plt.figure(figsize=(4, 3), dpi=150)
-        plt.plot(index_data.index, index_data['FR'], marker='o', label='France (FR)')
-        plt.title('Index for France (FR)')
-        plt.xlabel('Quarter')
-        plt.ylabel('Index Value')
-        plt.xticks(rotation=45)
-        plt.grid(True)
-        st.pyplot(plt)
+         # Temporarily add the index (quarters) as a column for hover_name
+        custom_gradients_df_with_index = custom_gradients_df.reset_index().rename(columns={'index': 'quarter'})
+
+        fig = px.scatter(
+            custom_gradients_df_with_index,  # Reset index temporarily for the plot
+            x='normalized_employment_grad_FR',
+            y='normalized_labour_grad_FR',
+            size='normalized_GVA_grad_FR',
+            hover_name='quarter'  
+            )
+        st.plotly_chart(fig)
+
+        st.write("""
+        This animated bubble plot visualizes how the employment, labor, and Gross Value Added (GVA) metrics evolve over time for various countries.
+
+        - **X-axis**: Represents the normalized employment growth in the IT sector.
+        - **Y-axis**: Represents the normalized labor growth in the IT sector.
+        - **Bubble Size**: Reflects the normalized GVA (Gross Value Added) in the IT sector for each country.
+        - **Color (WILL BE)**: The color of each bubble corresponds to an index value derived from another dataset, indicating the performance or digital transformation potential of each country.
+        - **Animation**: The plot is animated over time, with each frame representing a different quarter. You can see how the metrics for each country change across quarters, providing insights into trends and shifts over time.
+
+        Hover over the bubbles to see details about the specific quarter and country data.
+        """)
+        fig = px.scatter(
+            custom_gradients_df_with_index,  # Reset index temporarily for the plot
+            x='normalized_employment_grad_FR',
+            y='normalized_labour_grad_FR',
+            size='normalized_GVA_grad_FR',
+            hover_name='quarter',
+            animation_frame= 'quarter'
+            )
+        st.plotly_chart(fig)
 
     # Tab 3: Germany (DE)
     with tab4:
         st.write("### Germany (DE)")
         
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns([1,2])
         
-        # Column 1: ICT Employment Data
+        # Column 1
         with col1:
             st.write("**ICT Employment Data**")
             plt.figure(figsize=(8, 6))
@@ -1100,8 +1122,6 @@ elif page==page3:
             plt.grid(True)
             st.pyplot(plt)
         
-        # Column 2: GVA Data
-        with col2:
             st.write("**GVA Data**")
             plt.figure(figsize=(8, 6))
             plt.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o', label=f'{country}')
@@ -1112,8 +1132,6 @@ elif page==page3:
             plt.grid(True)
             st.pyplot(plt)
 
-        # Column 3: Labour Demand Data
-        with col3:
             st.write("**Labour Demand Data**")
             plt.figure(figsize=(8, 6))
             plt.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o', label=f'{country}')
@@ -1124,14 +1142,48 @@ elif page==page3:
             plt.grid(True)
             st.pyplot(plt)
 
-        # Plot the index for Germany (DE)
-        plt.figure(figsize=(4, 3), dpi=150)
-        plt.plot(index_data.index, index_data['DE'], marker='o', label='Germany (DE)')
-        plt.title('Index for Germany (DE)')
-        plt.xlabel('Quarter')
-        plt.ylabel('Index Value')
-        plt.xticks(rotation=45)
-        plt.grid(True)
-        st.pyplot(plt)
+        with col2:
+            # Plot the index for Germany (DE)
+            plt.figure(figsize=(6, 10), dpi=150)
+            plt.plot(index_data.index, index_data['DE'], marker='o', label='Germany (DE)')
+            plt.title('Index for Germany (DE)')
+            plt.xlabel('Quarter')
+            plt.ylabel('Index Value')
+            plt.xticks(rotation=45)
+            plt.grid(True)
+            st.pyplot(plt)
 
+         # Temporarily add the index (quarters) as a column for hover_name
+        custom_gradients_df_with_index = custom_gradients_df.reset_index().rename(columns={'index': 'quarter'})
+
+        fig = px.scatter(
+            custom_gradients_df_with_index,  # Reset index temporarily for the plot
+            x='normalized_employment_grad_DE',
+            y='normalized_labour_grad_DE',
+            size='normalized_GVA_grad_DE',
+            hover_name='quarter'  
+            )
+        st.plotly_chart(fig)
+
+        st.write("""
+        This animated bubble plot visualizes how the employment, labor, and Gross Value Added (GVA) metrics evolve over time for various countries.
+
+        - **X-axis**: Represents the normalized employment growth in the IT sector.
+        - **Y-axis**: Represents the normalized labor growth in the IT sector.
+        - **Bubble Size**: Reflects the normalized GVA (Gross Value Added) in the IT sector for each country.
+        - **Color (WILL BE)**: The color of each bubble corresponds to an index value derived from another dataset, indicating the performance or digital transformation potential of each country.
+        - **Animation**: The plot is animated over time, with each frame representing a different quarter. You can see how the metrics for each country change across quarters, providing insights into trends and shifts over time.
+
+        Hover over the bubbles to see details about the specific quarter and country data.
+        """)
+
+        fig = px.scatter(
+            custom_gradients_df_with_index,  # Reset index temporarily for the plot
+            x='normalized_employment_grad_DE',
+            y='normalized_labour_grad_DE',
+            size='normalized_GVA_grad_DE',
+            hover_name='quarter',
+            animation_frame= 'quarter'
+            )
+        st.plotly_chart(fig)
         
