@@ -6,3 +6,4 @@ scikit-learn==1.5.2
 streamlit==1.37.1
 ternary == 0.1
 mpltern ==1.0.4
+plotly==5.24.1
