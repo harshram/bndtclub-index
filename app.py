@@ -7,6 +7,8 @@ import mpltern
 import matplotlib.cm as cm 
 import plotly.express as px
 
+from text_to_print import description_text 
+
 import eurostat
 
 from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
@@ -29,8 +31,9 @@ st.set_page_config(
 page1 = "DTPI vesion 0"
 page2 = "DTPI version 0.1"
 page3 = "DTPI deployment test"
+page4 = "DTPI recurring tab"
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", [page1, page2, page3])
+page = st.sidebar.radio("Go to", [page1, page2, page3,page4])
 
 
 # Inject custom CSS to control the width of the centered layout
@@ -55,7 +58,10 @@ st.markdown(
 scaler = MinMaxScaler()
 
 # List of countries for which to process and plot data
-countries = ['IT', 'FR', 'DE']  # Italy, France, and Germany
+# List of countries and titles
+countries = ['IT', 'FR', 'DE', 'ES', 'NL']
+country_titles = ['Italy (IT)', 'France (FR)', 'Germany (DE)', 'Spain (ES)', 'Netherlands (NL)']
+#countries = ['IT', 'FR', 'DE']  # Italy, France, and Germany
 
 # Caching data to save time in loading data from API call
 @st.cache_data
@@ -1211,3 +1217,91 @@ elif page==page3:
             )
         st.plotly_chart(fig)
         
+elif page == page4:
+    
+     st.title("DTPI - Selected countries")
+     tabs = st.tabs([f'{title}' for title in country_titles])
+
+     for i, country in enumerate(countries):
+         with tabs[i]:
+             st.write(f'###{country_titles[i]}')
+             col1, col2 = st.columns([1,2])
+        
+        
+            # Column 1 content: ICT Employment, GVA, and Labour Demand Data
+             with col1:
+                st.write("**ICT Employment Data**")
+                fig1, ax1 = plt.subplots(figsize=(4, 3))  # Adjust figure size
+                ax1.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['value'], marker='o')
+                ax1.set_title(f'ICT Employment Data for {country}', fontsize=12)
+                ax1.set_xlabel('Quarter', fontsize=10)
+                ax1.set_ylabel('Percentage of Total Employees', fontsize=10)
+                ax1.grid(True)  # Add grid to the plot
+                ax1.tick_params(axis='x', rotation=45, labelsize=9)
+                ax1.tick_params(axis='y', labelsize=9)
+                st.pyplot(fig1)
+
+                st.write("**GVA Data**")
+                fig2, ax2 = plt.subplots(figsize=(4, 3))  # Adjust figure size
+                ax2.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o')
+                ax2.set_title(f'GVA Data for {country}', fontsize=12)
+                ax2.set_xlabel('Quarter', fontsize=10)
+                ax2.set_ylabel('Percentage of GDP', fontsize=10)
+                ax2.grid(True)  # Add grid to the plot
+                ax2.tick_params(axis='x', rotation=45, labelsize=9)
+                ax2.tick_params(axis='y', labelsize=9)
+                st.pyplot(fig2)
+
+                st.write("**Labour Demand Data**")
+                fig3, ax3 = plt.subplots(figsize=(4, 3))  # Adjust figure size
+                ax3.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o')
+                ax3.set_title(f'Labour Demand Data for {country}', fontsize=12)
+                ax3.set_xlabel('Quarter', fontsize=10)
+                ax3.set_ylabel('Percentage of Total Job Advertisements Online', fontsize=10)
+                ax3.grid(True)  # Add grid to the plot
+                ax3.tick_params(axis='x', rotation=45, labelsize=9)
+                ax3.tick_params(axis='y', labelsize=9)
+                st.pyplot(fig3)
+
+            # Column 2 content: Index plot and bubble chart
+             with col2:
+                st.write(f"**Index for {country}**")
+                fig_index, ax_index = plt.subplots(figsize=(5, 4))  # Adjust figure size
+                ax_index.plot(index_data.index, index_data[f'{country}'], marker='o', label=f'{country}')
+                ax_index.set_title(f'Index for {country}', fontsize=12)
+                ax_index.set_xlabel('Quarter', fontsize=10)
+                ax_index.set_ylabel('Index Value', fontsize=10)
+                ax_index.grid(True)  # Add grid to the plot
+                ax_index.tick_params(axis='x', rotation=45, labelsize=9)
+                ax_index.tick_params(axis='y', labelsize=9)
+                st.pyplot(fig_index)
+
+                # Set bubble plot dimensions to align properly
+                custom_gradients_df_with_index = custom_gradients_df.reset_index().rename(columns={'index': 'quarter'})
+                
+                
+                fig_bubble = px.scatter(
+                    custom_gradients_df_with_index,
+                    x=f'normalized_employment_grad_{country}',
+                    y=f'normalized_labour_grad_{country}',
+                    size=f'normalized_GVA_grad_{country}',
+                    hover_name='quarter',
+                    animation_frame='quarter',
+                )
+
+                fig_bubble.update_layout(
+                    width=600,  # Adjust width to match layout
+                    height=400,  # Adjust height to align with left column
+                    margin=dict(l=20, r=20, t=30, b=20),  # Adjust margins for better alignment
+                    xaxis_title="Normalized Employment Growth",  # Add x-axis label
+                    yaxis_title="Normalized Labour Growth",  # Add y-axis label
+                    font=dict(size=10),  # Set overall font size for the plot
+                    title_font=dict(size=12),  # Set title font size
+                    hoverlabel=dict(font_size=9),  # Adjust hover text font size
+                    xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),  # Add grid to x-axis
+                    yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),  # Add grid to y-axis
+                )
+
+                st.plotly_chart(fig_bubble)
+             st.write(f'***Comments for {country} Index***')
+             st.write(description_text(country))
