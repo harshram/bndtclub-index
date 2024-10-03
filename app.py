@@ -1265,7 +1265,7 @@ elif page == page4:
 
             # Column 2 content: Index plot and bubble chart
              with col2:
-                st.write(f"**Index for Italy ({country})**")
+                st.write(f"**Index for {country}**")
                 fig_index, ax_index = plt.subplots(figsize=(5, 4))  # Adjust figure size
                 ax_index.plot(index_data.index, index_data[f'{country}'], marker='o', label=f'{country}')
                 ax_index.set_title(f'Index for {country}', fontsize=12)
@@ -1279,7 +1279,7 @@ elif page == page4:
                 # Set bubble plot dimensions to align properly
                 custom_gradients_df_with_index = custom_gradients_df.reset_index().rename(columns={'index': 'quarter'})
                 
-                # Adjust Plotly figure size using layout controls
+                
                 fig_bubble = px.scatter(
                     custom_gradients_df_with_index,
                     x=f'normalized_employment_grad_{country}',
@@ -1298,10 +1298,10 @@ elif page == page4:
                     font=dict(size=10),  # Set overall font size for the plot
                     title_font=dict(size=12),  # Set title font size
                     hoverlabel=dict(font_size=9),  # Adjust hover text font size
-                    xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey'),  # Add grid to x-axis
-                    yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey'),  # Add grid to y-axis
+                    xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),  # Add grid to x-axis
+                    yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),  # Add grid to y-axis
                 )
 
                 st.plotly_chart(fig_bubble)
-
+             st.write(f'***Comments for {country} Index***')
              st.write(description_text(country))
