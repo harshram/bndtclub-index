@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.cm as cm 
 import plotly.express as px
 
-from text_to_print import description_text, description_text_by_quarter
+from text_to_print import description_text_by_quarter, load_md_overview
 from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
 from data_processing import process_import_data, process_ICT_labour_import_data
 
@@ -1213,12 +1213,18 @@ elif page==page3:
 elif page == page4:
     
      st.title("DTPI - Top X Selected Countries")
-     tabs = st.tabs([f'{title}' for title in country_titles])
 
-     for i, country in enumerate(countries):
+    # Tab 0 is for the Overview, the rest is for selected countries
+     tabs = st.tabs(['Overview'] + [f'{title}' for title in country_titles])
+     i = 0
+     with tabs[i]:
+         st.markdown(f'{load_md_overview()}', unsafe_allow_html=True, help=None)
+     
+     for country in countries:
+         i += 1
          with tabs[i]:
              
-             st.markdown(f'### Data for **{country_titles[i]}**: you can scroll and zoom into the details for the different views')
+             st.markdown(f'### Data for **{country_titles[i-1]}**: you can scroll and zoom into the details for the different views')
              st.markdown(f'---')
              
              col1, col2 = st.columns([1,2])
@@ -1307,13 +1313,16 @@ elif page == page4:
              print(f'>>> Contents for  {country}')
              print(json.dumps(highlights_per_year_quarter, indent=2))
 
+             # Time to render the markdown contents, making visible always the last quarter from the last year
              collapsed = False
              years = sorted(list(highlights_per_year_quarter.keys()), reverse=True)
+             # Going over the years, and the quarters in the year, it retrieves the contents and prepares for
+             # formatting and visualisation, leveraging the markdown renderer
              for year in years:
                  quarters = sorted(list(highlights_per_year_quarter[year].keys()), reverse=True)
                  for quarter in quarters:
                      if not collapsed:
                          st.markdown(f'<details open><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
-                         collapsed = True
-                     else:
-                         st.markdown(f'<details><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
+                         collapsed = not collapsed
+                         continue
+                     st.markdown(f'<details><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
