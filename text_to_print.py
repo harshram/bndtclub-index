@@ -13,19 +13,19 @@ def description_text(country):
                 """
             ,
         "IT" : """
-                **How the DTPI Reflects the Evolution of Inputs**
+                How the DTPI Reflects the Evolution of Inputs
 
-                - **Early Period (2020-Q4 to 2021-Q2)**:  
-                The sharp drop in the index mirrors the significant decline in **GVA**, despite relatively stable **ICT Employment** and moderate **Labour Demand**. The index reflects inefficiency in the ICT sector during this time, where economic output declines faster than employment growth, signaling underperformance.
+                - Early Period (2020-Q4 to 2021-Q2):  
+                The sharp drop in the index mirrors the significant decline in GVA, despite relatively stable ICT Employment and moderate Labour Demand. The index reflects inefficiency in the ICT sector during this time, where economic output declines faster than employment growth, signaling underperformance.
 
-                - **Stagnation Phase (2021-Q2 to 2022-Q1)**:  
-                During this period, the index remains low as **GVA** stays depressed, **Labour Demand** decreases, and **ICT Employment** grows only slightly. The index captures this stagnation by reflecting a lack of significant improvements in economic output or future job creation, showing minimal potential for growth.
+                - Stagnation Phase (2021-Q2 to 2022-Q1):  
+                During this period, the index remains low as GVA stays depressed, Labour Demand decreases, and ICT Employment grows only slightly. The index captures this stagnation by reflecting a lack of significant improvements in economic output or future job creation, showing minimal potential for growth.
 
-                - **Recovery and Growth (2022-Q2 to 2023-Q1)**:  
-                As **GVA** increases and **ICT Employment** expands, the index rises sharply. This indicates improved efficiency in the ICT sector. The stabilization and rise in **Labour Demand** further boosts the index, signaling positive future expectations.
+                - Recovery and Growth (2022-Q2 to 2023-Q1):  
+                As GVA increases and ICT Employment expands, the index rises sharply. This indicates improved efficiency in the ICT sector. The stabilization and rise in Labour Demand further boosts the index, signaling positive future expectations.
 
-                - **Recent Volatility (2023-Q2 to 2024-Q1)**:  
-                The index becomes more volatile, reflecting fluctuations in **GVA** and **Labour Demand**, while **ICT Employment** remains relatively stable. The instability in the index mirrors the uncertain future prospects for the ICT sector, with both potential growth and risks present.
+                - Recent Volatility (2023-Q2 to 2024-Q1):  
+                The index becomes more volatile, reflecting fluctuations in GVA and Labour Demand, while ICT Employment remains relatively stable. The instability in the index mirrors the uncertain future prospects for the ICT sector, with both potential growth and risks present.
                 """
             ,
         "FR" : """
@@ -66,3 +66,37 @@ def description_text(country):
      }
     
     return available_text[f"{country}"]
+
+def description_text_by_quarter(country):
+    highlights_text = {}
+    load_md_files(highlights_text)
+
+    return highlights_text[country]
+
+import os
+import markdown
+
+def load_md_files(highlights_text, base_path='docs'):
+    '''
+    Load Markdown files into and easy-to-parse data structure which maintains the historical
+    '''
+    years = os.listdir(f'{base_path}')
+    for year in years:
+        try:
+            # print(f'{year}')
+            quarters = os.listdir(f'{base_path}/{year}')
+            for quarter in quarters:
+                # print(f'  {quarter}')
+                files = os.listdir(f'{base_path}/{year}/{quarter}')
+                for file in files:
+                    # print(f'   {file}')
+                    if file[:2] not in highlights_text:
+                        highlights_text[file[:2]] = {}
+                    if year not in highlights_text[file[:2]]:
+                        highlights_text[file[:2]][year] = {}
+                    if quarter not in highlights_text[file[:2]][year]:
+                        highlights_text[file[:2]][year][quarter] = {}
+                    content = open(f'{base_path}/{year}/{quarter}/{file}').read()
+                    highlights_text[file[:2]][year][quarter] = markdown.markdown(content)
+        except NotADirectoryError:
+            pass

@@ -1,6 +1,7 @@
 import ternary
 import mpltern
 import eurostat
+import json
 
 import matplotlib.pyplot as plt
 import streamlit as st
@@ -9,7 +10,7 @@ import numpy as np
 import matplotlib.cm as cm 
 import plotly.express as px
 
-from text_to_print import description_text 
+from text_to_print import description_text, description_text_by_quarter
 from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
 from data_processing import process_import_data, process_ICT_labour_import_data
 
@@ -1216,10 +1217,12 @@ elif page == page4:
 
      for i, country in enumerate(countries):
          with tabs[i]:
-             st.write(f'Data for **{country_titles[i]}**: you can scroll and zoom into the details for the different views')
+             
+             st.markdown(f'### Data for **{country_titles[i]}**: you can scroll and zoom into the details for the different views')
+             st.markdown(f'---')
+             
              col1, col2 = st.columns([1,2])
-        
-        
+            
             # Column 1 content: ICT Employment, GVA, and Labour Demand Data
              with col1:
                 st.write("**ICT Employment Data**")
@@ -1233,17 +1236,6 @@ elif page == page4:
                 ax1.tick_params(axis='y', labelsize=9)
                 st.pyplot(fig1)
 
-                st.write("**GVA Data**")
-                fig2, ax2 = plt.subplots(figsize=(4, 3))  # Adjust figure size
-                ax2.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o', color='green')
-                ax2.set_title(f'GVA Data for {country}', fontsize=12)
-                ax2.set_xlabel('Quarter', fontsize=10)
-                ax2.set_ylabel('Percentage of GDP', fontsize=10)
-                ax2.grid(True)  # Add grid to the plot
-                ax2.tick_params(axis='x', rotation=45, labelsize=9)
-                ax2.tick_params(axis='y', labelsize=9)
-                st.pyplot(fig2)
-
                 st.write("**Labour Demand Data**")
                 fig3, ax3 = plt.subplots(figsize=(4, 3))  # Adjust figure size
                 ax3.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o', color='grey')
@@ -1254,6 +1246,17 @@ elif page == page4:
                 ax3.tick_params(axis='x', rotation=45, labelsize=9)
                 ax3.tick_params(axis='y', labelsize=9)
                 st.pyplot(fig3)
+
+                st.write("**GVA Data**")
+                fig2, ax2 = plt.subplots(figsize=(4, 3))  # Adjust figure size
+                ax2.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o', color='green')
+                ax2.set_title(f'GVA Data for {country}', fontsize=12)
+                ax2.set_xlabel('Quarter', fontsize=10)
+                ax2.set_ylabel('Percentage of GDP', fontsize=10)
+                ax2.grid(True)  # Add grid to the plot
+                ax2.tick_params(axis='x', rotation=45, labelsize=9)
+                ax2.tick_params(axis='y', labelsize=9)
+                st.pyplot(fig2)
 
             # Column 2 content: Index plot and bubble chart
              with col2:
@@ -1289,7 +1292,7 @@ elif page == page4:
                     yaxis_title="Normalized Labour Growth",                                                 # Add y-axis label
                     font=dict(size=10),                                                                     # Set overall font size for the plot
                     title_font=dict(size=12),                                                               # Set title font size
-                    title="Normalised Labour Vs Employment Growth over Quarters",
+                    title="Animation of Normalised Labour Vs Employment Growth over Quarters",
                     hoverlabel=dict(font_size=9),                                                           # Adjust hover text font size
                     xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to x-axis
                     yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to y-axis
@@ -1297,5 +1300,20 @@ elif page == page4:
 
                 st.plotly_chart(fig_bubble)
              
-             st.write(f'***Comments for {country} Index***')
-             st.write(description_text(country))
+             st.markdown(f'---')
+             st.markdown(f'### Historical Analysis and Highlights for {country} DPTI Indicator')
+
+             highlights_per_year_quarter = description_text_by_quarter(country)
+             print(f'>>> Contents for  {country}')
+             print(json.dumps(highlights_per_year_quarter, indent=2))
+
+             collapsed = False
+             years = sorted(list(highlights_per_year_quarter.keys()), reverse=True)
+             for year in years:
+                 quarters = sorted(list(highlights_per_year_quarter[year].keys()), reverse=True)
+                 for quarter in quarters:
+                     if not collapsed:
+                         st.markdown(f'<details open><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
+                         collapsed = True
+                     else:
+                         st.markdown(f'<details><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
