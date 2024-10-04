@@ -76,18 +76,18 @@ def description_text_by_quarter(country):
 import os
 import markdown
 
-def load_md_files(highlights_text):
+def load_md_files(highlights_text, base_path='docs'):
     '''
     Load Markdown files into and easy-to-parse data structure which maintains the historical
     '''
-    years = os.listdir('data')
+    years = os.listdir(f'{base_path}')
     for year in years:
         try:
             # print(f'{year}')
-            quarters = os.listdir(f'data/{year}')
+            quarters = os.listdir(f'{base_path}/{year}')
             for quarter in quarters:
                 # print(f'  {quarter}')
-                files = os.listdir(f'data/{year}/{quarter}')
+                files = os.listdir(f'{base_path}/{year}/{quarter}')
                 for file in files:
                     # print(f'   {file}')
                     if file[:2] not in highlights_text:
@@ -96,7 +96,7 @@ def load_md_files(highlights_text):
                         highlights_text[file[:2]][year] = {}
                     if quarter not in highlights_text[file[:2]][year]:
                         highlights_text[file[:2]][year][quarter] = {}
-                    content = open(f'data/{year}/{quarter}/{file}').read()
+                    content = open(f'{base_path}/{year}/{quarter}/{file}').read()
                     highlights_text[file[:2]][year][quarter] = markdown.markdown(content)
         except NotADirectoryError:
             pass

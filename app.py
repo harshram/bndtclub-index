@@ -1217,10 +1217,12 @@ elif page == page4:
 
      for i, country in enumerate(countries):
          with tabs[i]:
-             st.write(f'Data for **{country_titles[i]}**: you can scroll and zoom into the details for the different views')
+             
+             st.markdown(f'### Data for **{country_titles[i]}**: you can scroll and zoom into the details for the different views')
+             st.markdown(f'---')
+             
              col1, col2 = st.columns([1,2])
-        
-        
+            
             # Column 1 content: ICT Employment, GVA, and Labour Demand Data
              with col1:
                 st.write("**ICT Employment Data**")
@@ -1290,7 +1292,7 @@ elif page == page4:
                     yaxis_title="Normalized Labour Growth",                                                 # Add y-axis label
                     font=dict(size=10),                                                                     # Set overall font size for the plot
                     title_font=dict(size=12),                                                               # Set title font size
-                    title="Normalised Labour Vs Employment Growth over Quarters",
+                    title="Animation of Normalised Labour Vs Employment Growth over Quarters",
                     hoverlabel=dict(font_size=9),                                                           # Adjust hover text font size
                     xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to x-axis
                     yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to y-axis
@@ -1298,7 +1300,8 @@ elif page == page4:
 
                 st.plotly_chart(fig_bubble)
              
-             st.write(f'**Comments for {country} DPTI Indicator**')
+             st.markdown(f'---')
+             st.markdown(f'### Historical Analysis and Highlights for {country} DPTI Indicator')
 
              highlights_per_year_quarter = description_text_by_quarter(country)
              print(f'>>> Contents for  {country}')
