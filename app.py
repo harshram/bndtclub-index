@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.cm as cm 
 import plotly.express as px
 
-from text_to_print import description_text, description_text_by_quarter
+from text_to_print import description_text_by_quarter, load_md_overview
 from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
 from data_processing import process_import_data, process_ICT_labour_import_data
 
@@ -1213,12 +1213,18 @@ elif page==page3:
 elif page == page4:
     
      st.title("DTPI - Top X Selected Countries")
-     tabs = st.tabs([f'{title}' for title in country_titles])
 
-     for i, country in enumerate(countries):
+    # Tab 0 is for the Overview, the rest is for selected countries
+     tabs = st.tabs(['Overview'] + [f'{title}' for title in country_titles])
+     i = 0
+     with tabs[i]:
+         st.markdown(f'{load_md_overview()}', unsafe_allow_html=True, help=None)
+     
+     for country in countries:
+         i += 1
          with tabs[i]:
              
-             st.markdown(f'### Data for **{country_titles[i]}**: you can scroll and zoom into the details for the different views')
+             st.markdown(f'### Data for **{country_titles[i-1]}**: you can scroll and zoom into the details for the different views')
              st.markdown(f'---')
              
              col1, col2 = st.columns([1,2])

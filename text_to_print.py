@@ -104,3 +104,12 @@ def load_md_files(highlights_text, base_path='docs'):
                         highlights_text[file[:2]][year][quarter] = markdown.markdown(content.read())
         except NotADirectoryError:
             pass
+
+def load_md_overview(file_name='DTPI.md', base_path='docs'):
+    '''
+    Load from file the Markdown for the overview section
+    '''
+    with open(f'{base_path}/{file_name}', 'r') as f:
+        return markdown.markdown(f.read())
+
+    return None
