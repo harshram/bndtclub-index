@@ -1292,7 +1292,7 @@ elif page == page4:
                     yaxis_title="Normalized Labour Growth",                                                 # Add y-axis label
                     font=dict(size=10),                                                                     # Set overall font size for the plot
                     title_font=dict(size=12),                                                               # Set title font size
-                    title="Normalised Labour Vs Employment Growth over Quarters",
+                    title="Animation of Normalised Labour Vs Employment Growth over Quarters",
                     hoverlabel=dict(font_size=9),                                                           # Adjust hover text font size
                     xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to x-axis
                     yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to y-axis
