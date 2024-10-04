@@ -1307,13 +1307,16 @@ elif page == page4:
              print(f'>>> Contents for  {country}')
              print(json.dumps(highlights_per_year_quarter, indent=2))
 
+             # Time to render the markdown contents, making visible always the last quarter from the last year
              collapsed = False
              years = sorted(list(highlights_per_year_quarter.keys()), reverse=True)
+             # Going over the years, and the quarters in the year, it retrieves the contents and prepares for
+             # formatting and visualisation, leveraging the markdown renderer
              for year in years:
                  quarters = sorted(list(highlights_per_year_quarter[year].keys()), reverse=True)
                  for quarter in quarters:
                      if not collapsed:
                          st.markdown(f'<details open><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
-                         collapsed = True
-                     else:
-                         st.markdown(f'<details><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
+                         collapsed = not collapsed
+                         continue
+                     st.markdown(f'<details><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
