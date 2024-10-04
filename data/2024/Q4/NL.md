@@ -1,0 +1,2 @@
+- NL Early Period (2020-Q4 to 2021-Q2):  
+The sharp drop in the index mirrors the significant decline in GVA, despite relatively stable ICT Employment and moderate Labour Demand. The index reflects inefficiency in the ICT sector during this time, where economic output declines faster than employment growth, signaling underperformance.
