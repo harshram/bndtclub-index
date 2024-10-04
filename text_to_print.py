@@ -68,6 +68,10 @@ def description_text(country):
     return available_text[f"{country}"]
 
 def description_text_by_quarter(country):
+    '''
+    Load up the markdown contents into a viable data structure which is able to preserve the
+    historical. 
+    '''
     highlights_text = {}
     load_md_files(highlights_text)
 
@@ -96,7 +100,7 @@ def load_md_files(highlights_text, base_path='docs'):
                         highlights_text[file[:2]][year] = {}
                     if quarter not in highlights_text[file[:2]][year]:
                         highlights_text[file[:2]][year][quarter] = {}
-                    content = open(f'{base_path}/{year}/{quarter}/{file}').read()
-                    highlights_text[file[:2]][year][quarter] = markdown.markdown(content)
+                    with open(f'{base_path}/{year}/{quarter}/{file}', 'r') as content:
+                        highlights_text[file[:2]][year][quarter] = markdown.markdown(content.read())
         except NotADirectoryError:
             pass
