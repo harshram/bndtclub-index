@@ -1,24 +1,16 @@
+import ternary
+import mpltern
+import eurostat
+
 import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
 import numpy as np
-import ternary
-import mpltern
 import matplotlib.cm as cm 
 import plotly.express as px
 
 from text_to_print import description_text 
-
-import eurostat
-
 from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
-
-from data_processing import process_import_data, process_ICT_labour_import_data
-
-import eurostat
-
-from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
-
 from data_processing import process_import_data, process_ICT_labour_import_data
 
 # Set the page configuration at the top of the script
@@ -1219,12 +1211,12 @@ elif page==page3:
         
 elif page == page4:
     
-     st.title("DTPI - Selected countries")
+     st.title("DTPI - Top X Selected Countries")
      tabs = st.tabs([f'{title}' for title in country_titles])
 
      for i, country in enumerate(countries):
          with tabs[i]:
-             st.write(f'###{country_titles[i]}')
+             st.write(f'Data for **{country_titles[i]}**: you can scroll and zoom into the details for the different views')
              col1, col2 = st.columns([1,2])
         
         
@@ -1232,7 +1224,7 @@ elif page == page4:
              with col1:
                 st.write("**ICT Employment Data**")
                 fig1, ax1 = plt.subplots(figsize=(4, 3))  # Adjust figure size
-                ax1.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['value'], marker='o')
+                ax1.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['value'], marker='o', color='grey')
                 ax1.set_title(f'ICT Employment Data for {country}', fontsize=12)
                 ax1.set_xlabel('Quarter', fontsize=10)
                 ax1.set_ylabel('Percentage of Total Employees', fontsize=10)
@@ -1243,7 +1235,7 @@ elif page == page4:
 
                 st.write("**GVA Data**")
                 fig2, ax2 = plt.subplots(figsize=(4, 3))  # Adjust figure size
-                ax2.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o')
+                ax2.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o', color='green')
                 ax2.set_title(f'GVA Data for {country}', fontsize=12)
                 ax2.set_xlabel('Quarter', fontsize=10)
                 ax2.set_ylabel('Percentage of GDP', fontsize=10)
@@ -1254,7 +1246,7 @@ elif page == page4:
 
                 st.write("**Labour Demand Data**")
                 fig3, ax3 = plt.subplots(figsize=(4, 3))  # Adjust figure size
-                ax3.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o')
+                ax3.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o', color='grey')
                 ax3.set_title(f'Labour Demand Data for {country}', fontsize=12)
                 ax3.set_xlabel('Quarter', fontsize=10)
                 ax3.set_ylabel('Percentage of Total Job Advertisements Online', fontsize=10)
@@ -1265,9 +1257,9 @@ elif page == page4:
 
             # Column 2 content: Index plot and bubble chart
              with col2:
-                st.write(f"**Index for {country}**")
+                st.write(f"**DTPI Indicator for {country}**")
                 fig_index, ax_index = plt.subplots(figsize=(5, 4))  # Adjust figure size
-                ax_index.plot(index_data.index, index_data[f'{country}'], marker='o', label=f'{country}')
+                ax_index.plot(index_data.index, index_data[f'{country}'], marker='x', label=f'{country}', color='red')
                 ax_index.set_title(f'Index for {country}', fontsize=12)
                 ax_index.set_xlabel('Quarter', fontsize=10)
                 ax_index.set_ylabel('Index Value', fontsize=10)
@@ -1290,18 +1282,20 @@ elif page == page4:
                 )
 
                 fig_bubble.update_layout(
-                    width=600,  # Adjust width to match layout
-                    height=400,  # Adjust height to align with left column
-                    margin=dict(l=20, r=20, t=30, b=20),  # Adjust margins for better alignment
-                    xaxis_title="Normalized Employment Growth",  # Add x-axis label
-                    yaxis_title="Normalized Labour Growth",  # Add y-axis label
-                    font=dict(size=10),  # Set overall font size for the plot
-                    title_font=dict(size=12),  # Set title font size
-                    hoverlabel=dict(font_size=9),  # Adjust hover text font size
-                    xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),  # Add grid to x-axis
-                    yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),  # Add grid to y-axis
+                    width=600,                                                                              # Adjust width to match layout
+                    height=400,                                                                             # Adjust height to align with left column
+                    margin=dict(l=20, r=20, t=30, b=20),                                                    # Adjust margins for better alignment
+                    xaxis_title="Normalized Employment Growth",                                             # Add x-axis label
+                    yaxis_title="Normalized Labour Growth",                                                 # Add y-axis label
+                    font=dict(size=10),                                                                     # Set overall font size for the plot
+                    title_font=dict(size=12),                                                               # Set title font size
+                    title="Normalised Labour Vs Employment Growth over Quarters",
+                    hoverlabel=dict(font_size=9),                                                           # Adjust hover text font size
+                    xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to x-axis
+                    yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to y-axis
                 )
 
                 st.plotly_chart(fig_bubble)
+             
              st.write(f'***Comments for {country} Index***')
              st.write(description_text(country))
