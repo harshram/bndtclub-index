@@ -179,6 +179,8 @@ if page==page1:
 
     st.title("The DTPI - A summary for EU27 countries")
     options = st.multiselect("**Select one or more countries**", countries,placeholder="Choose an option", disabled=False, label_visibility="visible")
+    if not options:
+        options = countries
     # Calculate Box Plots for Index Data (variance and quartile across quarters)
     plt.figure(figsize=(8, 6), dpi=150)
 
