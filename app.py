@@ -156,15 +156,19 @@ for country in countries:
     # Concatenate the current country's DataFrame with the main DataFrame
     # Align on the 'quarter' index using axis=1 to ensure each country gets its own columns
     custom_gradients_df = pd.concat([custom_gradients_df, country_gradients_df], axis=1)
+    custom_gradients_df.dropna(inplace=True)
 
 # Initialize an empty DataFrame to hold the index values for all countries
 index_data = pd.DataFrame()
 
 plt.figure(figsize=(4, 3), dpi=150)
 
+
 for country in countries:    
     index_data[country] = custom_gradients_df[f'normalized_employment_grad_{country}']*custom_gradients_df[f'normalized_GVA_grad_{country}']*custom_gradients_df[f'normalized_labour_grad_{country}']
-    index_data.index = custom_gradients_df.index
+    index_data.dropna(inplace=True)
+    index_data.index = custom_gradients_df.index[:len(index_data)]
+    
 
 
 # The final DataFrame will automatically handle different lengths because of concatenation
@@ -174,6 +178,23 @@ for country in countries:
 if page==page1:
 
     st.title("The DTPI - A summary for EU27 countries")
+
+    # Calculate Box Plots for Index Data (variance and quartile across quarters)
+    plt.figure(figsize=(8, 6), dpi=150)
+
+    st.table(index_data)
+    # Show all box plots together for a visual comparison
+    fig_all_box, ax_all_box = plt.subplots(figsize=(8, 6))
+    ax_all_box.boxplot([index_data[country] for country in countries], patch_artist=True, labels=countries, boxprops=dict(facecolor='lightblue'))
+
+    ax_all_box.set_title('Box Plot of Index Data Across Countries', fontsize=14)
+    ax_all_box.set_xlabel('Countries', fontsize=12)
+    ax_all_box.set_ylabel('Index Value', fontsize=12)
+    ax_all_box.grid(True)
+
+    st.pyplot(fig_all_box)
+
+
 
 elif page == page2:
     
