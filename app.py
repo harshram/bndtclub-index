@@ -178,14 +178,14 @@ for country in countries:
 if page==page1:
 
     st.title("The DTPI - A summary for EU27 countries")
-
+    options = st.multiselect("**Select one or more countries**", countries,placeholder="Choose an option", disabled=False, label_visibility="visible")
     # Calculate Box Plots for Index Data (variance and quartile across quarters)
     plt.figure(figsize=(8, 6), dpi=150)
 
-    st.table(index_data)
+
     # Show all box plots together for a visual comparison
     fig_all_box, ax_all_box = plt.subplots(figsize=(8, 6))
-    ax_all_box.boxplot([index_data[country] for country in countries], patch_artist=True, labels=countries, boxprops=dict(facecolor='lightblue'))
+    ax_all_box.boxplot([index_data[country] for country in options], patch_artist=True, labels=options, boxprops=dict(facecolor='lightblue'))
 
     ax_all_box.set_title('Box Plot of Index Data Across Countries', fontsize=14)
     ax_all_box.set_xlabel('Countries', fontsize=12)
@@ -194,6 +194,7 @@ if page==page1:
 
     st.pyplot(fig_all_box)
 
+    st.table(index_data)
 
 
 elif page == page2:
