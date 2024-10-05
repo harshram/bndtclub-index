@@ -181,17 +181,14 @@ if page==page1:
     options = st.multiselect("**Select one or more countries**", countries,placeholder="Choose an option", disabled=False, label_visibility="visible")
     if not options:
         options = countries
-    # Calculate Box Plots for Index Data (variance and quartile across quarters)
-    plt.figure(figsize=(8, 6), dpi=150)
-
-
+    
     # Show all box plots together for a visual comparison
-    fig_all_box, ax_all_box = plt.subplots(figsize=(8, 6))
+    fig_all_box, ax_all_box = plt.subplots(figsize=(5, 4), dpi=150)
     ax_all_box.boxplot([index_data[country] for country in options], patch_artist=True, labels=options, boxprops=dict(facecolor='lightblue'))
 
-    ax_all_box.set_title('Box Plot of Index Data Across Countries', fontsize=14)
-    ax_all_box.set_xlabel('Countries', fontsize=12)
-    ax_all_box.set_ylabel('Index Value', fontsize=12)
+    ax_all_box.set_title('Box Plot of Index Data Across Countries', fontsize=10)
+    ax_all_box.set_xlabel('Countries', fontsize=8)
+    ax_all_box.set_ylabel('Index Value', fontsize=8)
     ax_all_box.grid(True)
 
     st.pyplot(fig_all_box)
