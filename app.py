@@ -11,7 +11,7 @@ import matplotlib.cm as cm
 import plotly.express as px
 
 from text_to_print import description_text_by_quarter, load_md_overview
-from sklearn.preprocessing import MinMaxScaler  # Or use StandardScaler for Z-score normalization
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from data_processing import process_import_data, process_ICT_labour_import_data
 
 # Set the page configuration at the top of the script
@@ -110,6 +110,31 @@ for country in countries:
     filtered_data['Employment'][country]['normalized_value'] = scaler.fit_transform(filtered_data['Employment'][country][['value']])
     filtered_data['LabourDemand'][country]['normalized_value'] = scaler.fit_transform(filtered_data['LabourDemand'][country][['value']])
 
+# Initialize an empty list to store individual DataFrames for each indicator-country combination
+frames = []
+
+# Iterate over each indicator and country to create DataFrames with desired format
+for indicator in ['GVA', 'Employment', 'LabourDemand']:
+    for country in countries:
+        df = filtered_data[indicator][country].copy()
+        # Rename the 'value' and 'normalized_value' columns to match the required format
+        df.rename(columns={
+            'value': f'{country}_{indicator}_value',
+            'normalized_value': f'{country}_{indicator}_value_norm'
+        }, inplace=True)
+        # Drop irrelevant columns to avoid duplication issues
+        df = df[['quarter', f'{country}_{indicator}_value', f'{country}_{indicator}_value_norm']]
+        # Set the quarter as the index
+        df.set_index('quarter', inplace=True)
+        # Append the DataFrame to the list of frames
+        frames.append(df)
+
+# Concatenate all DataFrames along the columns
+tranformed_data = pd.concat(frames, axis=1)
+tranformed_data.dropna(inplace=True)
+
+# Display the final DataFrame
+st.write(' ')
 print("Filtered and normalised all values")
 
 # Set global font size for plots
@@ -159,17 +184,18 @@ for country in countries:
     custom_gradients_df.dropna(inplace=True)
 
 # Initialize an empty DataFrame to hold the index values for all countries
-index_data = pd.DataFrame()
+index_data = pd.DataFrame(index=tranformed_data.index)
 
-plt.figure(figsize=(4, 3), dpi=150)
-
-
-for country in countries:    
-    index_data[country] = custom_gradients_df[f'normalized_employment_grad_{country}']*custom_gradients_df[f'normalized_GVA_grad_{country}']*custom_gradients_df[f'normalized_labour_grad_{country}']
+for country in countries:
+    # Calculate the index as the sum of normalized values
+    index_data[f'{country}'] = (
+        tranformed_data[f'{country}_GVA_value_norm'].rolling(window=window).mean() +
+        tranformed_data[f'{country}_Employment_value_norm'].rolling(window=window).mean() +
+        tranformed_data[f'{country}_LabourDemand_value_norm'].rolling(window=window).mean()
+    )
     index_data.dropna(inplace=True)
-    index_data.index = custom_gradients_df.index[:len(index_data)]
     
-
+#st.write(index_data)
 
 # The final DataFrame will automatically handle different lengths because of concatenation
 #st.write('Custom gradients (raw and normalized) for Employment, GVA, and Labour Demand across countries')
