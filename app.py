@@ -221,6 +221,7 @@ if page==page1:
 
     st.table(index_data)
 
+    # TODO for EU27 it is necessary to define the way we want to manage the analysis. Should we add the list of descriptions per quarter?
 
 elif page == page2:
     
@@ -320,21 +321,25 @@ elif page == page2:
              
              st.markdown(f'---')
              st.markdown(f'### Historical Analysis and Highlights for {country} DPTI Indicator')
+             
+             # In case of missing country, no rendering, but also no error
+             try:
+                highlights_per_year_quarter = description_text_by_quarter(country)
+                print(f'>>> Contents for  {country}')
+                print(json.dumps(highlights_per_year_quarter, indent=2))
 
-             highlights_per_year_quarter = description_text_by_quarter(country)
-             print(f'>>> Contents for  {country}')
-             print(json.dumps(highlights_per_year_quarter, indent=2))
-
-             # Time to render the markdown contents, making visible always the last quarter from the last year
-             collapsed = False
-             years = sorted(list(highlights_per_year_quarter.keys()), reverse=True)
-             # Going over the years, and the quarters in the year, it retrieves the contents and prepares for
-             # formatting and visualisation, leveraging the markdown renderer
-             for year in years:
-                 quarters = sorted(list(highlights_per_year_quarter[year].keys()), reverse=True)
-                 for quarter in quarters:
-                     if not collapsed:
-                         st.markdown(f'<details open><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
-                         collapsed = not collapsed
-                         continue
-                     st.markdown(f'<details><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
+                # Time to render the markdown contents, making visible always the last quarter from the last year
+                collapsed = False
+                years = sorted(list(highlights_per_year_quarter.keys()), reverse=True)
+                # Going over the years, and the quarters in the year, it retrieves the contents and prepares for
+                # formatting and visualisation, leveraging the markdown renderer
+                for year in years:
+                    quarters = sorted(list(highlights_per_year_quarter[year].keys()), reverse=True)
+                    for quarter in quarters:
+                        if not collapsed:
+                            st.markdown(f'<details open><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
+                            collapsed = not collapsed
+                            continue
+                        st.markdown(f'<details><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
+             except KeyError:
+                 print(f'{country} data is not available: no rendering')
