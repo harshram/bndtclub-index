@@ -33,8 +33,8 @@ st.markdown(
     <style>
     /* Adjust the width of the block-container class */
     .block-container {
-        max-width: 1200px;  /* Adjust this value to control the width */
-        padding-top: 1rem;
+        max-width: 1300px;  /* Adjust this value to control the width */
+        padding-top: 2rem;
         padding-right: 1rem;
         padding-left: 1rem;
         padding-bottom: 1rem;
@@ -50,8 +50,9 @@ scaler = MinMaxScaler()
 
 # List of countries for which to process and plot data
 # List of countries and titles
-countries = ['IT', 'FR', 'DE', 'ES', 'NL']
-country_titles = ['Italy (IT)', 'France (FR)', 'Germany (DE)', 'Spain (ES)', 'Netherlands (NL)']
+countries = ['IT', 'FR', 'DE', 'ES', 'NL', 'EU27_2020', 'SE']
+country_titles = ['Italy (IT)', 'France (FR)', 'Germany (DE)', 'Spain (ES)', 'Netherlands (NL)', 'Europe 27 (EU27)', 'Sweden (SE)']
+data_to_import = ['GVA', 'employment', 'labour_demand']
 #countries = ['IT', 'FR', 'DE']  # Italy, France, and Germany
 
 # Caching data to save time in loading data from API call
@@ -64,7 +65,7 @@ def load_data():
     print("Got Employment data")
     Labour_demand_ICT_data_import = eurostat.get_data_df('isoc_sk_oja1')
     print("Got Labour Demand data")
-
+    
     # Define the starting quarter for filtering data
     date_start = '2019Q4'
 
@@ -73,10 +74,70 @@ def load_data():
     Employment_data = process_import_data(Employment_data_import, date_start)
     Labour_demand_ICT_data = process_ICT_labour_import_data(Labour_demand_ICT_data_import, date_start)
 
+   
+
     return GVA_data, Employment_data, Labour_demand_ICT_data
 
 # Load the data from the cached function
 GVA_data, Employment_data, Labour_demand_ICT_data = load_data()
+
+## Create data frame for hosting all filtered data 
+
+# Create an empty data frame to hold the final data
+loaded_data = pd.DataFrame()
+
+# Create an empty list to store individual filtered data frames before merging
+loaded_data_list = []
+
+# Iterate over each country in the list of countries
+for country in countries:
+    # Filter GVA data for the given country, where the sector is 'J', unit is 'PC_GDP', item is 'B1G', and data is not seasonally adjusted
+    filtered_data_GVA = GVA_data[(GVA_data['nace_r2'] == 'J') & 
+                                 (GVA_data['unit'] == 'PC_GDP') & 
+                                 (GVA_data['geo'] == country) & 
+                                 (GVA_data['na_item'] == 'B1G') & 
+                                 (GVA_data['s_adj'] == 'NSA')].copy()
+
+    # Select only 'quarter' and 'value' columns, rename 'value' to 'GVA_value'
+    filtered_data_GVA = filtered_data_GVA[['quarter', 'value']]
+    filtered_data_GVA = filtered_data_GVA.rename(columns={'value': 'GVA_value'})
+
+    # Filter employment data for the given country, with similar filtering criteria (for employment)
+    filtered_data_employment = Employment_data[(Employment_data['nace_r2'] == 'J') & 
+                                               (Employment_data['unit'] == 'PC_TOT_PER') & 
+                                               (Employment_data['geo'] == country) & 
+                                               (Employment_data['na_item'] == 'EMP_DC') & 
+                                               (Employment_data['s_adj'] == 'NSA')].copy()
+
+    # Select only 'quarter' and 'value' columns, rename 'value' to 'employment_value'
+    filtered_data_employment = filtered_data_employment[['quarter', 'value']]
+    filtered_data_employment = filtered_data_employment.rename(columns={'value': 'employment_value'})
+
+    # Filter labor demand data for the given country, similar criteria
+    filtered_data_labour_demand = Employment_data[(Employment_data['nace_r2'] == 'J') & 
+                                                   (Employment_data['unit'] == 'PC_TOT_PER') & 
+                                                   (Employment_data['geo'] == country) & 
+                                                   (Employment_data['na_item'] == 'EMP_DC') & 
+                                                   (Employment_data['s_adj'] == 'NSA')].copy()
+
+    # Select only 'quarter' and 'value' columns, rename 'value' to 'employment_value'
+    filtered_data_labour_demand = filtered_data_labour_demand[['quarter', 'value']]
+    filtered_data_labour_demand = filtered_data_labour_demand.rename(columns={'value': 'employment_value'})
+
+    # Merge GVA data and employment data on the 'quarter' column, keep only common entries (inner join)
+    merged_data = pd.merge(filtered_data_GVA, filtered_data_employment, on='quarter', how='inner')
+
+    # Merge the resulting data frame with labor demand data on the 'quarter' column
+    merged_data = pd.merge(merged_data, filtered_data_labour_demand, on='quarter', how='inner')
+
+    # Append the merged data for this country to the list
+    loaded_data_list.append(merged_data)
+
+# Concatenate all merged data frames from the list into one data frame
+loaded_data = pd.concat(loaded_data_list, ignore_index=True)
+
+# Set 'quarter' as the index for the final data frame
+loaded_data.set_index('quarter', inplace=True)
 
 print("All data has been loaded")
 
@@ -141,7 +202,7 @@ print("Filtered and normalised all values")
 plt.rcParams.update({'font.size': 12})
 
 # Parametrizable window for gradient calculation
-window = st.sidebar.slider("Select Gradient Window", 1, 10, 2)  # Slider to select the window size
+window = st.sidebar.slider("Select Gradient Window", 1, 5, 2)  # Slider to select the window size
 def custom_gradient(data, window):
     return (data - data.shift(window)) / window
 
