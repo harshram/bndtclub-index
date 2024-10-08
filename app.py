@@ -48,6 +48,9 @@ st.markdown(
 # Normalize the data using Min-Max scaling
 scaler = MinMaxScaler()
 
+# weights for the index
+w1 = w2 = w3 = 1  # weights for index calc. w1 - GVA, w2 - Employment, w3 - Labour Demand 
+
 # moving average window defined by slider
 window = st.sidebar.slider("Select moving average window", 1, 5, 2)  # Slider to select the window size
 
@@ -173,10 +176,10 @@ index_data = pd.DataFrame(index=transformed_data.index)
 for country in countries:
     # Calculate the index as the sum of normalized values
     index_data[f'{country}'] = (
-        transformed_data[f'{country}_GVA_normalized_moving_average_value'] +
-        transformed_data[f'{country}_employment_normalized_moving_average_value'] +
-        transformed_data[f'{country}_labour_demand_normalized_moving_average_value']
-    )
+        w1*transformed_data[f'{country}_GVA_normalized_moving_average_value'] +
+        w2*transformed_data[f'{country}_employment_normalized_moving_average_value'] +
+        w3*transformed_data[f'{country}_labour_demand_normalized_moving_average_value']
+    )/(w1+w2+w3)
     index_data.dropna(inplace=True)
 
 # print index for check
