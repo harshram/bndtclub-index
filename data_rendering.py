@@ -43,3 +43,6 @@ def render_version4():
 # Render version 5 of the indicator
 def render_version5():
     pass
+
+def render_qoq_analysis_markdown(highlights_text, countries):
+    pass
