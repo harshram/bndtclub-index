@@ -23,7 +23,7 @@ st.set_page_config(
 # Sidebar for navigation
 page1 = "DTPI - EU27 overview"
 page2 = "DTPI - Selected X countries"
-st.sidebar.title("Navigation")
+st.sidebar.title("Navigation") 
 page = st.sidebar.radio("Go to", [page1, page2])
 
 # Inject custom CSS to control the width of the centered layout
