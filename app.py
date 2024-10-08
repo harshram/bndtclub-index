@@ -164,6 +164,7 @@ for country in countries:
         transformed_data[f'{country}_{measure}_normalized_moving_average_value'] = (
             normalized_moving_average.reindex(transformed_data.index)
         )
+
 transformed_data.dropna(inplace=True)
 # print transformed_data to check
 #st.write(transformed_data)
@@ -193,20 +194,38 @@ plt.rcParams.update({'font.size': 12})
 if page==page1:
 
     st.title("The DTPI - A summary for EU27 countries")
+    countries_withoutEU27 = countries.remove('EU27_2020')
     options = st.multiselect("**Select one or more countries**", countries,placeholder="Choose an option", disabled=False, label_visibility="visible")
     if not options:
         options = countries
     
-    # Show all box plots together for a visual comparison
-    fig_all_box, ax_all_box = plt.subplots(figsize=(5, 4), dpi=150)
-    ax_all_box.boxplot([index_data[country] for country in options], patch_artist=True, labels=options, boxprops=dict(facecolor='lightblue'))
+    col1, col2 = st.columns([1,1])
 
-    ax_all_box.set_title('Box Plot of Index Data Across Countries', fontsize=10)
-    ax_all_box.set_xlabel('Countries', fontsize=8)
-    ax_all_box.set_ylabel('Index Value', fontsize=8)
-    ax_all_box.grid(True)
+    with col1:
+        # Show all box plots together for a visual comparison
+        fig_all_box, ax_all_box = plt.subplots(figsize=(5, 4), dpi=150)
+        ax_all_box.boxplot(index_data['EU27_2020'], patch_artist=True, labels=['EU27'], boxprops=dict(facecolor='lightblue'))
 
-    st.pyplot(fig_all_box)
+        ax_all_box.set_title('Box Plot of Index Data EU27', fontsize=10)
+        ax_all_box.set_xlabel('Countries', fontsize=8)
+        ax_all_box.set_ylabel('Index Value', fontsize=8)
+        ax_all_box.grid(True)
+
+        st.pyplot(fig_all_box)
+
+    with col2:
+        # Show all box plots together for a visual comparison
+        fig_all_box, ax_all_box = plt.subplots(figsize=(5, 4), dpi=150)
+        ax_all_box.boxplot([index_data[country] for country in options], patch_artist=True, labels=options, boxprops=dict(facecolor='lightblue'))
+
+        ax_all_box.set_title('Box Plot of Index Data Across Countries', fontsize=10)
+        ax_all_box.set_xlabel('Countries', fontsize=8)
+        ax_all_box.set_ylabel('Index Value', fontsize=8)
+        ax_all_box.grid(True)
+
+        st.pyplot(fig_all_box)
+
+
 
     st.table(index_data)
 
