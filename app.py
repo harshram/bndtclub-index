@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.cm as cm 
 import plotly.express as px
 
-from text_to_print import description_text_by_quarter, load_md_overview
+from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_overview
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from data_processing import process_import_data, process_ICT_labour_import_data
 
@@ -25,25 +25,6 @@ page1 = "DTPI - EU27 overview"
 page2 = "DTPI - Selected X countries"
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", [page1, page2])
-
-
-# Inject custom CSS to control the width of the centered layout
-st.markdown(
-    """
-    <style>
-    /* Adjust the width of the block-container class */
-    .block-container {
-        max-width: 1200px;  /* Adjust this value to control the width */
-        padding-top: 1rem;
-        padding-right: 1rem;
-        padding-left: 1rem;
-        padding-bottom: 1rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 
 # Normalize the data using Min-Max scaling
 scaler = MinMaxScaler()
@@ -221,7 +202,32 @@ if page==page1:
 
     st.table(index_data)
 
-    # TODO for EU27 it is necessary to define the way we want to manage the analysis. Should we add the list of descriptions per quarter?
+    st.markdown(f'---')
+    st.markdown(f'### Historical Analysis and Highlights for {country} DPTI Indicator')
+
+    # TODO code to be refactored in a renderer function
+    highlights_text_by_year = description_text_by_countries()
+    years = sorted(highlights_text_by_year.keys(), reverse=True)
+    expanded = True
+    for year in years:
+        # print(year)
+        quarters = sorted(highlights_text_by_year[year].keys(), reverse=True)
+        for quarter in quarters:
+            details = ''
+            # print(quarter)
+            contents = sorted(highlights_text_by_year[year][quarter])
+            for content in contents:
+                if content in options:
+                    # print(content)
+                    if expanded:
+                        details += f'<details open><summary>{content}</summary>{highlights_text_by_year[year][quarter][content]}</details>'
+                    else:
+                        details += f'<details><summary>{content}</summary>{highlights_text_by_year[year][quarter][content]}</details>'
+            if expanded:
+                st.markdown(f'<details open><summary>{year} {quarter}</summary>{details}</details>', unsafe_allow_html=True, help=None)
+                expanded = not expanded
+            else:
+                st.markdown(f'<details><summary>{year} {quarter}</summary>{details}</details>', unsafe_allow_html=True, help=None)
 
 elif page == page2:
     
@@ -321,6 +327,8 @@ elif page == page2:
              
              st.markdown(f'---')
              st.markdown(f'### Historical Analysis and Highlights for {country} DPTI Indicator')
+             
+             # TODO code to be refactored in a renderer function
              
              # In case of missing country, no rendering, but also no error
              try:
