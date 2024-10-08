@@ -33,8 +33,8 @@ st.markdown(
     <style>
     /* Adjust the width of the block-container class */
     .block-container {
-        max-width: 1200px;  /* Adjust this value to control the width */
-        padding-top: 1rem;
+        max-width: 1300px;  /* Adjust this value to control the width */
+        padding-top: 3rem;
         padding-right: 1rem;
         padding-left: 1rem;
         padding-bottom: 1rem;
@@ -48,10 +48,17 @@ st.markdown(
 # Normalize the data using Min-Max scaling
 scaler = MinMaxScaler()
 
+# weights for the index
+w1 = w2 = w3 = 1  # weights for index calc. w1 - GVA, w2 - Employment, w3 - Labour Demand 
+
+# moving average window defined by slider
+window = st.sidebar.slider("Select moving average window", 1, 5, 2)  # Slider to select the window size
+
 # List of countries for which to process and plot data
 # List of countries and titles
-countries = ['IT', 'FR', 'DE', 'ES', 'NL']
-country_titles = ['Italy (IT)', 'France (FR)', 'Germany (DE)', 'Spain (ES)', 'Netherlands (NL)']
+countries = ['IT', 'FR', 'DE', 'ES', 'NL', 'EU27_2020', 'SE']
+country_titles = ['Italy (IT)', 'France (FR)', 'Germany (DE)', 'Spain (ES)', 'Netherlands (NL)', 'Europe 27 (EU27)', 'Sweden (SE)']
+data_to_import = ['GVA', 'employment', 'labour_demand']
 #countries = ['IT', 'FR', 'DE']  # Italy, France, and Germany
 
 # Caching data to save time in loading data from API call
@@ -64,7 +71,7 @@ def load_data():
     print("Got Employment data")
     Labour_demand_ICT_data_import = eurostat.get_data_df('isoc_sk_oja1')
     print("Got Labour Demand data")
-
+    
     # Define the starting quarter for filtering data
     date_start = '2019Q4'
 
@@ -73,129 +80,113 @@ def load_data():
     Employment_data = process_import_data(Employment_data_import, date_start)
     Labour_demand_ICT_data = process_ICT_labour_import_data(Labour_demand_ICT_data_import, date_start)
 
+   
+
     return GVA_data, Employment_data, Labour_demand_ICT_data
 
 # Load the data from the cached function
 GVA_data, Employment_data, Labour_demand_ICT_data = load_data()
-
 print("All data has been loaded")
 
-# Initialize dictionaries to hold country-specific filtered data
-filtered_data = {'GVA': {}, 'Employment': {}, 'LabourDemand': {}}
+# Create an empty data frame to hold the hold data during transformation
+transformed_data = pd.DataFrame()
 
-# Filter data for each country and normalize
+# Create an empty list to store individual filtered data frames before merging
+loaded_data_list = []
+
+# Iterate over each country in the list of countries
 for country in countries:
-    filtered_data['GVA'][country] = GVA_data[(GVA_data['nace_r2'] == 'J') & 
-                                             (GVA_data['unit'] == 'PC_GDP') & 
-                                             (GVA_data['geo'] == country) & 
-                                             (GVA_data['na_item'] == 'B1G') & 
-                                             (GVA_data['s_adj'] == 'NSA')].copy()
+    # Filter GVA data for the given country, where the sector is 'J', unit is 'PC_GDP', item is 'B1G', and data is not seasonally adjusted
+    filtered_data_GVA = GVA_data[(GVA_data['nace_r2'] == 'J') & 
+                                 (GVA_data['unit'] == 'PC_GDP') & 
+                                 (GVA_data['geo'] == country) & 
+                                 (GVA_data['na_item'] == 'B1G') & 
+                                 (GVA_data['s_adj'] == 'NSA')].copy()
 
-    filtered_data['Employment'][country] = Employment_data[(Employment_data['nace_r2'] == 'J') & 
-                                                           (Employment_data['unit'] == 'PC_TOT_PER') & 
-                                                           (Employment_data['geo'] == country) & 
-                                                           (Employment_data['na_item'] == 'EMP_DC') & 
-                                                           (Employment_data['s_adj'] == 'NSA')].copy()
+    # Select only 'quarter' and 'value' columns, rename 'value' to 'GVA_value'
+    filtered_data_GVA = filtered_data_GVA[['quarter', 'value']]
+    filtered_data_GVA = filtered_data_GVA.rename(columns={'value': f'{country}_GVA_value'})
 
-    filtered_data['LabourDemand'][country] = Labour_demand_ICT_data[(Labour_demand_ICT_data['geo'] == country) &
-                                                                    (Labour_demand_ICT_data['unit'] == 'PC')].copy()
+    # Filter employment data for the given country, with similar filtering criteria (for employment)
+    filtered_data_employment = Employment_data[(Employment_data['nace_r2'] == 'J') & 
+                                               (Employment_data['unit'] == 'PC_TOT_PER') & 
+                                               (Employment_data['geo'] == country) & 
+                                               (Employment_data['na_item'] == 'EMP_DC') & 
+                                               (Employment_data['s_adj'] == 'NSA')].copy()
 
-    # Convert 'quarter' from Period to string format for proper labeling
-    filtered_data['GVA'][country]['quarter'] = filtered_data['GVA'][country]['quarter'].dt.strftime('%Y-Q%q')
-    filtered_data['Employment'][country]['quarter'] = filtered_data['Employment'][country]['quarter'].dt.strftime('%Y-Q%q')
-    filtered_data['LabourDemand'][country]['quarter'] = filtered_data['LabourDemand'][country]['quarter'].dt.strftime('%Y-Q%q')
+    # Select only 'quarter' and 'value' columns, rename 'value' to 'employment_value'
+    filtered_data_employment = filtered_data_employment[['quarter', 'value']]
+    filtered_data_employment = filtered_data_employment.rename(columns={'value': f'{country}_employment_value'})
 
-    # Normalize the data
-    filtered_data['GVA'][country]['normalized_value'] = scaler.fit_transform(filtered_data['GVA'][country][['value']])
-    filtered_data['Employment'][country]['normalized_value'] = scaler.fit_transform(filtered_data['Employment'][country][['value']])
-    filtered_data['LabourDemand'][country]['normalized_value'] = scaler.fit_transform(filtered_data['LabourDemand'][country][['value']])
+    # Filter labor demand data for the given country, similar criteria
+    filtered_data_labour_demand = Labour_demand_ICT_data[(Labour_demand_ICT_data['geo'] == country) &
+                                                         (Labour_demand_ICT_data['unit'] == 'PC')].copy()
 
-# Initialize an empty list to store individual DataFrames for each indicator-country combination
-frames = []
+    # Select only 'quarter' and 'value' columns, rename 'value' to 'employment_value'
+    filtered_data_labour_demand = filtered_data_labour_demand[['quarter', 'value']]
+    filtered_data_labour_demand = filtered_data_labour_demand.rename(columns={'value': f'{country}_labour_demand_value'})
 
-# Iterate over each indicator and country to create DataFrames with desired format
-for indicator in ['GVA', 'Employment', 'LabourDemand']:
-    for country in countries:
-        df = filtered_data[indicator][country].copy()
-        # Rename the 'value' and 'normalized_value' columns to match the required format
-        df.rename(columns={
-            'value': f'{country}_{indicator}_value',
-            'normalized_value': f'{country}_{indicator}_value_norm'
-        }, inplace=True)
-        # Drop irrelevant columns to avoid duplication issues
-        df = df[['quarter', f'{country}_{indicator}_value', f'{country}_{indicator}_value_norm']]
-        # Set the quarter as the index
-        df.set_index('quarter', inplace=True)
-        # Append the DataFrame to the list of frames
-        frames.append(df)
+    # Merge GVA data and employment data on the 'quarter' column, keep only common entries (inner join)
+    merged_data = pd.merge(filtered_data_GVA, filtered_data_employment, on='quarter', how='inner')
 
-# Concatenate all DataFrames along the columns
-tranformed_data = pd.concat(frames, axis=1)
-tranformed_data.dropna(inplace=True)
+    # Merge the resulting data frame with labor demand data on the 'quarter' column
+    merged_data = pd.merge(merged_data, filtered_data_labour_demand, on='quarter', how='inner')
+    # Set 'quarter' as the index
+    merged_data.set_index('quarter', inplace=True)
 
-# Display the final DataFrame
-st.write(' ')
-print("Filtered and normalised all values")
+    # Append the merged data for this country to the list
+    loaded_data_list.append(merged_data)
+    #st.write(loaded_data_list)
 
-# Set global font size for plots
-plt.rcParams.update({'font.size': 12})
+# Concatenate all merged data frames from the list into one data frame
+transformed_data = pd.concat(loaded_data_list, axis=1, join='inner')
 
-# Parametrizable window for gradient calculation
-window = st.sidebar.slider("Select Gradient Window", 1, 10, 2)  # Slider to select the window size
-def custom_gradient(data, window):
-    return (data - data.shift(window)) / window
-
-# Initialize an empty DataFrame to hold raw and normalized custom gradients
-custom_gradients_df = pd.DataFrame()
+# list of the measures to use in the loop
+data_measures = ['GVA', 'employment', 'labour_demand']
 
 for country in countries:
-    # Set 'quarter' as the index for each dataset
-    employment_data = filtered_data['Employment'][country].set_index('quarter')
-    GVA_data = filtered_data['GVA'][country].set_index('quarter')
-    labour_data = filtered_data['LabourDemand'][country].set_index('quarter')  # Ensure correct LabourDemand key
+    for measure in data_measures:
+        # Calculate the moving average for the specified measure for each country
+        moving_average = transformed_data[f'{country}_{measure}_value'].rolling(window=window).mean()
 
-    # Define a dictionary to store raw and normalized gradients for each dataset
-    gradients = {}
+        # Drop NaN values in the moving average 
+        moving_average.dropna(inplace=True)
 
-    # List of datasets to loop over
-    datasets = {
-        'employment': employment_data,
-        'GVA': GVA_data,
-        'labour': labour_data
-    }
+        # Assign the calculated moving average to the DataFrame
+        transformed_data[f'{country}_{measure}_moving_average_value'] = moving_average
 
-    # Loop over each dataset and calculate the raw and normalized gradients
-    for data_key, data in datasets.items():
-        # Calculate the custom gradient for the current dataset
-        custom_grad = custom_gradient(data['value'], window).dropna()
-        # Normalize the custom gradient using MinMaxScaler
-        normalized_grad = scaler.fit_transform(custom_grad.values.reshape(-1, 1)).flatten()
+        # Normalize the moving average using MinMaxScaler
+        moving_average_values = moving_average.values.reshape(-1,1)  # reshape to fit method's requirements
+        normalized_values = scaler.fit_transform(moving_average_values)
 
-        # Store the raw and normalized gradients in the gradients dictionary
-        gradients[f'{data_key}_grad_{country}'] = pd.Series(custom_grad, index=custom_grad.index)
-        gradients[f'normalized_{data_key}_grad_{country}'] = pd.Series(normalized_grad, index=custom_grad.index)
+        # Convert normalized values back to a Series with the correct index
+        normalized_moving_average = pd.Series(normalized_values.flatten(), index=moving_average.index)
 
-    # Create a DataFrame for this country’s gradients
-    country_gradients_df = pd.DataFrame(gradients)
-
-    # Concatenate the current country's DataFrame with the main DataFrame
-    # Align on the 'quarter' index using axis=1 to ensure each country gets its own columns
-    custom_gradients_df = pd.concat([custom_gradients_df, country_gradients_df], axis=1)
-    custom_gradients_df.dropna(inplace=True)
+        # Assign the normalized moving average to a new column in the DataFrame and reindex
+        transformed_data[f'{country}_{measure}_normalized_moving_average_value'] = (
+            normalized_moving_average.reindex(transformed_data.index)
+        )
+transformed_data.dropna(inplace=True)
+# print transformed_data to check
+#st.write(transformed_data)
 
 # Initialize an empty DataFrame to hold the index values for all countries
-index_data = pd.DataFrame(index=tranformed_data.index)
+index_data = pd.DataFrame(index=transformed_data.index)
 
 for country in countries:
     # Calculate the index as the sum of normalized values
     index_data[f'{country}'] = (
-        tranformed_data[f'{country}_GVA_value_norm'].rolling(window=window).mean() +
-        tranformed_data[f'{country}_Employment_value_norm'].rolling(window=window).mean() +
-        tranformed_data[f'{country}_LabourDemand_value_norm'].rolling(window=window).mean()
-    )
+        w1*transformed_data[f'{country}_GVA_normalized_moving_average_value'] +
+        w2*transformed_data[f'{country}_employment_normalized_moving_average_value'] +
+        w3*transformed_data[f'{country}_labour_demand_normalized_moving_average_value']
+    )/(w1+w2+w3)
     index_data.dropna(inplace=True)
-    
+
+# print index for check
 #st.write(index_data)
+
+# Set global font size for plots
+plt.rcParams.update({'font.size': 12})
 
 # The final DataFrame will automatically handle different lengths because of concatenation
 #st.write('Custom gradients (raw and normalized) for Employment, GVA, and Labour Demand across countries')
@@ -241,12 +232,20 @@ elif page == page2:
              st.markdown(f'---')
              
              col1, col2 = st.columns([1,2])
+             if isinstance(transformed_data.index, pd.PeriodIndex):
+                    transformed_data.index = transformed_data.index.to_timestamp()
             
+             if isinstance(index_data.index, pd.PeriodIndex):
+                    index_data.index = index_data.index.to_timestamp()
+             #transformed_data.index = transformed_data.index.to_timestamp()
+             #index_data.index = index_data.index.to_timestamp()
+
             # Column 1 content: ICT Employment, GVA, and Labour Demand Data
              with col1:
                 st.write("**ICT Employment Data**")
+                # Ensure the index is only converted if it's a PeriodIndex
                 fig1, ax1 = plt.subplots(figsize=(4, 3))  # Adjust figure size
-                ax1.plot(filtered_data['Employment'][country]['quarter'], filtered_data['Employment'][country]['value'], marker='o', color='grey')
+                ax1.plot(transformed_data.index, transformed_data[f'{country}_employment_value'], marker='o', color='grey')
                 ax1.set_title(f'ICT Employment Data for {country}', fontsize=12)
                 ax1.set_xlabel('Quarter', fontsize=10)
                 ax1.set_ylabel('Percentage of Total Employees', fontsize=10)
@@ -257,7 +256,7 @@ elif page == page2:
 
                 st.write("**Labour Demand Data**")
                 fig3, ax3 = plt.subplots(figsize=(4, 3))  # Adjust figure size
-                ax3.plot(filtered_data['LabourDemand'][country]['quarter'], filtered_data['LabourDemand'][country]['value'], marker='o', color='grey')
+                ax3.plot(transformed_data.index, transformed_data[f'{country}_labour_demand_value'], marker='o', color='grey')
                 ax3.set_title(f'Labour Demand Data for {country}', fontsize=12)
                 ax3.set_xlabel('Quarter', fontsize=10)
                 ax3.set_ylabel('Percentage of Total Job Advertisements Online', fontsize=10)
@@ -268,18 +267,19 @@ elif page == page2:
 
                 st.write("**GVA Data**")
                 fig2, ax2 = plt.subplots(figsize=(4, 3))  # Adjust figure size
-                ax2.plot(filtered_data['GVA'][country]['quarter'], filtered_data['GVA'][country]['value'], marker='o', color='green')
+                ax2.plot(transformed_data.index, transformed_data[f'{country}_GVA_value'], marker='o', color='grey')
                 ax2.set_title(f'GVA Data for {country}', fontsize=12)
                 ax2.set_xlabel('Quarter', fontsize=10)
                 ax2.set_ylabel('Percentage of GDP', fontsize=10)
-                ax2.grid(True)  # Add grid to the plot
+                ax2.grid(True)  # Add grid to the plot  
                 ax2.tick_params(axis='x', rotation=45, labelsize=9)
                 ax2.tick_params(axis='y', labelsize=9)
                 st.pyplot(fig2)
 
             # Column 2 content: Index plot and bubble chart
              with col2:
-                st.write(f"**DTPI Indicator for {country}**")
+                st.write(f"**DTPI Indicator for {country}**") 
+                
                 fig_index, ax_index = plt.subplots(figsize=(5, 4))  # Adjust figure size
                 ax_index.plot(index_data.index, index_data[f'{country}'], marker='x', label=f'{country}', color='red')
                 ax_index.set_title(f'Index for {country}', fontsize=12)
@@ -289,29 +289,28 @@ elif page == page2:
                 ax_index.tick_params(axis='x', rotation=45, labelsize=9)
                 ax_index.tick_params(axis='y', labelsize=9)
                 st.pyplot(fig_index)
-
-                # Set bubble plot dimensions to align properly
-                custom_gradients_df_with_index = custom_gradients_df.reset_index().rename(columns={'index': 'quarter'})
                 
-                
+                # Reset the index but keep the 'quarter' both as the index and as a new column
+                transformed_data_with_quarters = transformed_data.reset_index(drop=False)
                 fig_bubble = px.scatter(
-                    custom_gradients_df_with_index,
-                    x=f'normalized_employment_grad_{country}',
-                    y=f'normalized_labour_grad_{country}',
-                    size=f'normalized_GVA_grad_{country}',
+                    transformed_data_with_quarters,
+                    x=f'{country}_labour_demand_normalized_moving_average_value',
+                    y=f'{country}_employment_normalized_moving_average_value',
+                    size=f'{country}_GVA_normalized_moving_average_value',
                     hover_name='quarter',
                     animation_frame='quarter',
+                    animation_group=f'{country}_GVA_normalized_moving_average_value',  # Ensure bubbles persist across frames
                 )
 
                 fig_bubble.update_layout(
                     width=600,                                                                              # Adjust width to match layout
                     height=400,                                                                             # Adjust height to align with left column
                     margin=dict(l=20, r=20, t=30, b=20),                                                    # Adjust margins for better alignment
-                    xaxis_title="Normalized Employment Growth",                                             # Add x-axis label
-                    yaxis_title="Normalized Labour Growth",                                                 # Add y-axis label
+                    xaxis_title="Normlized moving average for labour demand",                                             # Add x-axis label
+                    yaxis_title="Normlized moving average for employment",                                                 # Add y-axis label
                     font=dict(size=10),                                                                     # Set overall font size for the plot
                     title_font=dict(size=12),                                                               # Set title font size
-                    title="Animation of Normalised Labour Vs Employment Growth over Quarters",
+                    title="Animation of Normalised Employment Vs Normalized Labour Demand over Quarters",
                     hoverlabel=dict(font_size=9),                                                           # Adjust hover text font size
                     xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to x-axis
                     yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to y-axis
