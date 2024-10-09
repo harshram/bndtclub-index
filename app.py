@@ -23,7 +23,7 @@ st.set_page_config(
 # Sidebar for navigation
 page1 = "DTPI - EU27 overview"
 page2 = "DTPI - Selected X countries"
-st.sidebar.title("Navigation")
+st.sidebar.title("Navigation") 
 page = st.sidebar.radio("Go to", [page1, page2])
 
 # Inject custom CSS to control the width of the centered layout
@@ -82,9 +82,13 @@ def load_data():
 
     return GVA_data, Employment_data, Labour_demand_ICT_data
 
-# Load the data from the cached function
-GVA_data, Employment_data, Labour_demand_ICT_data = load_data()
-print("All data has been loaded")
+with st.spinner("Please wait, loading data..."):
+    # Load the data from the cached function
+    GVA_data, Employment_data, Labour_demand_ICT_data = load_data()
+    print("All data has been loaded")
+
+st.success("All datasets loaded successfully")
+st.info("Datasets are refreshed quarterly at the source")
 
 # Create an empty data frame to hold the hold data during transformation
 transformed_data = pd.DataFrame()
@@ -241,7 +245,7 @@ elif page == page2:
     
      st.title("DTPI - Top X Selected Countries")
 
-    # Tab 0 is for the Overview, the rest is for selected countries
+     # Tab 0 is for the Overview, the rest is for selected countries
      tabs = st.tabs(['Overview'] + [f'{title}' for title in country_titles])
      i = 0
      with tabs[i]:
