@@ -3,6 +3,7 @@ import mpltern
 import eurostat
 import json
 
+import plotly.express as px
 import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
@@ -390,6 +391,28 @@ elif page == page2:
                 )
 
                 st.plotly_chart(fig_bubble)
+
+                def plot_heatmap_plotly(transformed_data, country):
+                    # Prepare data for the heatmap
+                    heatmap_data = transformed_data[[f'{country}_GVA_normalized_moving_average_value', 
+                                                    f'{country}_employment_normalized_moving_average_value', 
+                                                    f'{country}_labour_demand_normalized_moving_average_value']]
+                    heatmap_data.columns = ['GVA', 'Employment', 'Labour Demand']
+                    heatmap_data['Quarter'] = transformed_data.index
+
+                    # Plotly heatmap
+                    fig = px.imshow(heatmap_data.T.iloc[:-1], 
+                                    labels=dict(x="Quarter", y="Metric", color="Normalized Value"),
+                                    x=heatmap_data['Quarter'],
+                                    y=['GVA', 'Employment', 'Labour Demand'],
+                                    color_continuous_scale='RdBu_r')
+                    
+                    fig.update_layout(title=f'Heatmap for {country} - GVA, Employment, Labour Demand',
+                                    xaxis_nticks=36)
+                    st.plotly_chart(fig)
+
+                # Example usage
+                plot_heatmap_plotly(transformed_data, f'{country}')  # You can loop for multiple countries
              
              st.markdown(f'---')
              st.markdown(f'### Historical Analysis and Highlights for {country} DPTI Indicator')
