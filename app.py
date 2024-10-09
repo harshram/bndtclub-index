@@ -201,6 +201,9 @@ if page==page1:
     
     col1, col2 = st.columns([1,1])
 
+    if isinstance(index_data.index, pd.PeriodIndex):
+                  index_data.index = index_data.index.to_timestamp()
+
     with col1:
         # Show all box plots together for a visual comparison
         fig_all_box, ax_all_box = plt.subplots(figsize=(5, 4), dpi=150)
@@ -213,6 +216,17 @@ if page==page1:
 
         st.pyplot(fig_all_box)
 
+        st.write("**DTPI Indicator for EU27**") 
+        fig_index, ax_index = plt.subplots(figsize=(5, 4))  # Adjust figure size
+        ax_index.plot(index_data.index, index_data['EU27_2020'], marker='x', label='EU27')
+        ax_index.set_title(f'Index for EU27', fontsize=12)
+        ax_index.set_xlabel('Quarter', fontsize=10)
+        ax_index.set_ylabel('Index Value', fontsize=10)
+        ax_index.grid(True)  # Add grid to the plot
+        ax_index.tick_params(axis='x', rotation=45, labelsize=9)
+        ax_index.tick_params(axis='y', labelsize=9)
+        st.pyplot(fig_index)
+
     with col2:
         # Show all box plots together for a visual comparison
         fig_all_box, ax_all_box = plt.subplots(figsize=(5, 4), dpi=150)
@@ -224,6 +238,19 @@ if page==page1:
         ax_all_box.grid(True)
 
         st.pyplot(fig_all_box)
+
+        st.write(f"**DTPI Indicator for selected countries**") 
+        fig_index, ax_index = plt.subplots(figsize=(5, 4))  # Adjust figure size
+        for country in options:
+            ax_index.plot(index_data.index, index_data[f'{country}'], marker='x', label=f'{country}')
+            ax_index.set_title(f'Index for {options}', fontsize=12)
+            ax_index.set_xlabel('Quarter', fontsize=10)
+            ax_index.set_ylabel('Index Value', fontsize=10)
+            ax_index.grid(True)  # Add grid to the plot
+            ax_index.tick_params(axis='x', rotation=45, labelsize=9)
+            ax_index.tick_params(axis='y', labelsize=9)
+            ax_index.legend()
+        st.pyplot(fig_index)
 
 
 
