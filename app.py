@@ -245,7 +245,7 @@ elif page == page2:
     
      st.title("DTPI - Top X Selected Countries")
 
-    # Tab 0 is for the Overview, the rest is for selected countries
+     # Tab 0 is for the Overview, the rest is for selected countries
      tabs = st.tabs(['Overview'] + [f'{title}' for title in country_titles])
      i = 0
      with tabs[i]:
