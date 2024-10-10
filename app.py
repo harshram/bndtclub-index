@@ -51,7 +51,9 @@ scaler = MinMaxScaler()
 w1 = w2 = w3 = 1  # weights for index calc. w1 - GVA, w2 - Employment, w3 - Labour Demand 
 
 # moving average window defined by slider
-window = st.sidebar.slider("Select moving average window", 1, 5, 2)  # Slider to select the window size
+#window = st.sidebar.slider("Select moving average window", 1, 5, 2)  # Slider to select the window size
+#ste window to a fixed value
+window = 3
 
 # List of countries for which to process and plot data
 # List of countries and titles
@@ -143,6 +145,7 @@ for country in countries:
 
 # Concatenate all merged data frames from the list into one data frame
 transformed_data = pd.concat(loaded_data_list, axis=1, join='inner')
+transformed_data.index = transformed_data.index.strftime('%y-Q%q')
 
 # list of the measures to use in the loop
 data_measures = ['GVA', 'employment', 'labour_demand']
@@ -318,7 +321,7 @@ elif page == page2:
              with col1:
                 st.write("**ICT Employment Data**")
                 # Ensure the index is only converted if it's a PeriodIndex
-                fig1, ax1 = plt.subplots(figsize=(4, 3))  # Adjust figure size
+                fig1, ax1 = plt.subplots(figsize=(4, 2.5))  # Adjust figure size
                 ax1.plot(transformed_data.index, transformed_data[f'{country}_employment_value'], marker='o', color='grey')
                 ax1.set_title(f'ICT Employment Data for {country}', fontsize=12)
                 ax1.set_xlabel('Quarter', fontsize=10)
@@ -329,18 +332,18 @@ elif page == page2:
                 st.pyplot(fig1)
 
                 st.write("**Labour Demand Data**")
-                fig3, ax3 = plt.subplots(figsize=(4, 3))  # Adjust figure size
+                fig3, ax3 = plt.subplots(figsize=(4, 2.5))  # Adjust figure size
                 ax3.plot(transformed_data.index, transformed_data[f'{country}_labour_demand_value'], marker='o', color='grey')
                 ax3.set_title(f'Labour Demand Data for {country}', fontsize=12)
                 ax3.set_xlabel('Quarter', fontsize=10)
-                ax3.set_ylabel('Percentage of Total Job Advertisements Online', fontsize=10)
+                ax3.set_ylabel('Percentage of Total Job Advertisements Online', fontsize=9)
                 ax3.grid(True)  # Add grid to the plot
                 ax3.tick_params(axis='x', rotation=45, labelsize=9)
                 ax3.tick_params(axis='y', labelsize=9)
                 st.pyplot(fig3)
 
                 st.write("**GVA Data**")
-                fig2, ax2 = plt.subplots(figsize=(4, 3))  # Adjust figure size
+                fig2, ax2 = plt.subplots(figsize=(4, 2.5))  # Adjust figure size
                 ax2.plot(transformed_data.index, transformed_data[f'{country}_GVA_value'], marker='o', color='grey')
                 ax2.set_title(f'GVA Data for {country}', fontsize=12)
                 ax2.set_xlabel('Quarter', fontsize=10)
@@ -354,7 +357,11 @@ elif page == page2:
              with col2:
                 st.write(f"**DTPI Indicator for {country}**") 
                 
-                fig_index, ax_index = plt.subplots(figsize=(5, 4))  # Adjust figure size
+                # set plot width
+                plot_width = 800
+                dpi_fig = 200
+
+                fig_index, ax_index = plt.subplots(figsize=(plot_width/dpi_fig, 2.5), dpi = dpi_fig)  # Adjust figure size
                 ax_index.plot(index_data.index, index_data[f'{country}'], marker='x', label=f'{country}', color='red')
                 ax_index.set_title(f'Index for {country}', fontsize=12)
                 ax_index.set_xlabel('Quarter', fontsize=10)
@@ -364,55 +371,38 @@ elif page == page2:
                 ax_index.tick_params(axis='y', labelsize=9)
                 st.pyplot(fig_index)
                 
-                # Reset the index but keep the 'quarter' both as the index and as a new column
-                transformed_data_with_quarters = transformed_data.reset_index(drop=False)
-                fig_bubble = px.scatter(
-                    transformed_data_with_quarters,
-                    x=f'{country}_labour_demand_normalized_moving_average_value',
-                    y=f'{country}_employment_normalized_moving_average_value',
-                    size=f'{country}_GVA_normalized_moving_average_value',
-                    hover_name='quarter',
-                    animation_frame='quarter',
-                    animation_group=f'{country}_GVA_normalized_moving_average_value',  # Ensure bubbles persist across frames
-                )
-
-                fig_bubble.update_layout(
-                    width=600,                                                                              # Adjust width to match layout
-                    height=400,                                                                             # Adjust height to align with left column
-                    margin=dict(l=20, r=20, t=30, b=20),                                                    # Adjust margins for better alignment
-                    xaxis_title="Normlized moving average for labour demand",                                             # Add x-axis label
-                    yaxis_title="Normlized moving average for employment",                                                 # Add y-axis label
-                    font=dict(size=10),                                                                     # Set overall font size for the plot
-                    title_font=dict(size=12),                                                               # Set title font size
-                    title="Animation of Normalised Employment Vs Normalized Labour Demand over Quarters",
-                    hoverlabel=dict(font_size=9),                                                           # Adjust hover text font size
-                    xaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to x-axis
-                    yaxis=dict(showgrid=True, gridwidth=1, gridcolor='LightGrey', range = [-0.1,1.1]),      # Add grid to y-axis
-                )
-
-                st.plotly_chart(fig_bubble)
-
-                def plot_heatmap_plotly(transformed_data, country):
-                    # Prepare data for the heatmap
+                def plot_heatmap_plotly(transformed_data, index_data, country):
+                    # Prepare data for the heatmap (GVA, Employment, Labour Demand)
                     heatmap_data = transformed_data[[f'{country}_GVA_normalized_moving_average_value', 
                                                     f'{country}_employment_normalized_moving_average_value', 
                                                     f'{country}_labour_demand_normalized_moving_average_value']]
                     heatmap_data.columns = ['GVA', 'Employment', 'Labour Demand']
-                    heatmap_data['Quarter'] = transformed_data.index
+                    heatmap_data[' '] = np.nan  # nan column to create a space in the heatmap
+
+                    # Add the index data as a new row to the heatmap
+                    index_row = pd.DataFrame(index_data[f'{country}']).T
+                    #index_row.index = ['Index']
+
+                    # Combine the original heatmap data with the index data
+                    combined_data = pd.concat([heatmap_data.T, index_row], axis=0)
 
                     # Plotly heatmap
-                    fig = px.imshow(heatmap_data.T.iloc[:-1], 
+                    fig = px.imshow(combined_data, 
                                     labels=dict(x="Quarter", y="Metric", color="Normalized Value"),
-                                    x=heatmap_data['Quarter'],
-                                    y=['GVA', 'Employment', 'Labour Demand'],
+                                    x=heatmap_data.index,
+                                    y=combined_data.index,
                                     color_continuous_scale='RdBu_r')
                     
-                    fig.update_layout(title=f'Heatmap for {country} - GVA, Employment, Labour Demand',
-                                    xaxis_nticks=36)
+                    fig.update_layout(title=f'Heatmap for {country} - GVA, Employment, Labour Demand, and Index',
+                                    xaxis_nticks=36,
+                                    width=plot_width + 100,  # Adjust width to match layout
+                                    height=600,  # Adjust height to align with left column
+                                    yaxis_title='Metric')  # Label for y-axis
+                                    
                     st.plotly_chart(fig)
-
-                # Example usage
-                plot_heatmap_plotly(transformed_data, f'{country}')  # You can loop for multiple countries
+                    st.write(heatmap_data)
+                    st.warning(combined_data)
+                plot_heatmap_plotly(transformed_data, index_data, f'{country}')
              
              st.markdown(f'---')
              st.markdown(f'### Historical Analysis and Highlights for {country} DPTI Indicator')
