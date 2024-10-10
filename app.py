@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.cm as cm 
 import plotly.express as px
 
-from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_overview
+from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_overview, load_md_introduction
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from data_processing import process_import_data, process_ICT_labour_import_data
 
@@ -300,7 +300,8 @@ elif page == page2:
      i = 0
      with tabs[i]:
          st.markdown(f'{load_md_overview()}', unsafe_allow_html=True, help=None)
-     
+         st.divider()
+         st.markdown(f'{load_md_introduction()}', unsafe_allow_html=True, help=None)
      for country in countries:
          i += 1
          with tabs[i]:
@@ -400,8 +401,6 @@ elif page == page2:
                                     yaxis_title='Metric')  # Label for y-axis
                                     
                     st.plotly_chart(fig)
-                    st.write(heatmap_data)
-                    st.warning(combined_data)
                 plot_heatmap_plotly(transformed_data, index_data, f'{country}')
              
              st.markdown(f'---')
