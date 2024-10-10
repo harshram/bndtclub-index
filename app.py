@@ -51,7 +51,9 @@ scaler = MinMaxScaler()
 w1 = w2 = w3 = 1  # weights for index calc. w1 - GVA, w2 - Employment, w3 - Labour Demand 
 
 # moving average window defined by slider
-window = st.sidebar.slider("Select moving average window", 1, 5, 2)  # Slider to select the window size
+#window = st.sidebar.slider("Select moving average window", 1, 5, 2)  # Slider to select the window size
+#ste window to a fixed value
+window = 3
 
 # List of countries for which to process and plot data
 # List of countries and titles
@@ -143,6 +145,7 @@ for country in countries:
 
 # Concatenate all merged data frames from the list into one data frame
 transformed_data = pd.concat(loaded_data_list, axis=1, join='inner')
+transformed_data.index = transformed_data.index.strftime('%y-Q%q')
 
 # list of the measures to use in the loop
 data_measures = ['GVA', 'employment', 'labour_demand']
