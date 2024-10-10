@@ -400,8 +400,6 @@ elif page == page2:
                                     yaxis_title='Metric')  # Label for y-axis
                                     
                     st.plotly_chart(fig)
-                    st.write(heatmap_data)
-                    st.warning(combined_data)
                 plot_heatmap_plotly(transformed_data, index_data, f'{country}')
              
              st.markdown(f'---')
