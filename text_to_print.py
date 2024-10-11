@@ -145,3 +145,13 @@ def load_md_introduction(file_name='DTPI_introduction.md', base_path='docs'):
         return markdown.markdown(f.read())
 
     return None
+
+
+def load_md_methodology(file_name='DTPI_methodology.md', base_path='docs'):
+    '''
+    Load from file the Markdown for the introduction section
+    '''
+    with open(f'{base_path}/{file_name}', 'r') as f:
+        return markdown.markdown(f.read())
+
+    return None
