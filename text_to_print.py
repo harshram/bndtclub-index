@@ -23,7 +23,7 @@ def description_text_by_countries():
     return highlights_text_by_year
 
 
-def load_md_files(highlights_text_by_country, highlights_text_by_year, base_path='docs'):
+def load_md_files(highlights_text_by_country, highlights_text_by_year, base_path='docs/contents'):
     '''
     Load Markdown files into and easy-to-parse data structures which maintains the historical
     information. 
@@ -60,7 +60,7 @@ def load_md_files(highlights_text_by_country, highlights_text_by_year, base_path
         except NotADirectoryError:
             pass
 
-def load_md_overview(file_name='DTPI.md', base_path='docs'):
+def load_md_overview(file_name='intro.md', base_path='docs/dtpi'):
     '''
     Load from file the Markdown for the overview section
     '''
@@ -69,7 +69,7 @@ def load_md_overview(file_name='DTPI.md', base_path='docs'):
 
     return None
 
-def load_md_introduction(file_name='DTPI_Intro.md', base_path='docs'):
+def load_md_introduction(file_name='intro.md', base_path='docs/dtpi'):
     '''
     Load from file the Markdown for the introduction section
     '''
@@ -79,7 +79,7 @@ def load_md_introduction(file_name='DTPI_Intro.md', base_path='docs'):
     return None
 
 
-def load_md_methodology(file_name='DTPI_Methodology.md', base_path='docs'):
+def load_md_methodology(file_name='methodology.md', base_path='docs/dtpi'):
     '''
     Load from file the Markdown for the introduction section
     '''
@@ -88,7 +88,16 @@ def load_md_methodology(file_name='DTPI_Methodology.md', base_path='docs'):
 
     return None
 
-def load_md_howto(file_name='DTPI_HowTo.md', base_path='docs'):
+def load_md_howto(file_name='howto.md', base_path='docs/dtpi'):
+    '''
+    Load from file the Markdown for the how to section
+    '''
+    with open(f'{base_path}/{file_name}', 'r') as f:
+        return markdown.markdown(f.read())
+
+    return None
+
+def load_md_welcome(file_name='welcome.md', base_path='docs/dtpi'):
     '''
     Load from file the Markdown for the how to section
     '''
