@@ -289,7 +289,7 @@ elif page == page3:
     st.title("Summarising the DTPI for EU27 with the ability to select and compare")
 
     countries_withoutEU27 = countries.remove('EU27_2020')
-    options = st.multiselect("**Select one or more countries to compare...**", countries,placeholder="Choose one or more options", disabled=False, label_visibility="visible")
+    options = st.multiselect("**Default is EU6, select one or more countries to compare...**", countries,placeholder="Choose one or more options", disabled=False, label_visibility="visible")
     if not options:
         options = countries
     
@@ -346,12 +346,12 @@ elif page == page3:
             ax_index.legend()
         st.pyplot(fig_index)
 
-
-
-    st.table(index_data)
+    index_data_filtered = index_data[['EU27_2020'] + options]
+    index_data_filtered.rename(columns={'quarter': 'Quarter'}, inplace=True)
+    st.markdown(index_data_filtered.to_markdown(index=True))
 
     st.markdown(f'---')
-    st.markdown(f'### Historical analysis and highlights for {country} DPTI')
+    st.markdown(f'### Historical DTPI analysis and highlights for your selection: {options}')
 
     # TODO code to be refactored in a renderer function
     highlights_text_by_year = description_text_by_countries()
@@ -364,13 +364,11 @@ elif page == page3:
             details = ''
             # print(quarter)
             contents = sorted(highlights_text_by_year[year][quarter])
+            details += f'<details {'open' if expanded else ''}><summary>EU</summary>{highlights_text_by_year[year][quarter]['EU']}</details>'
             for content in contents:
                 if content in options:
                     # print(content)
-                    if expanded:
-                        details += f'<details open><summary>{content}</summary>{highlights_text_by_year[year][quarter][content]}</details>'
-                    else:
-                        details += f'<details><summary>{content}</summary>{highlights_text_by_year[year][quarter][content]}</details>'
+                    details += f'<details {'open' if expanded else ''}><summary>{content}</summary>{highlights_text_by_year[year][quarter][content]}</details>'
             if expanded:
                 st.markdown(f'<details open><summary>{year} {quarter}</summary>{details}</details>', unsafe_allow_html=True, help=None)
                 expanded = not expanded
