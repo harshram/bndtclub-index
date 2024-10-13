@@ -21,12 +21,6 @@ st.set_page_config(
     layout="centered"  # Using the centered layout
 )
 
-# Sidebar for navigation
-page1 = "Introduction to the Digital Transformation Potential Index (DTPI)"
-page2 = "An overview of EU27 by the DTPI"
-page3 = "The DTPI by country"
-st.sidebar.title("Navigation") 
-page = st.sidebar.radio("Go to", [page1, page2, page3])
 
 # Inject custom CSS to control the width of the centered layout
 st.markdown(
@@ -34,7 +28,7 @@ st.markdown(
     <style>
     /* Adjust the width of the block-container class */
     .block-container {
-        max-width: 1300px;  /* Adjust this value to control the width */
+        max-width: 1000px;  /* Adjust this value to control the width */
         padding-top: 3rem;
         padding-right: 1rem;
         padding-left: 1rem;
@@ -44,6 +38,15 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+# Sidebar for navigation
+page1 = 'Home'
+page2 = "Introduction to the Digital Transformation Potential Index (DTPI)"
+page3 = "An overview of EU27 by the DTPI"
+page4 = "The DTPI by country"
+
+#st.title("Navigation")  # Title for the navigation bar
+page = st.radio('',[page1, page2, page3, page4], horizontal=True)
 
 # Normalize the data using Min-Max scaling
 scaler = MinMaxScaler()
@@ -90,9 +93,6 @@ with st.spinner("Please wait, loading data..."):
     # Load the data from the cached function
     GVA_data, Employment_data, Labour_demand_ICT_data = load_data()
     print("All data has been loaded")
-
-st.success("All datasets loaded successfully")
-st.info("Datasets are refreshed quarterly at the source")
 
 # Create an empty data frame to hold the hold data during transformation
 transformed_data = pd.DataFrame()
@@ -201,7 +201,19 @@ plt.rcParams.update({'font.size': 12})
 #st.dataframe(custom_gradients_df)
 
 if page==page1:
+    st.title('Welcome to the home page of the Business & Digital Transformation Club')
+    st.markdown("""
+    ## Welcome to the Digital Transformation Potential Index (DTPI)
 
+    The DTPI, developed by the Business and Digital Transformation Club at GSoM POLIMI, is a dynamic tool that provides quarterly insights into the digitalization trends across the European Union. It helps stakeholders like policymakers, businesses, and researchers understand the digital economy's current state and potential.
+
+    Focusing on three core components—Gross Value Added (GVA) in the ICT sector, labor demand, and employment in ICT—the DTPI offers a clear, data-driven snapshot of how digital investments are impacting economic growth, innovation, and the labor market.
+    """)
+
+elif page == page2:
+
+    st.success("All datasets loaded successfully")
+    st.info("Datasets are refreshed quarterly at the source")
      # Tab 0 is for the Overview, the rest is for selected countries
     intro = 'What is it? Introduction'
     methodology = 'Methodology'
@@ -217,7 +229,7 @@ if page==page1:
     with tab_howto:
         st.markdown('how to read')
     
-elif page2:
+elif page == page3:
     st.title("The DTPI - A summary for EU27 countries")
     countries_withoutEU27 = countries.remove('EU27_2020')
     options = st.multiselect("**Select one or more countries**", countries,placeholder="Choose an option", disabled=False, label_visibility="visible")
@@ -308,22 +320,15 @@ elif page2:
             else:
                 st.markdown(f'<details><summary>{year} {quarter}</summary>{details}</details>', unsafe_allow_html=True, help=None)
 
-elif page == page3:
+elif page == page4:
     
      st.title("DTPI - Top X Selected Countries")
 
      # Tab 0 is for the Overview, the rest is for selected countries
-     tabs = st.tabs(['Overview'] + ['Methodology']+[f'{title}' for title in country_titles])
+     tabs = st.tabs([f'{title}' for title in country_titles])
      i = 0
-     with tabs[i]:
-         st.markdown(f'{load_md_overview()}', unsafe_allow_html=True, help=None)
-         st.divider()
-         st.markdown(f'{load_md_introduction()}', unsafe_allow_html=True, help=None)
-     i += 1
-     with tabs[i]:
-         st.markdown(f'{load_md_methodology()}', unsafe_allow_html=True, help=None)
      for country in countries:
-         i += 1
+         
          with tabs[i]:
              
              st.markdown(f'### Data for **{country_titles[i-2]}**: you can scroll and zoom into the details for the different views')
@@ -373,7 +378,7 @@ elif page == page3:
                 ax2.tick_params(axis='x', rotation=45, labelsize=9)
                 ax2.tick_params(axis='y', labelsize=9)
                 st.pyplot(fig2)
-
+                i += 1
             # Column 2 content: Index plot and bubble chart
              with col2:
                 st.write(f"**DTPI Indicator for {country}**") 
