@@ -212,15 +212,17 @@ elif page == page2:
     st.info("Datasets are refreshed quarterly at the source", icon="📬")
 
      # Tab 0 is for the Overview, the rest is for selected countries
-    intro = 'What is it? Introduction'
+    intro = 'What about DTPI?'
     methodology = 'Methodology'
-    howto = 'How to read'
+    howto = 'How to read it?'
     tab_intro, tab_methodology, tab_howto = st.tabs([intro, methodology, howto])
      
     with tab_intro:
         st.markdown(f'{load_md_introduction()}', unsafe_allow_html=True, help=None)
 
     with tab_methodology:
+        m = load_md_methodology()
+        print(m)
         st.markdown(f'{load_md_methodology()}', unsafe_allow_html=True, help=None)
 
     with tab_howto:
@@ -307,6 +309,7 @@ elif page == page3:
             # print(quarter)
             contents = sorted(highlights_text_by_year[year][quarter])
             details += f'<details {"open" if expanded else ""}><summary>EU</summary>{highlights_text_by_year[year][quarter]["EU"]}</details>'
+            st.markdown('---', unsafe_allow_html=True, help=None)
             for content in contents:
                 if content in options:
                     # print(content)
@@ -448,6 +451,7 @@ elif page == page4:
                 for year in years:
                     quarters = sorted(list(highlights_per_year_quarter[year].keys()), reverse=True)
                     for quarter in quarters:
+                        st.markdown('---', unsafe_allow_html=True, help=None)
                         if not collapsed:
                             st.markdown(f'<details open><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
                             collapsed = not collapsed

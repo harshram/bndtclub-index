@@ -53,7 +53,7 @@ def load_md_files(highlights_text_by_country, highlights_text_by_year, base_path
                     if quarter not in highlights_text_by_country[country][year]:
                         highlights_text_by_country[country][year][quarter] = {}
                     with open(f'{base_path}/{year}/{quarter}/{file}', 'r') as content:
-                        md = markdown.markdown(content.read())
+                        md = content.read()
                         highlights_text_by_country[country][year][quarter] = md
                         highlights_text_by_year[year][quarter][country] = md
 
@@ -74,7 +74,7 @@ def load_md_introduction(file_name='intro.md', base_path='docs/dtpi'):
     Load from file the Markdown for the introduction section
     '''
     with open(f'{base_path}/{file_name}', 'r') as f:
-        return markdown.markdown(f.read())
+        return f.read()
 
     return None
 
@@ -84,7 +84,7 @@ def load_md_methodology(file_name='methodology.md', base_path='docs/dtpi'):
     Load from file the Markdown for the introduction section
     '''
     with open(f'{base_path}/{file_name}', 'r') as f:
-        return markdown.markdown(f.read())
+        return f.read()
 
     return None
 
@@ -93,7 +93,7 @@ def load_md_howto(file_name='howto.md', base_path='docs/dtpi'):
     Load from file the Markdown for the how to section
     '''
     with open(f'{base_path}/{file_name}', 'r') as f:
-        return markdown.markdown(f.read())
+        return f.read()
 
     return None
 
@@ -102,6 +102,6 @@ def load_md_welcome(file_name='welcome.md', base_path='docs/dtpi'):
     Load from file the Markdown for the how to section
     '''
     with open(f'{base_path}/{file_name}', 'r') as f:
-        return markdown.markdown(f.read())
+        return f.read()
 
     return None
