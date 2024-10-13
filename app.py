@@ -88,8 +88,14 @@ page4 = "Zoom into EU27 and EU6 DTPI"
 
 #st.title("Navigation")  # Title for the navigation bar
 page = st.radio('',[page1, page2, page3, page4], horizontal=True)
-
-st.logo("logo/DTPI_logo_v5.png" )
+st.html("""
+  <style>
+    [alt=Logo] {
+      height: 5rem;
+    }
+  </style>
+        """)
+st.logo(image="logo/DTPI_logo_v5.png")
 
 # Normalize the data using Min-Max scaling
 scaler = MinMaxScaler()
