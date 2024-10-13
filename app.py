@@ -42,7 +42,7 @@ st.markdown(
 page1 = 'Home'
 page2 = "Intro: DTPI"
 page3 = "Overview of EU27 DTPI"
-page4 = "Overview of EU5 DTPI"
+page4 = "Zoom into EU27 and EU6 DTPI"
 
 #st.title("Navigation")  # Title for the navigation bar
 page = st.radio('',[page1, page2, page3, page4], horizontal=True)
@@ -60,8 +60,8 @@ window = 3
 
 # List of countries for which to process and plot data
 # List of countries and titles
-countries = ['IT', 'FR', 'DE', 'ES', 'NL', 'EU27_2020', 'SE']
-country_titles = ['Italy (IT)', 'France (FR)', 'Germany (DE)', 'Spain (ES)', 'Netherlands (NL)', 'Europe 27 (EU27)', 'Sweden (SE)']
+countries = ['EU27_2020', 'IT', 'FR', 'DE', 'ES', 'NL', 'SE']
+country_titles = ['Europe 27 (EU27)', 'Italy (IT)', 'France (FR)', 'Germany (DE)', 'Spain (ES)', 'Netherlands (NL)', 'Sweden (SE)']
 data_to_import = ['GVA', 'employment', 'labour_demand']
 #countries = ['IT', 'FR', 'DE']  # Italy, France, and Germany
 
@@ -200,9 +200,12 @@ plt.rcParams.update({'font.size': 12})
 #st.dataframe(custom_gradients_df)
 
 if page==page1:
-    st.title('Welcome to the home page of the Business & Digital Transformation Club')
+    st.success("All datasets loaded successfully")
+    st.info("Datasets are refreshed quarterly at the source")
+
+    st.title('Home page of the BnDT DTPI')
     st.markdown("""
-    ## Welcome to the Digital Transformation Potential Index (DTPI)
+    ## Welcome to the Digital Transformation Potential Index (DTPI) Beta!
 
     The DTPI, developed by the Business and Digital Transformation Club at GSoM POLIMI, is a dynamic tool that provides quarterly insights into the digitalization trends across the European Union. It helps stakeholders like policymakers, businesses, and researchers understand the digital economy's current state and potential.
 
@@ -210,9 +213,8 @@ if page==page1:
     """)
 
 elif page == page2:
-
-    st.success("All datasets loaded successfully")
     st.info("Datasets are refreshed quarterly at the source")
+
      # Tab 0 is for the Overview, the rest is for selected countries
     intro = 'What is it? Introduction'
     methodology = 'Methodology'
@@ -229,9 +231,11 @@ elif page == page2:
         st.markdown(f'{load_md_howto()}', unsafe_allow_html=True, help=None)
     
 elif page == page3:
-    st.title("The DTPI - A summary for EU27 countries")
+    st.info("Datasets are refreshed quarterly at the source")
+    st.title("Summarising the DTPI for EU27 with the ability to select and compare")
+
     countries_withoutEU27 = countries.remove('EU27_2020')
-    options = st.multiselect("**Select one or more countries**", countries,placeholder="Choose an option", disabled=False, label_visibility="visible")
+    options = st.multiselect("**Select one or more countries to compare...**", countries,placeholder="Choose one or more options", disabled=False, label_visibility="visible")
     if not options:
         options = countries
     
@@ -293,7 +297,7 @@ elif page == page3:
     st.table(index_data)
 
     st.markdown(f'---')
-    st.markdown(f'### Historical Analysis and Highlights for {country} DPTI Indicator')
+    st.markdown(f'### Historical analysis and highlights for {country} DPTI')
 
     # TODO code to be refactored in a renderer function
     highlights_text_by_year = description_text_by_countries()
@@ -320,18 +324,18 @@ elif page == page3:
                 st.markdown(f'<details><summary>{year} {quarter}</summary>{details}</details>', unsafe_allow_html=True, help=None)
 
 elif page == page4:
-    
-     st.title("DTPI - Top X Selected Countries")
+     st.info("Datasets are refreshed quarterly at the source")
+     st.title("Zooming into the EU27 and EU6 components of the DTPI")
 
      # Tab 0 is for the Overview, the rest is for selected countries
      tabs = st.tabs([f'{title}' for title in country_titles])
-     i = 0
-     for country in countries:
+     tab_idx = 0
+     for idx, country in enumerate(countries):
          
-         with tabs[i]:
+         with tabs[tab_idx]:
              
-             st.markdown(f'### Data for **{country_titles[i-2]}**: you can scroll and zoom into the details for the different views')
-             st.markdown(f'---')
+             st.markdown(f'### Data for **{country_titles[idx]}**: you can scroll and zoom into the details for the different views')
+            #  st.markdown(f'---')
              
              col1, col2 = st.columns([1,2])
              if isinstance(transformed_data.index, pd.PeriodIndex):
@@ -377,7 +381,7 @@ elif page == page4:
                 ax2.tick_params(axis='x', rotation=45, labelsize=9)
                 ax2.tick_params(axis='y', labelsize=9)
                 st.pyplot(fig2)
-                i += 1
+                tab_idx += 1
             # Column 2 content: Index plot and bubble chart
              with col2:
                 st.write(f"**DTPI Indicator for {country}**") 
@@ -427,14 +431,14 @@ elif page == page4:
                     st.plotly_chart(fig)
                 plot_heatmap_plotly(transformed_data, index_data, f'{country}')
              
-             st.markdown(f'---')
-             st.markdown(f'### Historical Analysis and Highlights for {country} DPTI Indicator')
+            #  st.markdown(f'---')
+             st.markdown(f'### Historical Analysis and Highlights for {country_titles[idx]} DPTI Indicator')
              
              # TODO code to be refactored in a renderer function
              
              # In case of missing country, no rendering, but also no error
              try:
-                highlights_per_year_quarter = description_text_by_quarter(country)
+                highlights_per_year_quarter = description_text_by_quarter('EU' if 'EU' in country else country)
                 print(f'>>> Contents for  {country}')
                 print(json.dumps(highlights_per_year_quarter, indent=2))
 
