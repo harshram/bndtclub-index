@@ -79,6 +79,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+st.warning("**This app is in beta. Features may be incomplete and are subject to change.",icon="⚠️")
 
 # Sidebar for navigation
 page1 = 'Home'
@@ -88,8 +89,14 @@ page4 = "Zoom into EU27 and EU6 DTPI"
 
 #st.title("Navigation")  # Title for the navigation bar
 page = st.radio('',[page1, page2, page3, page4], horizontal=True)
-
-st.logo("logo/DTPI_logo_v5.png" )
+st.html("""
+  <style>
+    [alt=Logo] {
+      height: 5rem;
+    }
+  </style>
+        """)
+st.logo(image="logo/DTPI_logo_v5.png")
 
 # Normalize the data using Min-Max scaling
 scaler = MinMaxScaler()
@@ -364,11 +371,11 @@ elif page == page3:
             details = ''
             # print(quarter)
             contents = sorted(highlights_text_by_year[year][quarter])
-            details += f'<details {'open' if expanded else ''}><summary>EU</summary>{highlights_text_by_year[year][quarter]['EU']}</details>'
+            details += f'<details {"open" if expanded else ""}><summary>EU</summary>{highlights_text_by_year[year][quarter]["EU"]}</details>'
             for content in contents:
                 if content in options:
                     # print(content)
-                    details += f'<details {'open' if expanded else ''}><summary>{content}</summary>{highlights_text_by_year[year][quarter][content]}</details>'
+                    details += f'<details {"open" if expanded else ""}><summary>{content}</summary>{highlights_text_by_year[year][quarter][content]}</details>'
             if expanded:
                 st.markdown(f'<details open><summary>{year} {quarter}</summary>{details}</details>', unsafe_allow_html=True, help=None)
                 expanded = not expanded
@@ -478,7 +485,11 @@ elif page == page4:
                                     xaxis_nticks=36,
                                     width=plot_width + 100,  # Adjust width to match layout
                                     height=600,  # Adjust height to align with left column
-                                    yaxis_title='Metric')  # Label for y-axis
+                                    yaxis_title='Metric',    # Label for y-axis
+                                    plot_bgcolor='#002f6c',  # Background color
+                                    paper_bgcolor='#002f6c',  # Paper (outer plot) background color
+                                    font=dict(color='#e5e5e5')  # Font color
+                    )
                                     
                     st.plotly_chart(fig)
                 plot_heatmap_plotly(transformed_data, index_data, f'{country}')
