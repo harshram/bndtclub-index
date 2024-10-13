@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.cm as cm 
 import plotly.express as px
 
-from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_overview, load_md_introduction, load_md_methodology
+from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_overview, load_md_introduction, load_md_methodology, load_md_howto
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from data_processing import process_import_data, process_ICT_labour_import_data
 
@@ -20,7 +20,6 @@ st.set_page_config(
     page_title="B&DT Club Digital Transformation Index",  # Optional: Give your app a title
     layout="centered"  # Using the centered layout
 )
-
 
 # Inject custom CSS to control the width of the centered layout
 st.markdown(
@@ -41,9 +40,9 @@ st.markdown(
 
 # Sidebar for navigation
 page1 = 'Home'
-page2 = "Introduction to the Digital Transformation Potential Index (DTPI)"
-page3 = "An overview of EU27 by the DTPI"
-page4 = "The DTPI by country"
+page2 = "Intro: DTPI"
+page3 = "Overview of EU27 DTPI"
+page4 = "Overview of EU5 DTPI"
 
 #st.title("Navigation")  # Title for the navigation bar
 page = st.radio('',[page1, page2, page3, page4], horizontal=True)
@@ -227,7 +226,7 @@ elif page == page2:
         st.markdown(f'{load_md_methodology()}', unsafe_allow_html=True, help=None)
 
     with tab_howto:
-        st.markdown('how to read')
+        st.markdown(f'{load_md_howto()}', unsafe_allow_html=True, help=None)
     
 elif page == page3:
     st.title("The DTPI - A summary for EU27 countries")
