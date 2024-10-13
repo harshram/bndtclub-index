@@ -22,6 +22,7 @@ The DTPI is a versatile tool designed to serve a range of stakeholders:
 
 - **Policymakers**: To assess the effectiveness of digital investments and identify policy areas that need attention to further stimulate digital growth.
 - **Businesses**: To gauge the digital maturity of their operating environment and uncover opportunities for **innovation and expansion**.
+- **Researchers**: To study the correlation between digital transformation and broader economic indicators, including GDP growth and employment.
 
 ### Components of the DTPI
 
