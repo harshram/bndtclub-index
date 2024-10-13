@@ -25,9 +25,9 @@ st.set_page_config(
 page1 = "Introduction to the Digital Transformation Potential Index (DTPI)"
 page2 = "An overview of EU27 by the DTPI"
 page3 = "The DTPI by country"
-st.sidebar.title("Navigation") 
-page = st.sidebar.radio("Go to", [page1, page2, page3])
 
+st.title("Navigation")  # Title for the navigation bar
+page = st.radio(' ',[page1, page2, page3], horizontal=True)
 # Inject custom CSS to control the width of the centered layout
 st.markdown(
     """
