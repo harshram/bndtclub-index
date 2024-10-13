@@ -79,7 +79,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.warning("**This app is in beta. Features may be incomplete and are subject to change.",icon="⚠️")
+st.warning("**This app is in beta**. Features may be incomplete and are subject to change.",icon="⚠️")
 
 # Sidebar for navigation
 page1 = 'Home'
