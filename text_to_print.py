@@ -79,7 +79,7 @@ def load_md_introduction(file_name='DTPI_Intro.md', base_path='docs'):
     return None
 
 
-def load_md_methodology(file_name='DTPI_Methodology.md', base_path='docs'):
+def load_md_methodology(file_name='DTPI_Methodology_v2.md', base_path='docs'):
     '''
     Load from file the Markdown for the introduction section
     '''
