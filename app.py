@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.cm as cm 
 import plotly.express as px
 
-from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_overview, load_md_introduction, load_md_methodology
+from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_overview, load_md_introduction, load_md_methodology, load_md_howto
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from data_processing import process_import_data, process_ICT_labour_import_data
 
@@ -22,9 +22,9 @@ st.set_page_config(
 )
 
 # Sidebar for navigation
-page1 = "Introduction to the Digital Transformation Potential Index (DTPI)"
-page2 = "An overview of EU27 by the DTPI"
-page3 = "The DTPI by country"
+page1 = "Intro: DTPI"
+page2 = "Overview of EU27 DTPI"
+page3 = "Overview of EU5 DTPI"
 st.sidebar.title("Navigation") 
 page = st.sidebar.radio("Go to", [page1, page2, page3])
 
@@ -215,7 +215,7 @@ if page==page1:
         st.markdown(f'{load_md_methodology()}', unsafe_allow_html=True, help=None)
 
     with tab_howto:
-        st.markdown('how to read')
+        st.markdown(f'{load_md_howto()}', unsafe_allow_html=True, help=None)
     
 elif page2:
     st.title("The DTPI - A summary for EU27 countries")

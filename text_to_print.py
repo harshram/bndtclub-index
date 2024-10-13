@@ -87,3 +87,12 @@ def load_md_methodology(file_name='DTPI_Methodology.md', base_path='docs'):
         return markdown.markdown(f.read())
 
     return None
+
+def load_md_howto(file_name='DTPI_HowTo.md', base_path='docs'):
+    '''
+    Load from file the Markdown for the how to section
+    '''
+    with open(f'{base_path}/{file_name}', 'r') as f:
+        return markdown.markdown(f.read())
+
+    return None
