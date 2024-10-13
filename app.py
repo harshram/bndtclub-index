@@ -22,10 +22,11 @@ st.set_page_config(
 )
 
 # Sidebar for navigation
-page1 = "DTPI - EU27 overview"
-page2 = "DTPI - Selected X countries"
+page1 = "Introduction to the Digital Transformation Potential Index (DTPI)"
+page2 = "An overview of EU27 by the DTPI"
+page3 = "The DTPI by country"
 st.sidebar.title("Navigation") 
-page = st.sidebar.radio("Go to", [page1, page2])
+page = st.sidebar.radio("Go to", [page1, page2, page3])
 
 # Inject custom CSS to control the width of the centered layout
 st.markdown(
@@ -201,6 +202,22 @@ plt.rcParams.update({'font.size': 12})
 
 if page==page1:
 
+     # Tab 0 is for the Overview, the rest is for selected countries
+    intro = 'What is it? Introduction'
+    methodology = 'Methodology'
+    howto = 'How to read'
+    tab_intro, tab_methodology, tab_howto = st.tabs([intro, methodology, howto])
+     
+    with tab_intro:
+        st.markdown(f'{load_md_introduction()}', unsafe_allow_html=True, help=None)
+
+    with tab_methodology:
+        st.markdown(f'{load_md_methodology()}', unsafe_allow_html=True, help=None)
+
+    with tab_howto:
+        st.markdown('how to read')
+    
+elif page2:
     st.title("The DTPI - A summary for EU27 countries")
     countries_withoutEU27 = countries.remove('EU27_2020')
     options = st.multiselect("**Select one or more countries**", countries,placeholder="Choose an option", disabled=False, label_visibility="visible")
@@ -291,7 +308,7 @@ if page==page1:
             else:
                 st.markdown(f'<details><summary>{year} {quarter}</summary>{details}</details>', unsafe_allow_html=True, help=None)
 
-elif page == page2:
+elif page == page3:
     
      st.title("DTPI - Top X Selected Countries")
 
