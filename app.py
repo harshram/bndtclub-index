@@ -36,7 +36,7 @@ page3 = "Overview of EU27 DTPI"
 page4 = "Zoom into EU27 and EU6 DTPI"
 
 #st.title("Navigation")  # Title for the navigation bar
-page = st.radio('',[page1, page2, page3, page4], horizontal=True)
+page = st.radio('Select a page',[page1, page2, page3, page4], horizontal=True, label_visibility='hidden')
 st.html(css['logo'])
 st.logo(image="logo/DTPI_logo_v5.png")
 
@@ -294,18 +294,19 @@ elif page == page3:
     highlights_text_by_year = description_text_by_countries()
     years = sorted(highlights_text_by_year.keys(), reverse=True)
     expanded = True
+    debug_print('>>> Contents tree')
     for year in years:
-        debug_print(year)
+        debug_print(f'{year}')
         quarters = sorted(highlights_text_by_year[year].keys(), reverse=True)
         for quarter in quarters:
             details = ''
-            debug_print(quarter)
+            debug_print(f'  {quarter}')
             contents = sorted(highlights_text_by_year[year][quarter])
             details += f'<details {"open" if expanded else ""}><summary>EU</summary>{highlights_text_by_year[year][quarter]["EU"]}</details>'
             st.markdown('---', unsafe_allow_html=True, help=None)
             for content in contents:
                 if content in options:
-                    debug_print(content)
+                    debug_print(f'    {content}')
                     details += f'<details {"open" if expanded else ""}><summary>{content}</summary>{highlights_text_by_year[year][quarter][content]}</details>'
             if expanded:
                 st.markdown(f'<details open><summary>{year} {quarter}</summary>{details}</details>', unsafe_allow_html=True, help=None)
