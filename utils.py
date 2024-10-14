@@ -2,6 +2,8 @@ import os
 
 import streamlit as st
 
+print(">>> Env Variables")
+print(st.secrets['VERBOSITY'])
 
 def debug_print(message):
     '''
