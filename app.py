@@ -11,9 +11,10 @@ import numpy as np
 import matplotlib.cm as cm 
 import plotly.express as px
 
-from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_overview, load_md_introduction, load_md_methodology, load_md_howto
+from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_introduction, load_md_methodology, load_md_howto, load_md_welcome
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from data_processing import process_import_data, process_ICT_labour_import_data
+from data_rendering import css
 
 # Set the page configuration at the top of the script
 st.set_page_config(
@@ -23,63 +24,9 @@ st.set_page_config(
 
 
 # Inject custom CSS to control the width of the centered layout
-st.markdown(
-    """
-    <style>
-    /* Adjust the width of the block-container class */
-    .block-container {
-        max-width: 1000px;  /* Adjust this value to control the width */
-        padding-top: 3rem;
-        padding-right: 1rem;
-        padding-left: 1rem;
-        padding-bottom: 1rem;
-    }
-    /* Set the background color for the entire page */
-    html, body, [data-testid="stAppViewContainer"] {
-        background-color: #002f6c !important;
-    }
-    /* Set the text color for all text elements */
-    html, body, .stText, .stMarkdown, .css-10trblm, .css-1v0mbdj, .css-1cpxqw2, .css-1cpxqw2 h1, 
-    .css-1cpxqw2 h2, .css-1cpxqw2 h3, .css-1v0mbdj h1, .css-1v0mbdj h2, .css-1v0mbdj h3, 
-    span, div, h1, h2, h3, h4, h5, h6 {
-        color: #e5e5e5 !important;
-    }
-    /* Table styling */
-    table {
-        color: #e5e5e5 !important;  /* Font color */
-        border-collapse: collapse;  /* Remove space between table borders */
-        width: 100%;
-    }
+st.markdown(css['body'], unsafe_allow_html=True)
 
-    thead th {
-        color: #e5e5e5 !important;  /* Header font color */
-        border-bottom: 2px solid #e5e5e5 !important;  /* Header bottom border */
-    }
-
-    tbody td, tbody th {
-        border: 1px solid #e5e5e5 !important;  /* Table cell borders */
-        padding: 8px !important;  /* Add padding to improve readability */
-    }
-
-    tbody th {
-        color: #e5e5e5 !important;  /* Index (first column) font color */
-        background-color: #003366 !important;  /* Background color for the first column */
-        text-align: left !important;  /* Align text in the index column to the left */
-    }
-
-    tbody tr:nth-child(even) {
-        background-color: #003366 !important;  /* Background color for even rows */
-    }
-
-    tbody tr:nth-child(odd) {
-        background-color: #002f6c !important;  /* Background color for odd rows */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-st.warning("**This app is in beta**. Features may be incomplete and are subject to change.",icon="⚠️")
+st.warning("**The DTPI is in Beta version**. As such, things might be subject to changee.", icon="⚠️")
 
 # Sidebar for navigation
 page1 = 'Home'
@@ -89,13 +36,7 @@ page4 = "Zoom into EU27 and EU6 DTPI"
 
 #st.title("Navigation")  # Title for the navigation bar
 page = st.radio('',[page1, page2, page3, page4], horizontal=True)
-st.html("""
-  <style>
-    [alt=Logo] {
-      height: 5rem;
-    }
-  </style>
-        """)
+st.html(css['logo'])
 st.logo(image="logo/DTPI_logo_v5.png")
 
 # Normalize the data using Min-Max scaling
@@ -260,39 +201,35 @@ plt.rcParams.update({'font.size': 12,
 #st.write('Custom gradients (raw and normalized) for Employment, GVA, and Labour Demand across countries')
 #st.dataframe(custom_gradients_df)
 
-if page==page1:
-    st.success("All datasets loaded successfully")
-    st.info("Datasets are refreshed quarterly at the source")
+if page == page1:
+    st.success("All datasets loaded successfully", icon="⚙️")
+    st.info("Datasets are refreshed quarterly at the source", icon="📬")
 
     st.title('Home page of the BnDT DTPI')
-    st.markdown("""
-    ## Welcome to the Digital Transformation Potential Index (DTPI) Beta!
-
-    The DTPI, developed by the Business and Digital Transformation Club at GSoM POLIMI, is a dynamic tool that provides quarterly insights into the digitalization trends across the European Union. It helps stakeholders like policymakers, businesses, and researchers understand the digital economy's current state and potential.
-
-    Focusing on three core components—Gross Value Added (GVA) in the ICT sector, labor demand, and employment in ICT—the DTPI offers a clear, data-driven snapshot of how digital investments are impacting economic growth, innovation, and the labor market.
-    """)
+    st.markdown(load_md_welcome(), unsafe_allow_html=True, help=None)
 
 elif page == page2:
-    st.info("Datasets are refreshed quarterly at the source")
+    st.info("Datasets are refreshed quarterly at the source", icon="📬")
 
      # Tab 0 is for the Overview, the rest is for selected countries
-    intro = 'What is it? Introduction'
+    intro = 'What about DTPI?'
     methodology = 'Methodology'
-    howto = 'How to read'
+    howto = 'How to read it?'
     tab_intro, tab_methodology, tab_howto = st.tabs([intro, methodology, howto])
      
     with tab_intro:
         st.markdown(f'{load_md_introduction()}', unsafe_allow_html=True, help=None)
 
     with tab_methodology:
+        m = load_md_methodology()
+        print(m)
         st.markdown(f'{load_md_methodology()}', unsafe_allow_html=True, help=None)
 
     with tab_howto:
         st.markdown(f'{load_md_howto()}', unsafe_allow_html=True, help=None)
     
 elif page == page3:
-    st.info("Datasets are refreshed quarterly at the source")
+    st.info("Datasets are refreshed quarterly at the source", icon="📬")
     st.title("Summarising the DTPI for EU27 with the ability to select and compare")
 
     countries_withoutEU27 = countries.remove('EU27_2020')
@@ -372,6 +309,7 @@ elif page == page3:
             # print(quarter)
             contents = sorted(highlights_text_by_year[year][quarter])
             details += f'<details {"open" if expanded else ""}><summary>EU</summary>{highlights_text_by_year[year][quarter]["EU"]}</details>'
+            st.markdown('---', unsafe_allow_html=True, help=None)
             for content in contents:
                 if content in options:
                     # print(content)
@@ -383,7 +321,7 @@ elif page == page3:
                 st.markdown(f'<details><summary>{year} {quarter}</summary>{details}</details>', unsafe_allow_html=True, help=None)
 
 elif page == page4:
-     st.info("Datasets are refreshed quarterly at the source")
+     st.info("Datasets are refreshed quarterly at the source", icon="📬")
      st.title("Zooming into the EU27 and EU6 components of the DTPI")
 
      # Tab 0 is for the Overview, the rest is for selected countries
@@ -410,7 +348,7 @@ elif page == page4:
                 st.write("**ICT Employment Data**")
                 # Ensure the index is only converted if it's a PeriodIndex
                 fig1, ax1 = plt.subplots(figsize=(4, 2.5))  # Adjust figure size
-                ax1.plot(transformed_data.index, transformed_data[f'{country}_employment_value'], marker='o', color='grey')
+                ax1.plot(transformed_data.index, transformed_data[f'{country}_employment_value'], marker='o', color='orange')
                 ax1.set_title(f'ICT Employment Data for {country}', fontsize=12)
                 ax1.set_xlabel('Quarter', fontsize=10)
                 ax1.set_ylabel('Percentage of Total Employees', fontsize=10)
@@ -421,7 +359,7 @@ elif page == page4:
 
                 st.write("**Labour Demand Data**")
                 fig3, ax3 = plt.subplots(figsize=(4, 2.5))  # Adjust figure size
-                ax3.plot(transformed_data.index, transformed_data[f'{country}_labour_demand_value'], marker='o', color='grey')
+                ax3.plot(transformed_data.index, transformed_data[f'{country}_labour_demand_value'], marker='o', color='orange')
                 ax3.set_title(f'Labour Demand Data for {country}', fontsize=12)
                 ax3.set_xlabel('Quarter', fontsize=10)
                 ax3.set_ylabel('Percentage of Total Job Advertisements Online', fontsize=9)
@@ -432,7 +370,7 @@ elif page == page4:
 
                 st.write("**GVA Data**")
                 fig2, ax2 = plt.subplots(figsize=(4, 2.5))  # Adjust figure size
-                ax2.plot(transformed_data.index, transformed_data[f'{country}_GVA_value'], marker='o', color='grey')
+                ax2.plot(transformed_data.index, transformed_data[f'{country}_GVA_value'], marker='o', color='yellow')
                 ax2.set_title(f'GVA Data for {country}', fontsize=12)
                 ax2.set_xlabel('Quarter', fontsize=10)
                 ax2.set_ylabel('Percentage of GDP', fontsize=10)
@@ -513,6 +451,7 @@ elif page == page4:
                 for year in years:
                     quarters = sorted(list(highlights_per_year_quarter[year].keys()), reverse=True)
                     for quarter in quarters:
+                        st.markdown('---', unsafe_allow_html=True, help=None)
                         if not collapsed:
                             st.markdown(f'<details open><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
                             collapsed = not collapsed
