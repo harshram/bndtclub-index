@@ -1,6 +1,12 @@
 import os
 import markdown
 import json
+import sys
+
+# Making sure to leverage upon absolute paths (avoid deployment issues)
+abs_filedir = os.path.abspath(__file__)
+prt_dir = os.path.dirname(abs_filedir)
+sys.path.append(prt_dir)
 
 def description_text_by_quarter(country):
     '''
@@ -23,7 +29,7 @@ def description_text_by_countries():
     return highlights_text_by_year
 
 
-def load_md_files(highlights_text_by_country, highlights_text_by_year, base_path='docs/contents'):
+def load_md_files(highlights_text_by_country, highlights_text_by_year, base_path=os.path.join(prt_dir, 'docs/contents')):
     '''
     Load Markdown files into and easy-to-parse data structures which maintains the historical
     information. 
@@ -60,7 +66,7 @@ def load_md_files(highlights_text_by_country, highlights_text_by_year, base_path
         except NotADirectoryError:
             pass
 
-def load_md_overview(file_name='intro.md', base_path='docs/dtpi'):
+def load_md_overview(file_name='intro.md', base_path=os.path.join(prt_dir, 'docs/dtpi')):
     '''
     Load from file the Markdown for the overview section
     '''
@@ -69,7 +75,7 @@ def load_md_overview(file_name='intro.md', base_path='docs/dtpi'):
 
     return None
 
-def load_md_introduction(file_name='intro.md', base_path='docs/dtpi'):
+def load_md_introduction(file_name='intro.md', base_path=os.path.join(prt_dir, 'docs/dtpi')):
     '''
     Load from file the Markdown for the introduction section
     '''
@@ -79,7 +85,7 @@ def load_md_introduction(file_name='intro.md', base_path='docs/dtpi'):
     return None
 
 
-def load_md_methodology(file_name='methodology.md', base_path='docs/dtpi'):
+def load_md_methodology(file_name='methodology.md', base_path=os.path.join(prt_dir, 'docs/dtpi')):
     '''
     Load from file the Markdown for the introduction section
     '''
@@ -88,7 +94,7 @@ def load_md_methodology(file_name='methodology.md', base_path='docs/dtpi'):
 
     return None
 
-def load_md_howto(file_name='howto.md', base_path='docs/dtpi'):
+def load_md_howto(file_name='howto.md', base_path=os.path.join(prt_dir, 'docs/dtpi')):
     '''
     Load from file the Markdown for the how to section
     '''
@@ -97,7 +103,7 @@ def load_md_howto(file_name='howto.md', base_path='docs/dtpi'):
 
     return None
 
-def load_md_welcome(file_name='welcome.md', base_path='docs/dtpi'):
+def load_md_welcome(file_name='welcome.md', base_path=os.path.join(prt_dir, 'docs/dtpi')):
     '''
     Load from file the Markdown for the how to section
     '''
