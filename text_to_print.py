@@ -44,6 +44,7 @@ def load_md_files(highlights_text_by_country, highlights_text_by_year, base_path
         if os.path.isfile(f'{base_path}/{year}'):
             continue
         highlights_text_by_year[year] = {}
+        debug_print('>>> Markdown files tree')
         try:
             debug_print(f'{year}')
             quarters = os.listdir(f'{base_path}/{year}')

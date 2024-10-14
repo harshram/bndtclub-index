@@ -1,16 +1,16 @@
 import os
 
+import streamlit as st
+
+
 def debug_print(message):
     '''
     It makes debug messages visibile on the console in case those are needed. 
     
     It leverages on the DEBUG environment variable: set to 'true' activates the debugging messages.
     '''
-    # Read the DEBUG environment variable
-    debug_mode = os.getenv('DEBUG', 'False').lower() == 'true'
-    
     # Print the message if debug mode is enabled
-    if debug_mode:
+    if st.secrets['VERBOSITY'].lower() == 'debug':
         print(f"[DEBUG] {message}")
 
 def info_print(message):
@@ -19,11 +19,8 @@ def info_print(message):
 
     It leverages on the INFO environment variable: set to 'true' activates the debugging messages.
     '''
-    # Read the DEBUG environment variable
-    info_mode = os.getenv('DEBUG', 'False').lower() == 'true' or os.getenv('INFO', 'False').lower() == 'true'
-    
     # Print the message if debug mode is enabled
-    if info_mode:
+    if st.secrets['VERBOSITY'].lower() == 'debug' or st.secrets['VERBOSITY'].lower() == 'info':
         print(f"[INFO] {message}")
 
 def error_print(message):
