@@ -1,22 +1,22 @@
-### What is a Composite Index?
+## About Composite Index
 
 A **composite index** combines multiple indicators into a single numerical score, allowing for a holistic assessment of complex, multi-dimensional phenomena. The purpose of a composite index is to offer a comprehensive, yet simplified, representation of a topic by aggregating different metrics that may reflect various aspects of the subject matter.
 
 In general, composite indices are created using the following steps:
 
-1. **Selecting Indicators**: Choose the most relevant indicators that represent the key dimensions of the subject.
-2. **Normalization**: Ensure that indicators are comparable, typically by scaling them to a common range (e.g., 0 to 1).
-3. **Weighting**: Assign weights to each indicator to reflect its relative importance within the composite score.
-4. **Aggregation**: Combine the weighted indicators into a single score, often by summing or averaging.
-5. **Interpretation**: Analyze and interpret the results, usually in relation to other entities (e.g., comparing countries).
+1. **Selecting Indicators**. Choose the most relevant indicators that represent the key dimensions of the subject.
+2. **Normalization**. Ensure that indicators are comparable, typically by scaling them to a common range (e.g., 0 to 1).
+3. **Weighting**. Assign weights to each indicator to reflect its relative importance within the composite score.
+4. **Aggregation**. Combine the weighted indicators into a single score, often by summing or averaging.
+5. **Interpretation**. Analyze and interpret the results, usually in relation to other entities (e.g., comparing countries).
 
 ### Why Use a Composite Index?
 
 Composite indices provide several key benefits:
 
-- **Simplification**: They condense complex information into a single, interpretable score, making it easier to communicate results to decision-makers and stakeholders.
-- **Comparability**: They allow for cross-sectional and temporal comparisons across regions, countries, or sectors.
-- **Insight Generation**: By tracking changes in the index, policymakers, businesses, and researchers can gain insights into trends and opportunities.
+- **Simplification**. They condense complex information into a single, interpretable score, making it easier to communicate results to decision-makers and stakeholders.
+- **Comparability**. They allow for cross-sectional and temporal comparisons across regions, countries, or sectors.
+- **Insight Generation**. By tracking changes in the index, policymakers, businesses, and researchers can gain insights into trends and opportunities.
 
 ---
 
@@ -24,8 +24,8 @@ Composite indices provide several key benefits:
 
 The **DTPI** is inspired by the **Digital Economy and Society Index (DESI)** but differs in several key ways:
 
-1. **Quarterly Updates**: Unlike DESI, which is updated annually, the DTPI provides more frequent updates—**quarterly**—to offer a more **timely pulse check** on the state of digitalization.
-2. **Streamlined Structure**: While DESI tracks multiple dimensions, the DTPI focuses on **three core components** (GVA, labor demand, and employment in the ICT sector), making it more **streamlined** and **focused on economic potential**.
+1. **Quarterly Updates**. Unlike DESI, which is updated annually, the DTPI provides more frequent updates—**quarterly**—to offer a more **timely pulse check** on the state of digitalization.
+2. **Streamlined Structure**. While DESI tracks multiple dimensions, the DTPI focuses on **three core components** (GVA, labor demand, and employment in the ICT sector), making it more **streamlined** and **focused on economic potential**.
    
 Despite being more focused, the DTPI retains the essence of DESI, centering on the economic drivers of digital transformation, but offering **more frequent insights** into how digitalization is evolving across the EU.
 
@@ -37,9 +37,9 @@ Despite being more focused, the DTPI retains the essence of DESI, centering on t
 
 The DTPI includes three key components, each representing a critical aspect of digital transformation:
 
-- **Gross Value Added (GVA) in the ICT Sector**: Measures the contribution of the ICT sector to the overall economy.
-- **Labor Demand for ICT Skills**: Captures the demand for digital skills across industries.
-- **Employment in ICT**: Reflects the employment levels in digital occupations.
+- **Gross Value Added (GVA) in the ICT Sector**. Measures the contribution of the ICT sector to the overall economy.
+- **Labor Demand (LD) for ICT Skills**. Captures the demand for digital skills across industries.
+- **Employment Rate (ER) in ICT**. Reflects the employment levels in digital occupations.
 
 These components are chosen because they provide a clear picture of how digitalization is impacting both economic growth and the labor market.
 
@@ -103,11 +103,11 @@ $$
 
 ### Key Differences Between DTPI and DESI
 
-1. **Update Frequency**: While DESI provides a comprehensive view of the EU's digital economy on an **annual basis**, the DTPI is updated **quarterly**, allowing for a more **dynamic assessment**.
+1. **Update Frequency**. While DESI provides a comprehensive view of the EU's digital economy on an **annual basis**, the DTPI is updated **quarterly**, allowing for a more **dynamic assessment**.
    
-2. **Focus**: DESI includes a wide range of indicators across various dimensions such as connectivity, human capital, use of internet services, and integration of digital technology. The DTPI focuses on the **economic potential** of digital transformation, streamlining the number of indicators to focus on the **economic and employment aspects** of ICT.
+2. **Focus**. DESI includes a wide range of indicators across various dimensions such as connectivity, human capital, use of internet services, and integration of digital technology. The DTPI focuses on the **economic potential** of digital transformation, streamlining the number of indicators to focus on the **economic and employment aspects** of ICT.
 
-3. **Applicability**: DESI offers a broader scope for tracking digital society, while DTPI is more specialized in assessing **economic readiness** for digital transformation and potential growth areas.
+3. **Applicability**. DESI offers a broader scope for tracking digital society, while DTPI is more specialized in assessing **economic readiness** for digital transformation and potential growth areas.
 
 ---
 
