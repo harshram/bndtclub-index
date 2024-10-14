@@ -2,21 +2,22 @@
 
 A collection of tasks, intended as To Do for the future releases of the DTPI Indicator. 
 
-Beta Release
+**Beta Release**. Planned by October 14th 2024.
 
 - [x] 2 x 2 row for the EU 27 page
 - [x] Test heatmap plotting instead of bubble graph
-- [ ] page 1 - Intro + Methodology + how to read
-- [ ] page 2 - overview
-- [ ] page 3 - by country
+- [x] page 1 - Intro + Methodology + how to read
+- [x] page 2 - overview
+- [x] page 3 - by country
 - [ ] finalize logo
-- [ ] add a banner with logo and club identity (per page)
-- [ ] write "beta" in the banner
-- [ ] fix markdown rendering
-- [ ] generate content 2024 
+- [x] add a banner with logo and club identity (per page)
+- [x] write "beta" in the banner
+- [x] fix markdown rendering
+- [x] generate content for 2024 
+- [x] generate content for 2023
 
-General Available
+**General Available**. Planned by Novemeber 14th 2024.
 
 - [ ] Call gen AI for analysis
-- [ ] ...
-- [ ] ...
+- [ ] Finalise the Logo
+- [ ] Finalise the Color Palette
