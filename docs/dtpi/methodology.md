@@ -47,9 +47,9 @@ These components are chosen because they provide a clear picture of how digitali
 
 For each of the components, data is sourced from **Eurostat**. Since the three metrics have different scales, we normalize them using **Min-Max scaling**:
 
-\[
+$$
 \text{Normalized Value} = \frac{\text{Actual Value} - \text{Minimum Value}}{\text{Maximum Value} - \text{Minimum Value}}
-\]
+$$
 
 This scaling ensures that each component is brought to a common scale (0 to 1) to make them comparable. A value of 1 indicates the highest performance in that category, and 0 indicates the lowest.
 
@@ -57,9 +57,9 @@ This scaling ensures that each component is brought to a common scale (0 to 1) t
 
 The DTPI assigns **equal weights** to the three components, as each dimension is considered equally important for assessing digital transformation potential:
 
-\[
+$$
 \text{Weighting}: w_1 = w_2 = w_3 = 1
-\]
+$$
 
 This assumption may be revised in the future as more data becomes available, and different weights may be assigned depending on the sector's evolving priorities.
 
@@ -67,9 +67,9 @@ This assumption may be revised in the future as more data becomes available, and
 
 The final DTPI score for each country is calculated as the **weighted average** of the normalized values of the three components:
 
-\[
+$$
 \text{DTPI} = \frac{w_1 \times \text{GVA\_normalized} + w_2 \times \text{Employment\_normalized} + w_3 \times \text{LaborDemand\_normalized}}{w_1 + w_2 + w_3}
-\]
+$$
 
 This formula aggregates the three normalized values into a single index score for each country, reflecting its digital transformation potential.
 
@@ -85,9 +85,9 @@ Let’s walk through two simplified examples to better understand how DTPI score
 - Employment Normalized: 0.2
 - Labor Demand Normalized: 0.1
 
-\[
+$$
 \text{DTPI}_{A} = \frac{1 \times 0.3 + 1 \times 0.2 + 1 \times 0.1}{1 + 1 + 1} = \frac{0.6}{3} = 0.2
-\]
+$$
 
 #### Example 2: Country B (High Score)
 
@@ -95,9 +95,9 @@ Let’s walk through two simplified examples to better understand how DTPI score
 - Employment Normalized: 0.8
 - Labor Demand Normalized: 0.85
 
-\[
+$$
 \text{DTPI}_{B} = \frac{1 \times 0.9 + 1 \times 0.8 + 1 \times 0.85}{1 + 1 + 1} = \frac{2.55}{3} = 0.85
-\]
+$$
 
 ---
 
