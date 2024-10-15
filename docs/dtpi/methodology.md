@@ -43,7 +43,7 @@ The DTPI includes three key components, each selected to represent a critical as
 
 - **Employment Rate (ER) in ICT**. This component measures the employment levels in **ICT occupations**, expressed as a percentage of total employment. The ICT employment rate reflects the capacity of the labor market to absorb and sustain jobs in digital roles, such as software developers, data scientists, IT consultants, and network engineers. A higher employment rate in ICT indicates that a significant portion of the workforce is engaged in digital activities, which is an essential factor for driving and sustaining digital transformation. Countries with strong ICT employment rates are likely to have the human capital needed to support ongoing digital innovation and transformation efforts.
 
-#### Rationale for Component Selection
+##### Rationale for Component Selection
 
 These three components—GVA in ICT, labor demand for ICT skills, and employment in ICT—were chosen because together, they provide a comprehensive picture of the digital economy's health and its transformative potential. 
 
