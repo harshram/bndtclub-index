@@ -1,0 +1,3 @@
+The box plots below illustrate the range and distribution of the **Digital Transformation Potential Indicator (DTPI)** scores for each country across different quarters. Each plot shows the minimum, maximum, and median values, with the box representing the interquartile range (the middle 50% of the data). These visualizations allow you to quickly compare the variability in DTPI scores between countries, highlighting both the consistency and fluctuations in their digital transformation potential over time.
+
+Below the box plots, on the left-hand side, you can see the DTPI for **EU27**, while the right-hand side presents the indicator for the **selected countries** you have chosen for comparison.

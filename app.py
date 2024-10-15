@@ -13,7 +13,7 @@ import plotly.express as px
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
-from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_introduction, load_md_methodology, load_md_howto, load_md_welcome
+from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_introduction, load_md_methodology, load_md_howto, load_md_welcome, load_md_box_plot
 from data_processing import process_import_data, process_ICT_labour_import_data
 from utils import debug_print, info_print, error_print
 from data_rendering import css
@@ -226,6 +226,7 @@ elif page == page3:
     st.title("Summarising the DTPI for EU27 with the ability to select and compare")
 
     countries_withoutEU27 = countries.remove('EU27_2020')
+    st.markdown(f'{load_md_box_plot()}', unsafe_allow_html=True, help=None)
     options = st.multiselect("**Default is EU6, select one or more countries to compare...**", countries,placeholder="Choose one or more options", disabled=False, label_visibility="visible")
     if not options:
         options = countries
