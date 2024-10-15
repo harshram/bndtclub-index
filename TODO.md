@@ -14,10 +14,10 @@ Beta Release
 - [x] fix markdown rendering
 - [x] generate content 2024
 - [ ] finalize logo
-- [ ] Claudio
+- [x] Claudio
     - [x] review EU 27 content
-    - [ ] review NL
-    - [ ] review SW
+    - [x] review NL
+    - [x] review SW
     - [x] moving window description 
 - [ ] Tania 
     - [ ] Country 1
