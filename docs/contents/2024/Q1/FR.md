@@ -2,7 +2,7 @@
 
 **FR 2024 Q1 Timeframe Analysis**
 
-General remarks. France'sDTPI for Q1 2024 stands at apt 0.4, showing drop from the previous quarter. Despite this, the DPTI remains above its earlier lows, indicating that while recent performance has dipped, France has maintained some level of recovery and growth potential.
+General remarks. France's DTPI for Q1 2024 stands at 0.4, showing drop from the previous quarter. Despite this, the DPTI remains above its earlier lows, indicating that while recent performance has dipped, France has maintained some level of recovery and growth potential.
 
 **Quarterly Trend Analysis**
 - **Time series analysis**. France’s DTPI has fluctuated in recent years, with notable decreases from 2021 peaks, followed by a period of stabilization in 2023. Q1 2024 marks a continuation of the recovery that began in late 2022, though growth remains modest.
