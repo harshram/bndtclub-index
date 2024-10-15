@@ -200,7 +200,7 @@ if page == page1:
     st.success("All datasets loaded successfully", icon="⚙️")
     st.info("Datasets are refreshed quarterly at the source", icon="📬")
 
-    st.title('Home page of the BnDT DTPI')
+    st.title('Home page of the Business and Digital Transformation Club DTPI')
     st.markdown(load_md_welcome(), unsafe_allow_html=True, help=None)
 
 elif page == page2:
