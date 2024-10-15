@@ -15,7 +15,7 @@ Beta Release
 - [x] generate content 2024
 - [ ] finalize logo
 - [ ] Claudio
-    - [ ] review EU 27 content
+    - [x] review EU 27 content
     - [ ] review NL
     - [ ] review SW
     - [x] moving window description 
