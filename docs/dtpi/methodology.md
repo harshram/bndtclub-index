@@ -56,7 +56,7 @@ These three components—GVA in ICT, labor demand for ICT skills, and employment
 By selecting these components, the DTPI aims to capture the key elements of digital transformation that are essential for economic growth, workforce development, and the successful adoption of new technologies across industries. These factors are critical in understanding how digitalization affects both the **supply side** (economic output and workforce participation) and the **demand side** (the need for ICT skills in the market). Together, they provide a well-rounded and actionable indicator for tracking a country’s digital transformation potential.
 
 
-#### Step 2: Data Collection
+#### Step 2: Data Collection and Smoothing
 
 For each of the components, data is sourced from **Eurostat**, using the following datasets:
 
@@ -66,7 +66,7 @@ For each of the components, data is sourced from **Eurostat**, using the followi
 
 - **Labor Demand for ICT Skills**: The demand for ICT labor is measured through the **isoc_sk_oja1** dataset, which tracks online job advertisements. This dataset provides information on labor demand, specifically focusing on job postings requiring ICT skills.
 
-Once the data is collected, a **3-quarter moving average** is applied to each component (GVA, labor demand, and employment) to smooth out short-term fluctuations and highlight longer-term trends. This reduces the impact of temporary volatility, ensuring the indicator captures consistent, medium-term digital transformation dynamics. The moving average calculation helps to identify underlying trends rather than being affected by short-term anomalies, such as seasonal variations or economic shocks.
+- **Moving Average Smoothing**: To enhance the clarity of trends and reduce short-term fluctuations, we apply a **moving average** with a **3-quarter window** to each component (GVA, labor demand, and employment). The **window** refers to the span of consecutive data points (in this case, 3 quarters) used to calculate the average for each point in time. By averaging over this window, we smooth out temporary spikes or dips, helping to reveal the underlying trends and making the data more reliable for medium-term analysis. This smoothing process reduces noise and ensures that the indicator better reflects consistent digital transformation dynamics, rather than being influenced by short-term volatility.
 
 
 
