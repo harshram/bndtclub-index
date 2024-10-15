@@ -31,3 +31,7 @@ The DTPI is a versatile tool designed to serve a range of stakeholders:
 2. **Labor Demand (LD) in ICT**. This component measures the **demand for ICT skills** across different sectors, highlighting the extent to which digital technologies are being adopted.
 
 3. **Employment Rate (LD) in ICT**. This tracks the **employment level** within ICT-related occupations, offering insights into how digital transformation is impacting the job market.
+
+### EU27 and EU6
+
+The DTPI provides the aggregate view for the EU27 and in addition to that a punctual zoom into a selected number of EU countries, namely the EU6 of the DTPI comprising of Italy, France, Germany, Spain, Sweden and Netherlands. 
