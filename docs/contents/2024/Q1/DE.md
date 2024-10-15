@@ -2,19 +2,19 @@
 
 **DE 2024 Q1 Timeframe Analysis**
 
-General remarks. In Q1 2024, Germany’s DTPI stood at 0.4993, which reflects a slight increase from the previous quarter (Q4 2023). This modest growth suggests that Germany is stabilizing its digital transformation efforts after a series of fluctuations in the previous quarters. The improvement indicates a renewed focus on advancing digital capabilities as the country continues to navigate its transformation journey.
+General remarks. In Q1 2024, Germany’s DTPI stood beyond 0.5 threshold, which reflects a slight increase from the previous quarter (Q4 2023). This modest growth suggests that Germany is stabilizing its digital transformation efforts after a steep decline in the previous quarters. The improvement indicates a renewed focus on advancing digital capabilities as the country continues to navigate its transformation journey.
 
 **Quarterly Trend Analysis**
 
-- **Time series analysis**. Germany’s DTPI has shown variability over recent quarters. After a decline to 0.3995 in Q4 2023, the DTPI rebounded to 0.4993 in Q1 2024. This recovery suggests a potential turning point for Germany's digital transformation initiatives.
+- **Time series analysis**. Germany’s DTPI has shown variability over recent quarters. After a decline to below 0.5 in Q4 2023, the DTPI rebounded above 0.5 in Q1 2024. This recovery suggests a potential turning point for Germany's digital transformation initiatives.
 
-- **Quarter-over-quarter comparisons**. The DTPI increased by 0.0998 from Q4 2023 (0.3995) to Q1 2024 (0.4993). This growth highlights a positive shift in Germany's digital landscape and indicates that efforts to enhance digital infrastructure and skills may be taking effect.
+- **Quarter-over-quarter comparisons**. The DTPI increased by 0.497626 from Q4 2023 to 0.512821 in Q1 2024. This growth highlights a positive rebounce in Germany's digital landscape and indicates that efforts to enhance digital infrastructure and skills may be taking effect.
 
 **Variation Analysis**
 
-- **Trend deviation**. The increase of 0.0998 points in Q1 2024 compared to the previous quarter indicates a positive trend deviation. However, Germany's current DTPI is still lower than its peak of 0.6472 in Q4 2021, showing that while progress is being made, there is still significant ground to cover.
+- **Trend deviation**. The increase of 0.0998 points in Q1 2024 compared to the previous quarter indicates a positive trend deviation. However, Germany's current DTPI is still lower than its peak of 0.726971 in Q1 2023, showing that while progress is being made, there is still significant ground to cover.
 
-- **Range analysis**. The DTPI of 0.4993 in Q1 2024 places Germany in the mid-range of its historical values. While it reflects an upward trend from the previous low of 0.3995, it remains below the levels reached during more robust growth periods.
+- **Range analysis**. The DTPI of 0.512821 in Q1 2024 places Germany in the high-range of its historical values. While it reflects an upward trend from the previous low of 0.497626, it remains below the levels reached during more robust growth periods.
 
 **Potential Factors Influencing Trends**
 
