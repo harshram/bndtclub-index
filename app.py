@@ -11,9 +11,11 @@ import numpy as np
 import matplotlib.cm as cm 
 import plotly.express as px
 
-from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_introduction, load_md_methodology, load_md_howto, load_md_welcome
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
+from text_to_print import description_text_by_quarter, description_text_by_countries, load_md_introduction, load_md_methodology, load_md_howto, load_md_welcome
 from data_processing import process_import_data, process_ICT_labour_import_data
+from utils import debug_print, info_print, error_print
 from data_rendering import css
 
 # Set the page configuration at the top of the script
@@ -22,11 +24,10 @@ st.set_page_config(
     layout="centered"  # Using the centered layout
 )
 
-
 # Inject custom CSS to control the width of the centered layout
 st.markdown(css['body'], unsafe_allow_html=True)
 
-st.warning("**The DTPI is in Beta version**. As such, things might be subject to changee.", icon="⚠️")
+st.warning("**The DTPI is in Beta version**. As such, things might be subject to change.", icon="⚠️")
 
 # Sidebar for navigation
 page1 = 'Home'
@@ -35,7 +36,7 @@ page3 = "Overview of EU27 DTPI"
 page4 = "Zoom into EU27 and EU6 DTPI"
 
 #st.title("Navigation")  # Title for the navigation bar
-page = st.radio('',[page1, page2, page3, page4], horizontal=True)
+page = st.radio('Select a page',[page1, page2, page3, page4], horizontal=True, label_visibility='hidden')
 st.html(css['logo'])
 st.logo(image="logo/DTPI_logo_v5.png")
 
@@ -62,11 +63,11 @@ data_to_import = ['GVA', 'employment', 'labour_demand']
 def load_data():
     # Load the raw data from Eurostat API
     GVA_data_import = eurostat.get_data_df('namq_10_a10')
-    print("Got GVA data")
+    info_print("Got GVA data")
     Employment_data_import = eurostat.get_data_df('namq_10_a10_e')
-    print("Got Employment data")
+    info_print("Got Employment data")
     Labour_demand_ICT_data_import = eurostat.get_data_df('isoc_sk_oja1')
-    print("Got Labour Demand data")
+    info_print("Got Labour Demand data")
     
     # Define the starting quarter for filtering data
     date_start = '2019Q4'
@@ -83,7 +84,7 @@ def load_data():
 with st.spinner("Please wait, loading data..."):
     # Load the data from the cached function
     GVA_data, Employment_data, Labour_demand_ICT_data = load_data()
-    print("All data has been loaded")
+    info_print("All data has been loaded")
 
 # Create an empty data frame to hold the hold data during transformation
 transformed_data = pd.DataFrame()
@@ -133,7 +134,6 @@ for country in countries:
 
     # Append the merged data for this country to the list
     loaded_data_list.append(merged_data)
-    #st.write(loaded_data_list)
 
 # Concatenate all merged data frames from the list into one data frame
 transformed_data = pd.concat(loaded_data_list, axis=1, join='inner')
@@ -166,8 +166,6 @@ for country in countries:
         )
 
 transformed_data.dropna(inplace=True)
-# print transformed_data to check
-#st.write(transformed_data)
 
 # Initialize an empty DataFrame to hold the index values for all countries
 index_data = pd.DataFrame(index=transformed_data.index)
@@ -180,9 +178,6 @@ for country in countries:
         w3*transformed_data[f'{country}_labour_demand_normalized_moving_average_value']
     )/(w1+w2+w3)
     index_data.dropna(inplace=True)
-
-# print index for check
-#st.write(index_data)
 
 # Set global font size for plots
 plt.rcParams.update({'font.size': 12,
@@ -221,8 +216,6 @@ elif page == page2:
         st.markdown(f'{load_md_introduction()}', unsafe_allow_html=True, help=None)
 
     with tab_methodology:
-        m = load_md_methodology()
-        print(m)
         st.markdown(f'{load_md_methodology()}', unsafe_allow_html=True, help=None)
 
     with tab_howto:
@@ -245,7 +238,7 @@ elif page == page3:
     with col1:
         # Show all box plots together for a visual comparison
         fig_all_box, ax_all_box = plt.subplots(figsize=(5, 4), dpi=150)
-        ax_all_box.boxplot(index_data['EU27_2020'], patch_artist=True, labels=['EU27'], boxprops=dict(facecolor='lightblue'))
+        ax_all_box.boxplot(index_data['EU27_2020'], patch_artist=True, tick_labels=['EU27'], boxprops=dict(facecolor='lightblue'))
 
         ax_all_box.set_title('Box Plot of Index Data EU27', fontsize=10)
         ax_all_box.set_xlabel('Countries', fontsize=8)
@@ -268,7 +261,7 @@ elif page == page3:
     with col2:
         # Show all box plots together for a visual comparison
         fig_all_box, ax_all_box = plt.subplots(figsize=(5, 4), dpi=150)
-        ax_all_box.boxplot([index_data[country] for country in options], patch_artist=True, labels=options, boxprops=dict(facecolor='lightblue'))
+        ax_all_box.boxplot([index_data[country] for country in options], patch_artist=True, tick_labels=options, boxprops=dict(facecolor='lightblue'))
 
         ax_all_box.set_title('Box Plot of Index Data Across Countries', fontsize=10)
         ax_all_box.set_xlabel('Countries', fontsize=8)
@@ -301,18 +294,19 @@ elif page == page3:
     highlights_text_by_year = description_text_by_countries()
     years = sorted(highlights_text_by_year.keys(), reverse=True)
     expanded = True
+    debug_print('>>> Contents tree')
     for year in years:
-        # print(year)
+        debug_print(f'{year}')
         quarters = sorted(highlights_text_by_year[year].keys(), reverse=True)
         for quarter in quarters:
             details = ''
-            # print(quarter)
+            debug_print(f'  {quarter}')
             contents = sorted(highlights_text_by_year[year][quarter])
             details += f'<details {"open" if expanded else ""}><summary>EU</summary>{highlights_text_by_year[year][quarter]["EU"]}</details>'
             st.markdown('---', unsafe_allow_html=True, help=None)
             for content in contents:
                 if content in options:
-                    # print(content)
+                    debug_print(f'    {content}')
                     details += f'<details {"open" if expanded else ""}><summary>{content}</summary>{highlights_text_by_year[year][quarter][content]}</details>'
             if expanded:
                 st.markdown(f'<details open><summary>{year} {quarter}</summary>{details}</details>', unsafe_allow_html=True, help=None)
@@ -332,7 +326,6 @@ elif page == page4:
          with tabs[tab_idx]:
              
              st.markdown(f'### Data for **{country_titles[idx]}**: you can scroll and zoom into the details for the different views')
-            #  st.markdown(f'---')
              
              col1, col2 = st.columns([1,2])
              if isinstance(transformed_data.index, pd.PeriodIndex):
@@ -340,8 +333,6 @@ elif page == page4:
             
              if isinstance(index_data.index, pd.PeriodIndex):
                     index_data.index = index_data.index.to_timestamp()
-             #transformed_data.index = transformed_data.index.to_timestamp()
-             #index_data.index = index_data.index.to_timestamp()
 
             # Column 1 content: ICT Employment, GVA, and Labour Demand Data
              with col1:
@@ -440,8 +431,8 @@ elif page == page4:
              # In case of missing country, no rendering, but also no error
              try:
                 highlights_per_year_quarter = description_text_by_quarter('EU' if 'EU' in country else country)
-                print(f'>>> Contents for  {country}')
-                print(json.dumps(highlights_per_year_quarter, indent=2))
+                debug_print(f'>>> Contents for  {country}')
+                debug_print(json.dumps(highlights_per_year_quarter, indent=2))
 
                 # Time to render the markdown contents, making visible always the last quarter from the last year
                 collapsed = False
@@ -458,4 +449,4 @@ elif page == page4:
                             continue
                         st.markdown(f'<details><summary>{year} {quarter}</summary>{highlights_per_year_quarter[year][quarter]}</details>', unsafe_allow_html=True, help=None)
              except KeyError:
-                 print(f'{country} data is not available: no rendering')
+                 error_print(f'{country} data is not available: no rendering')

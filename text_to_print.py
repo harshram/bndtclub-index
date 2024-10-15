@@ -3,6 +3,8 @@ import markdown
 import json
 import sys
 
+from utils import debug_print, info_print, error_print
+
 # Making sure to leverage upon absolute paths (avoid deployment issues)
 abs_filedir = os.path.abspath(__file__)
 prt_dir = os.path.dirname(abs_filedir)
@@ -42,15 +44,16 @@ def load_md_files(highlights_text_by_country, highlights_text_by_year, base_path
         if os.path.isfile(f'{base_path}/{year}'):
             continue
         highlights_text_by_year[year] = {}
+        debug_print('>>> Markdown files tree')
         try:
-            # print(f'{year}')
+            debug_print(f'{year}')
             quarters = os.listdir(f'{base_path}/{year}')
             for quarter in quarters:
-                # print(f'  {quarter}')
+                debug_print(f'  {quarter}')
                 highlights_text_by_year[year][quarter] = {}
                 files = os.listdir(f'{base_path}/{year}/{quarter}')
                 for file in files:
-                    # print(f'   {file}')
+                    debug_print(f'   {file}')
                     country = file[:2]
                     if country not in highlights_text_by_country:
                         highlights_text_by_country[country] = {}
@@ -63,8 +66,8 @@ def load_md_files(highlights_text_by_country, highlights_text_by_year, base_path
                         highlights_text_by_country[country][year][quarter] = md
                         highlights_text_by_year[year][quarter][country] = md
 
-        except NotADirectoryError:
-            pass
+        except NotADirectoryError as nade:
+            error_print(f'detected {nade}')
 
 def load_md_overview(file_name='intro.md', base_path=os.path.join(prt_dir, 'docs/dtpi')):
     '''
