@@ -66,7 +66,7 @@ For each of the components, data is sourced from **Eurostat**, using the followi
 
 - **Labor Demand for ICT Skills**: The demand for ICT labor is measured through the **isoc_sk_oja1** dataset, which tracks online job advertisements. This dataset provides information on labor demand, specifically focusing on job postings requiring ICT skills.
 
-Once the data is collected, a **3-quarter moving average** is applied to each component (GVA, labor demand, and employment) to smooth out short-term fluctuations and highlight longer-term trends. This reduces the impact of temporary volatility, ensuring the index captures consistent, medium-term digital transformation dynamics. The moving average calculation helps to identify underlying trends rather than being affected by short-term anomalies, such as seasonal variations or economic shocks.
+Once the data is collected, a **3-quarter moving average** is applied to each component (GVA, labor demand, and employment) to smooth out short-term fluctuations and highlight longer-term trends. This reduces the impact of temporary volatility, ensuring the indicator captures consistent, medium-term digital transformation dynamics. The moving average calculation helps to identify underlying trends rather than being affected by short-term anomalies, such as seasonal variations or economic shocks.
 
 
 
@@ -98,11 +98,11 @@ $$
 \text{DTPI} = \frac{w_1 \times \text{GVA\_normalized} + w_2 \times \text{Employment\_normalized} + w_3 \times \text{LaborDemand\_normalized}}{w_1 + w_2 + w_3}
 $$
 
-This formula aggregates the three normalized values into a single index score for each country, reflecting its digital transformation potential.
+This formula aggregates the three normalized values into a single indicator score for each country, reflecting its digital transformation potential.
 
 ---
 
-### Examples of Index Calculation
+### Examples of indicator Calculation
 
 Let’s walk through two simplified examples to better understand how DTPI scores are calculated:
 

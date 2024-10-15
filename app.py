@@ -20,7 +20,7 @@ from data_rendering import css
 
 # Set the page configuration at the top of the script
 st.set_page_config(
-    page_title="B&DT Club Digital Transformation Index",  # Optional: Give your app a title
+    page_title="B&DT Club Digital Transformation Indicator",  # Optional: Give your app a title
     layout="centered"  # Using the centered layout
 )
 
@@ -241,9 +241,9 @@ elif page == page3:
         fig_all_box, ax_all_box = plt.subplots(figsize=(5, 4), dpi=150)
         ax_all_box.boxplot(index_data['EU27_2020'], patch_artist=True, tick_labels=['EU27'], boxprops=dict(facecolor='lightblue'))
 
-        ax_all_box.set_title('Box Plot of Index Data EU27', fontsize=10)
+        ax_all_box.set_title('Box Plot of Indicator Data EU27', fontsize=10)
         ax_all_box.set_xlabel('Countries', fontsize=8)
-        ax_all_box.set_ylabel('Index Value', fontsize=8)
+        ax_all_box.set_ylabel('Indicator Value', fontsize=8)
         ax_all_box.grid(True)
 
         st.pyplot(fig_all_box)
@@ -251,9 +251,9 @@ elif page == page3:
         st.write("**DTPI Indicator for EU27**") 
         fig_index, ax_index = plt.subplots(figsize=(5, 4))  # Adjust figure size
         ax_index.plot(index_data.index, index_data['EU27_2020'], marker='x', label='EU27')
-        ax_index.set_title(f'Index for EU27', fontsize=12)
+        ax_index.set_title(f'Indicator for EU27', fontsize=12)
         ax_index.set_xlabel('Quarter', fontsize=10)
-        ax_index.set_ylabel('Index Value', fontsize=10)
+        ax_index.set_ylabel('Indicator Value', fontsize=10)
         ax_index.grid(True)  # Add grid to the plot
         ax_index.tick_params(axis='x', rotation=45, labelsize=9)
         ax_index.tick_params(axis='y', labelsize=9)
@@ -264,9 +264,9 @@ elif page == page3:
         fig_all_box, ax_all_box = plt.subplots(figsize=(5, 4), dpi=150)
         ax_all_box.boxplot([index_data[country] for country in options], patch_artist=True, tick_labels=options, boxprops=dict(facecolor='lightblue'))
 
-        ax_all_box.set_title('Box Plot of Index Data Across Countries', fontsize=10)
+        ax_all_box.set_title('Box Plot of Indicator Data Across Countries', fontsize=10)
         ax_all_box.set_xlabel('Countries', fontsize=8)
-        ax_all_box.set_ylabel('Index Value', fontsize=8)
+        ax_all_box.set_ylabel('Indicator Value', fontsize=8)
         ax_all_box.grid(True)
 
         st.pyplot(fig_all_box)
@@ -275,9 +275,9 @@ elif page == page3:
         fig_index, ax_index = plt.subplots(figsize=(5, 4))  # Adjust figure size
         for country in options:
             ax_index.plot(index_data.index, index_data[f'{country}'], marker='x', label=f'{country}')
-            ax_index.set_title(f'Index for {options}', fontsize=12)
+            ax_index.set_title(f'Indicator for {options}', fontsize=12)
             ax_index.set_xlabel('Quarter', fontsize=10)
-            ax_index.set_ylabel('Index Value', fontsize=10)
+            ax_index.set_ylabel('Indicator Value', fontsize=10)
             ax_index.grid(True)  # Add grid to the plot
             ax_index.tick_params(axis='x', rotation=45, labelsize=9)
             ax_index.tick_params(axis='y', labelsize=9)
@@ -381,9 +381,9 @@ elif page == page4:
 
                 fig_index, ax_index = plt.subplots(figsize=(plot_width/dpi_fig, 2.5), dpi = dpi_fig)  # Adjust figure size
                 ax_index.plot(index_data.index, index_data[f'{country}'], marker='x', label=f'{country}', color='red')
-                ax_index.set_title(f'Index for {country}', fontsize=12)
+                ax_index.set_title(f'Indicator for {country}', fontsize=12)
                 ax_index.set_xlabel('Quarter', fontsize=10)
-                ax_index.set_ylabel('Index Value', fontsize=10)
+                ax_index.set_ylabel('Indicator Value', fontsize=10)
                 ax_index.grid(True)  # Add grid to the plot
                 ax_index.tick_params(axis='x', rotation=45, labelsize=9)
                 ax_index.tick_params(axis='y', labelsize=9)
@@ -411,7 +411,7 @@ elif page == page4:
                                     y=combined_data.index,
                                     color_continuous_scale='RdBu_r')
                     
-                    fig.update_layout(title=f'Heatmap for {country} - GVA, Employment, Labour Demand, and Index',
+                    fig.update_layout(title=f'Heatmap for {country} - GVA, Employment, Labour Demand, and Indicator',
                                     xaxis_nticks=36,
                                     width=plot_width + 100,  # Adjust width to match layout
                                     height=600,  # Adjust height to align with left column
