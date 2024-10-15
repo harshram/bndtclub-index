@@ -1,6 +1,6 @@
 ## Welcome to the Digital Transformation Potential Index (DTPI) Beta!
 
-The DTPI, developed by the [Business and Digital Transformation Club at GSoM POLIMI](https://bit.ly/bndtclub), is a platform to provide quarterly insights into the digitalization trends and pervasiveness across the European Union (EU), driven by the computation of the Digital Transformation Potential Index (DTPI). It helps stakeholders like policymakers, businesses, and researchers understand the digital economy's current state and its potential if compared to the actual status of digitalisation.
+The DTPI, developed by the [Business and Digital Transformation Club at GSoM POLIMI](https://bit.ly/bndtclub), is a platform that provides quarterly insights into the digitalization trends and pervasiveness across the European Union (EU), driven by the computation of the DTPI. It helps stakeholders like policymakers, businesses, and researchers understand the digital economy's current state and its potential if compared to the actual status of digitalisation.
 
 The DTPI focusses on three core components which are as many datasets from the Eurostat official database:
 1. **Gross Value Added (GVA)** in the ICT sector.
