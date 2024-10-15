@@ -1,20 +1,20 @@
 ## Introduction
 
-The Digital Transformation Potential Indicator (DTPI) is a strategic initiative by the [Business and Digital Transformation Club at GSoM POLIMI](https://bit.ly/bndtclub), aimed at providing **data-driven insights** into the state of digitalization across the European Union (EU). The index offers an up-to-date pulse check on the **digitalization status and potential** of individual EU countries, as well as the EU as a whole. By updating this index **quarterly**, we aim to track shifts in digitalization trends, informing decision-makers and stakeholders about emerging opportunities and challenges in the digital landscape.
+The Digital Transformation Potential Indicator (DTPI) is a strategic initiative by the [Business and Digital Transformation Club at GSoM POLIMI](https://bit.ly/bndtclub), aimed at providing **data-driven insights** into the state of digitalization across the European Union (EU). The indicator offers an up-to-date pulse check on the **digitalization status and potential** of individual EU countries, as well as the EU as a whole. By updating this indicator **quarterly**, we aim to track shifts in digitalization trends, informing decision-makers and stakeholders about emerging opportunities and challenges in the digital landscape.
 
 ### Purpose
 
 In today's rapidly evolving digital environment, **businesses, policymakers, and researchers** require timely and reliable insights into the factors driving digital transformation. The DTPI serves this need by providing a **composite measure** that integrates multiple indicators related to **economic value creation through digital investments**. Its ultimate goal is to offer a dynamic tool that can monitor and assess how effectively digital investments are fostering economic growth and innovation across Europe.
 
-### What is a Composite Index?
+### What is a Composite indicator?
 
-A **composite index** is a statistical tool that combines multiple individual indicators into a single score. Each indicator reflects a specific aspect of the subject being measured, and together they offer a more **holistic view** than individual metrics alone. Composite indices are commonly used to capture complex, multi-dimensional phenomena—like digital transformation—by aggregating different factors into a single, interpretable score.
+A **composite indicator** is a statistical tool that combines multiple individual indicators into a single score. Each indicator reflects a specific aspect of the subject being measured, and together they offer a more **holistic view** than individual metrics alone. Composite indices are commonly used to capture complex, multi-dimensional phenomena—like digital transformation—by aggregating different factors into a single, interpretable score.
 
-The **DTPI** is such a composite index. It synthesizes three critical components—**Gross Value Added (GVA)** in the ICT sector, **labor demand**, and **employment rates**—to provide a comprehensive view of the **digital economy's potential** in each country.
+The **DTPI** is such a composite indicator. It synthesizes three critical components—**Gross Value Added (GVA)** in the ICT sector, **labor demand**, and **employment rates**—to provide a comprehensive view of the **digital economy's potential** in each country.
 
 ### Overview of the DTPI
 
-The **DTPI** tracks and measures the potential impact of **digital investments** on a country's **economic growth and innovation**. By focusing on the **ICT sector**, the DTPI can gauge the role of ICT technologies and investments in boosting productivity, increasing employment, and driving overall economic value. Updated quarterly, this index allows for real-time tracking of digitalization trends across the EU.
+The **DTPI** tracks and measures the potential impact of **digital investments** on a country's **economic growth and innovation**. By focusing on the **ICT sector**, the DTPI can gauge the role of ICT technologies and investments in boosting productivity, increasing employment, and driving overall economic value. Updated quarterly, this indicator allows for real-time tracking of digitalization trends across the EU.
 
 ### Who Can Use the DTPI?
 

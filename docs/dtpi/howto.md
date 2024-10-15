@@ -1,4 +1,4 @@
-### How to Read the Index
+### How to Read the indicator
 
 The DTPI score provides an easy-to-understand snapshot of a country's digital transformation potential.
 

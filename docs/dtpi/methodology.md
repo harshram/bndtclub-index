@@ -1,6 +1,6 @@
-## About Composite Index
+## About Composite Indicators
 
-A **composite index** combines multiple indicators into a single numerical score, allowing for a holistic assessment of complex, multi-dimensional phenomena. The purpose of a composite index is to offer a comprehensive, yet simplified, representation of a topic by aggregating different metrics that may reflect various aspects of the subject matter.
+A **composite indicator** combines multiple indicators into a single numerical score, allowing for a holistic assessment of complex, multi-dimensional phenomena. The purpose of a composite indicator is to offer a comprehensive, yet simplified, representation of a topic by aggregating different metrics that may reflect various aspects of the subject matter.
 
 In general, composite indices are created using the following steps:
 
@@ -10,19 +10,19 @@ In general, composite indices are created using the following steps:
 4. **Aggregation**. Combine the weighted indicators into a single score, often by summing or averaging.
 5. **Interpretation**. Analyze and interpret the results, usually in relation to other entities (e.g., comparing countries).
 
-### Why Use a Composite Index?
+### Why Use a Composite indicator?
 
 Composite indices provide several key benefits:
 
 - **Simplification**. They condense complex information into a single, interpretable score, making it easier to communicate results to decision-makers and stakeholders.
 - **Comparability**. They allow for cross-sectional and temporal comparisons across regions, countries, or sectors.
-- **Insight Generation**. By tracking changes in the index, policymakers, businesses, and researchers can gain insights into trends and opportunities.
+- **Insight Generation**. By tracking changes in the indicator, policymakers, businesses, and researchers can gain insights into trends and opportunities.
 
 ---
 
 ### The DTPI: A Quarterly Digital Transformation Indicator
 
-The **DTPI** is inspired by the **Digital Economy and Society Index (DESI)** but differs in several key ways:
+The **DTPI** is inspired by the **Digital Economy and Society index (DESI)** but differs in several key ways:
 
 1. **Quarterly Updates**. Unlike DESI, which is updated annually, the DTPI provides more frequent updates—**quarterly**—to offer a more **timely pulse check** on the state of digitalization.
 2. **Streamlined Structure**. While DESI tracks multiple dimensions, the DTPI focuses on **three core components** (GVA, labor demand, and employment in the ICT sector), making it more **streamlined** and **focused on economic potential**.
@@ -53,7 +53,7 @@ These three components—GVA in ICT, labor demand for ICT skills, and employment
 
 - **Human Capital**: Employment in ICT occupations provides a measure of the availability of talent within the labor market to meet the needs of digital transformation. This is crucial for sustaining growth and innovation in the long term.
 
-By selecting these components, the DTPI aims to capture the key elements of digital transformation that are essential for economic growth, workforce development, and the successful adoption of new technologies across industries. These factors are critical in understanding how digitalization affects both the **supply side** (economic output and workforce participation) and the **demand side** (the need for ICT skills in the market). Together, they provide a well-rounded and actionable index for tracking a country’s digital transformation potential.
+By selecting these components, the DTPI aims to capture the key elements of digital transformation that are essential for economic growth, workforce development, and the successful adoption of new technologies across industries. These factors are critical in understanding how digitalization affects both the **supply side** (economic output and workforce participation) and the **demand side** (the need for ICT skills in the market). Together, they provide a well-rounded and actionable indicator for tracking a country’s digital transformation potential.
 
 
 #### Step 2: Data Collection
@@ -66,7 +66,7 @@ For each of the components, data is sourced from **Eurostat**, using the followi
 
 - **Labor Demand for ICT Skills**: The demand for ICT labor is measured through the **isoc_sk_oja1** dataset, which tracks online job advertisements. This dataset provides information on labor demand, specifically focusing on job postings requiring ICT skills.
 
-Once the data is collected, a **3-quarter moving average** is applied to each component (GVA, labor demand, and employment) to smooth out short-term fluctuations and highlight longer-term trends. This reduces the impact of temporary volatility, ensuring the index captures consistent, medium-term digital transformation dynamics. The moving average calculation helps to identify underlying trends rather than being affected by short-term anomalies, such as seasonal variations or economic shocks.
+Once the data is collected, a **3-quarter moving average** is applied to each component (GVA, labor demand, and employment) to smooth out short-term fluctuations and highlight longer-term trends. This reduces the impact of temporary volatility, ensuring the indicator captures consistent, medium-term digital transformation dynamics. The moving average calculation helps to identify underlying trends rather than being affected by short-term anomalies, such as seasonal variations or economic shocks.
 
 
 
@@ -98,11 +98,11 @@ $$
 \text{DTPI} = \frac{w_1 \times \text{GVA\_normalized} + w_2 \times \text{Employment\_normalized} + w_3 \times \text{LaborDemand\_normalized}}{w_1 + w_2 + w_3}
 $$
 
-This formula aggregates the three normalized values into a single index score for each country, reflecting its digital transformation potential.
+This formula aggregates the three normalized values into a single indicator score for each country, reflecting its digital transformation potential.
 
 ---
 
-### Examples of Index Calculation
+### Examples of indicator Calculation
 
 Let’s walk through two simplified examples to better understand how DTPI scores are calculated:
 
@@ -128,9 +128,9 @@ $$
 
 ---
 
-### Key Differences Between DTPI and DESI
+### Key Differences Between DTPI and 
 
-1. **Update Frequency**. While DESI provides a comprehensive view of the EU's digital economy on an **annual basis**, the DTPI is updated **quarterly**, allowing for a more **dynamic assessment**.
+1. **Update Frequency**. While  provides a comprehensive view of the EU's digital economy on an **annual basis**, the DTPI is updated **quarterly**, allowing for a more **dynamic assessment**.
    
 2. **Focus**. DESI includes a wide range of indicators across various dimensions such as connectivity, human capital, use of internet services, and integration of digital technology. The DTPI focuses on the **economic potential** of digital transformation, streamlining the number of indicators to focus on the **economic and employment aspects** of ICT.
 
@@ -141,26 +141,26 @@ $$
 
 #### Justification for the Equal Weighting of Components
 
-In the current version of the DTPI, each of the three core components—GVA, employment, and labor demand—is assigned **equal weight** (w₁ = w₂ = w₃ = 1) in the calculation of the composite index. This approach assumes that each component contributes equally to assessing a country's digital transformation potential. The rationale for this equal weighting is based on the importance of capturing a balanced view of economic activity, labor market conditions, and demand for ICT skills.
+In the current version of the DTPI, each of the three core components—GVA, employment, and labor demand—is assigned **equal weight** (w₁ = w₂ = w₃ = 1) in the calculation of the composite indicator. This approach assumes that each component contributes equally to assessing a country's digital transformation potential. The rationale for this equal weighting is based on the importance of capturing a balanced view of economic activity, labor market conditions, and demand for ICT skills.
 
 However, the DTPI is designed to be adaptable, and future versions may incorporate different weights based on further analysis or stakeholder input. For example, if emerging evidence shows that one component has a disproportionate impact on digital transformation, the weighting scheme could be adjusted to reflect this. 
 
 #### Clarity on How Missing or Incomplete Data is Handled
 
-The DTPI updates are based on the latest quarter where data for all three components (GVA, employment, and labor demand) is available. If data for any one of these components is missing for a particular quarter, the index is **not calculated** for that period. This ensures that the integrity of the index is maintained and avoids partial assessments that might distort the results. 
-This approach helps to avoid skewing the index results and maintains consistency in tracking the digital transformation potential of countries over time.
+The DTPI updates are based on the latest quarter where data for all three components (GVA, employment, and labor demand) is available. If data for any one of these components is missing for a particular quarter, the indicator is **not calculated** for that period. This ensures that the integrity of the indicator is maintained and avoids partial assessments that might distort the results. 
+This approach helps to avoid skewing the indicator results and maintains consistency in tracking the digital transformation potential of countries over time.
 
 #### Consideration of Potential Correlations Between GVA, Employment, and Labor Demand
 
-It is important to acknowledge potential correlations between the three components of the DTPI—GVA, employment, and labor demand—when interpreting the index results. For example, during periods of economic growth, all three indicators may rise simultaneously, reflecting positive correlations. Conversely, labor demand for ICT skills may outpace employment growth if a skills gap exists in the market. 
+It is important to acknowledge potential correlations between the three components of the DTPI—GVA, employment, and labor demand—when interpreting the indicator results. For example, during periods of economic growth, all three indicators may rise simultaneously, reflecting positive correlations. Conversely, labor demand for ICT skills may outpace employment growth if a skills gap exists in the market. 
 
-The DTPI does not currently account for such interdependencies explicitly, but future iterations of the index may incorporate **correlation analysis** to better capture the dynamics between these components. Understanding these relationships will provide deeper insights into how different aspects of the digital economy evolve in relation to one another.
+The DTPI does not currently account for such interdependencies explicitly, but future iterations of the indicator may incorporate **correlation analysis** to better capture the dynamics between these components. Understanding these relationships will provide deeper insights into how different aspects of the digital economy evolve in relation to one another.
 
 #### Future Work
 
 1. **Dynamic Weighting**: Future versions of the DTPI may consider dynamically adjusting the weights of the three components based on their evolving relevance to digital transformation. This would allow for a more accurate reflection of the changing landscape of the digital economy.
   
-2. **Correlation Analysis**: Incorporating correlation analysis between the components (GVA, employment, and labor demand) could provide deeper insights into how these factors influence one another and help to refine the index.
+2. **Correlation Analysis**: Incorporating correlation analysis between the components (GVA, employment, and labor demand) could provide deeper insights into how these factors influence one another and help to refine the indicator.
 
 3. **Handling Missing Data**: Improving strategies for handling missing data, such as implementing more advanced imputation techniques or using alternative sources, could allow for continuous tracking even when some data is unavailable.
 

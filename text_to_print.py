@@ -114,3 +114,13 @@ def load_md_welcome(file_name='welcome.md', base_path=os.path.join(prt_dir, 'doc
         return f.read()
 
     return None
+
+
+def load_md_box_plot(file_name='boxplot.md', base_path=os.path.join(prt_dir, 'docs/dtpi')):
+    '''
+    Load from file the Markdown for the how to section
+    '''
+    with open(f'{base_path}/{file_name}', 'r') as f:
+        return f.read()
+
+    return None
