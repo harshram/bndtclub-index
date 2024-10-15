@@ -18,7 +18,13 @@ Beta Release
     - [ ] review EU 27 content
     - [ ] review NL
     - [ ] review SW
-    - [ ] moving window description 
+    - [x] moving window description 
+- [ ] Tania 
+    - [ ] Country 1
+    - [ ] Coutnry 2
+- [ ] Paolo
+    - [ ] Country 3
+    - [ ] Coutnry 4
 
 General Available
 
