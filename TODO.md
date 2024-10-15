@@ -29,5 +29,10 @@ Beta Release
 General Available
 
 - [ ] Call gen AI for analysis
-- [ ] ...
-- [ ] ...
+
+- [ ] Finalise the Logo
+- [ ] Finalise the Color Palette
+- [ ] Interactive Plots
+- [ ] Click and point on Plots and timeframes
+- [ ] Fetch news relevant to the country digitalisation and use AI to summarise and share links
+
