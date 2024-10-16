@@ -6,7 +6,7 @@ General remarks. Germany's DTPI for Q4 2023 reached 0.497626, showing a continue
 
 **Quarterly Trend Analysis**
 
-- **Time series analysis**. Germany's DTPI has experienced a downward trend over the past year. After peaking at 0.726971 in Q1 2023, the index has steadily declined, reaching 0.497626 in Q4 2023. This trend highlights the difficulties faced in maintaining a robust digital transformation agenda.
+- **Time series analysis**. Germany's DTPI has experienced a downward trend over the past year. After peaking at 0.726971 in Q1 2023, the indicator has steadily declined, reaching 0.497626 in Q4 2023. This trend highlights the difficulties faced in maintaining a robust digital transformation agenda.
 
 - **Quarter-over-quarter comparisons**. The DTPI decreased from 0.4792 in Q3 2023 to 0.622982 in Q4 2023, representing a decline of 0.2293. This significant decrease underscores the challenges in Germany's digital landscape and raises concerns about the sustainability of its transformation efforts.
 

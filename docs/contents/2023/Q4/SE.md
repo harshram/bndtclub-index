@@ -2,7 +2,7 @@
 
 **SE 2023 Q4 Timeframe Analysis**
 
-General remarks. In Q4 2023, the DTPI for Sweden (SE) dropped to **0.413**, down from **0.456** in Q3 2023. This decline marks a continuation of the downward trend that has persisted throughout the latter half of 2023, reflecting growing challenges in sustaining Sweden’s digital transformation momentum. The current index places Sweden closer to its lower performance levels, highlighting the need for renewed focus on addressing the factors that may be hindering growth.
+General remarks. In Q4 2023, the DTPI for Sweden (SE) dropped to **0.413**, down from **0.456** in Q3 2023. This decline marks a continuation of the downward trend that has persisted throughout the latter half of 2023, reflecting growing challenges in sustaining Sweden’s digital transformation momentum. The current indicator places Sweden closer to its lower performance levels, highlighting the need for renewed focus on addressing the factors that may be hindering growth.
 
 **Quarterly Trend Analysis**
 
