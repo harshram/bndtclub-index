@@ -2,11 +2,11 @@
 
 **IT 2024 Q1 Timeframe Analysis**
 
-General remarks. Italy (IT) has experienced a noticeable improvement in its Digital Transformation Potential Index (DTPI) during Q1 2024, increasing to 0.3889. This quarter signals a recovery trend after the relative slow down observed between Q2 and Q3 2023, where the DTPI fell to a low of 0.2688 in Q3. This resurgence suggests that Italy may be regaining momentum in its digital transformation efforts, driven by multiple internal and external factors.
+General remarks. Italy (IT) has experienced a noticeable improvement in its Digital Transformation Potential indicator (DTPI) during Q1 2024, increasing to 0.3889. This quarter signals a recovery trend after the relative slow down observed between Q2 and Q3 2023, where the DTPI fell to a low of 0.2688 in Q3. This resurgence suggests that Italy may be regaining momentum in its digital transformation efforts, driven by multiple internal and external factors.
 
 **Quarterly Trend Analysis**
 
-- **Time series analysis**. The DTPI for Italy has shown significant fluctuations over time, peaking in 2021 Q1 (0.8032) and gradually decreasing until 2022 Q3. The overall trend reflects a consistent decline between 2021 and 2023, with the lowest point recorded in 2022 Q3 (0.1631). However, the index has started to recover from Q4 2022 onwards, with Q1 2024 showing a notable uptick.
+- **Time series analysis**. The DTPI for Italy has shown significant fluctuations over time, peaking in 2021 Q1 (0.8032) and gradually decreasing until 2022 Q3. The overall trend reflects a consistent decline between 2021 and 2023, with the lowest point recorded in 2022 Q3 (0.1631). However, the indicator has started to recover from Q4 2022 onwards, with Q1 2024 showing a notable uptick.
 
 - **Quarter-over-quarter comparisons**. Comparing quarter-over-quarter data, Italy's DTPI rose by approximately 0.0509 from 2023 Q4 (0.3380) to 2024 Q1 (0.3889). Although still below the historical peak, this represents the second consecutive quarter of recovery, reinforcing the notion of Italy's potential rebound in digital transformation.
 

@@ -7,13 +7,13 @@ General remarks. In Q4 2023, the DTPI for the Netherlands (NL) showed a positive
 **Quarterly Trend Analysis**
 
 - **Time series analysis**: 
-  The DTPI for NL has shown notable fluctuations over time. After reaching its highest point in **Q4 2020** at **0.720**, the index experienced several ups and downs, dropping significantly by Q1 2022 but gradually recovering towards the end of 2023.
+  The DTPI for NL has shown notable fluctuations over time. After reaching its highest point in **Q4 2020** at **0.720**, the indicator experienced several ups and downs, dropping significantly by Q1 2022 but gradually recovering towards the end of 2023.
 
-  This time series shows how the DTPI fluctuated post-2020, with the index reaching a low point in early 2022, followed by recovery and moderate growth throughout 2023.
+  This time series shows how the DTPI fluctuated post-2020, with the indicator reaching a low point in early 2022, followed by recovery and moderate growth throughout 2023.
 
 - **Quarter-over-quarter comparisons**:
   
-  Comparing **Q4 2023** to **Q3 2023**, the DTPI for NL rose from **0.494** to **0.572**, representing a **15.7%** increase. This is a significant improvement compared to the stagnant period between Q2 and Q3 2023, where the index had remained relatively unchanged. The index also reflects an overall upward trajectory since **Q1 2023**, when the DTPI was at a low of **0.400**.
+  Comparing **Q4 2023** to **Q3 2023**, the DTPI for NL rose from **0.494** to **0.572**, representing a **15.7%** increase. This is a significant improvement compared to the stagnant period between Q2 and Q3 2023, where the indicator had remained relatively unchanged. The indicator also reflects an overall upward trajectory since **Q1 2023**, when the DTPI was at a low of **0.400**.
 
 **Variation Analysis**
 

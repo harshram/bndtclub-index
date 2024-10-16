@@ -2,7 +2,7 @@
 
 **SE 2024 Q1 Timeframe Analysis**
 
-General remarks. In Q1 2024, the DTPI for Sweden (SE) showed a marginal increase to **0.419**, up from **0.413** in Q4 2023. While the gain is minor, it halts the downward trend seen throughout 2023, suggesting a potential stabilization of Sweden’s digital transformation potential. However, the index remains significantly below the highs observed in previous years, indicating the need for sustained efforts to reignite growth in the ICT sector.
+General remarks. In Q1 2024, the DTPI for Sweden (SE) showed a marginal increase to **0.419**, up from **0.413** in Q4 2023. While the gain is minor, it halts the downward trend seen throughout 2023, suggesting a potential stabilization of Sweden’s digital transformation potential. However, the indicator remains significantly below the highs observed in previous years, indicating the need for sustained efforts to reignite growth in the ICT sector.
 
 **Quarterly Trend Analysis**
 

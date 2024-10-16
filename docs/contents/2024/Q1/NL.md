@@ -2,14 +2,14 @@
 
 **NL 2024 Q1 Timeframe Analysis**
 
-General remarks. In Q1 2024, the DTPI for the Netherlands (NL) dropped to **0.327**, marking a significant decline from **0.572** in Q4 2023. This represents a considerable setback in the Netherlands' digital transformation potential, as the index returned to its lowest level since Q1 2022. The downward shift indicates that internal or external challenges may have affected the country's ability to sustain its digital transformation momentum in early 2024.
+General remarks. In Q1 2024, the DTPI for the Netherlands (NL) dropped to **0.327**, marking a significant decline from **0.572** in Q4 2023. This represents a considerable setback in the Netherlands' digital transformation potential, as the indicator returned to its lowest level since Q1 2022. The downward shift indicates that internal or external challenges may have affected the country's ability to sustain its digital transformation momentum in early 2024.
 
 **Quarterly Trend Analysis**
 
 - **Time series analysis**: 
   The DTPI for NL has experienced fluctuations over the past quarters, reaching a peak of **0.720** in Q4 2020 before gradually declining and stabilizing in 2023. The sharp drop in Q1 2024 contrasts with the slight recovery observed at the end of 2023.
 
-  The time series highlights the volatility in NL's digital transformation potential, with several instances of sharp growth followed by equally sharp declines. The Q1 2024 drop is one of the most significant decreases observed since the index began tracking.
+  The time series highlights the volatility in NL's digital transformation potential, with several instances of sharp growth followed by equally sharp declines. The Q1 2024 drop is one of the most significant decreases observed since the indicator began tracking.
 
 - **Quarter-over-quarter comparisons**:
   
