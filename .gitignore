@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Streamlit hidden, e.g. secrets
+# .streamlit/
