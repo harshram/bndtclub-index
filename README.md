@@ -62,7 +62,7 @@ Installation: Install the required Python libraries using pip:
 
 ```bash
 # To install the dependencies
-pip install streamlit eurostat pandas matplotlib scikit-learn
+pip install -r requirements.txt
 # Running the App: To run the app locally, use the following commmand
 make run|debug
 ```
