@@ -1,7 +1,7 @@
 eurostat == 1.1.1
 matplotlib==3.9.2
 numpy==2.1.0
-pandas==2.2.2
+pandas==2.2.3
 scikit-learn==1.5.2
 streamlit==1.37.1
 ternary == 0.1
