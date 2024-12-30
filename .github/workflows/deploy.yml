@@ -36,9 +36,11 @@ jobs:
         cd #{{ env.PATH_TO_BUILD }}                                    # Navigate to your project directory
         git clone ${{ env.REPO_HTTP_URL }}                             # Pull the latest changes
         cd ${{ env.REPO_NAMING }}
+        ls -la
         docker-compose down                                             # Stop existing containers (if running)
-        docker build --no-cache -t #{{ env.CONTAINER_NAME }} .          # Build the updated Docker containers
+        docker build --no-cache -t ${{ env.CONTAINER_NAME }} .          # Build the updated Docker containers
         docker-compose up -d                                            # Start the containers in detached mode
         cd ..
         rm -Rf ${{ env.REPO_NAMING }}
+        ls -la
         EOF
