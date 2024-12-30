@@ -10,7 +10,8 @@ env:
   REPO_NAMING: bndt-indicator
   REPO_HTTP_URL: https://github.com/hailpam/bndt-indicator.git        # repo URL
   PATH_TO_BUILD: docker/build                                         # set the path to the build directory
-  CONTAINER_NAME: bndtclub.dtpi                                       # set this to the name of the container in the
+  CONTAINER_IMG_NAME: bndtclub.dtpi                                   # set this to the name of the image
+  CONTAINER_RNT_NAME: bndtclub-dtpi                                   # set this to the name of the runtime
 
 jobs:
   deploy:
@@ -36,11 +37,14 @@ jobs:
         cd #{{ env.PATH_TO_BUILD }}                                    # Navigate to your project directory
         git clone ${{ env.REPO_HTTP_URL }}                             # Pull the latest changes
         cd ${{ env.REPO_NAMING }}
+        pwd
         ls -la
-        docker-compose down                                             # Stop existing containers (if running)
-        docker build --no-cache -t ${{ env.CONTAINER_NAME }} .          # Build the updated Docker containers
-        docker-compose up -d                                            # Start the containers in detached mode
+        docker-compose down ${{ CONTAINER_RNT_NAME }}                  # Stop existing containers (if running)
+        docker build --no-cache -t ${{ env.CONTAINER_IMG_NAME }} .     # Build the updated Docker containers
+        docker-compose up -d ${{ CONTAINER_RNT_NAME }}                 # Start the containers in detached mode
         cd ..
+        pwd
         rm -Rf ${{ env.REPO_NAMING }}
         ls -la
+        pwd
         EOF
