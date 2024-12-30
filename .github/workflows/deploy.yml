@@ -33,7 +33,7 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
         cd #{{ PATH_TO_BUILD }}                                         # Navigate to your project directory
-        git clone ${{ REPO_HTTP_URL }}                                  # Pull the latest changes
+        git clone https://github.com/hailpam/bndt-indicator.git                                  # Pull the latest changes
         cd ${{ REPO_NAMING }}
         docker-compose down                                             # Stop existing containers (if running)
         docker build --no-cache -t #{{ CONTAINER_NAME }} .              # Build the updated Docker containers
