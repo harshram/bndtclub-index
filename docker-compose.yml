@@ -1,6 +1,6 @@
 
 services:
-  streamlit:
+  bndtclub-dtpi:
     image: bndtclub.dtpi:latest
     container_name: bndtclub-dtpi
     ports:
