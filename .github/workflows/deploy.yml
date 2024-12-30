@@ -39,9 +39,9 @@ jobs:
         cd ${{ env.REPO_NAMING }}
         pwd
         ls -la
-        docker-compose down ${{ CONTAINER_RNT_NAME }}                  # Stop existing containers (if running)
+        docker-compose down ${{ env.CONTAINER_RNT_NAME }}              # Stop existing containers (if running)
         docker build --no-cache -t ${{ env.CONTAINER_IMG_NAME }} .     # Build the updated Docker containers
-        docker-compose up -d ${{ CONTAINER_RNT_NAME }}                 # Start the containers in detached mode
+        docker-compose up -d ${{ env.CONTAINER_RNT_NAME }}             # Start the containers in detached mode
         cd ..
         pwd
         rm -Rf ${{ env.REPO_NAMING }}
