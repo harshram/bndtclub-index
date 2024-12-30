@@ -1,0 +1,4 @@
+[server]
+  baseUrlPath = "/dtpi"    # Prefix for the URL path
+  enableCORS = false       # Disable CORS for local development (optional)
+  headless = true          # Run in headless mode if needed
