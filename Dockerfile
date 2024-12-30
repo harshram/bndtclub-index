@@ -29,6 +29,6 @@ RUN pip install -v --only-binary=:all: --no-input --no-cache-dir -r minimal.requ
 
 EXPOSE 8501
 
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+HEALTHCHECK CMD curl --fail http://localhost:8501/dtpi/_stcore/health -v
 
 ENTRYPOINT ["make", "debug"]

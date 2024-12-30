@@ -1,8 +1,15 @@
 
 services:
-  streamlit:
+  bndtclub-dtpi:
     image: bndtclub.dtpi:latest
     container_name: bndtclub-dtpi
+    networks:
+      - web_network
     ports:
       - "127.0.0.1:8501:8501"
     restart: unless-stopped
+
+# Define the network
+networks:
+  web_network:
+    driver: bridge
