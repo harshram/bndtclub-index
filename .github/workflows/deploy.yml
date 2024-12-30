@@ -8,7 +8,7 @@ on:
 
 env:
   REPO_NAMING: bndt-indicator
-  REPO_HTTP_URL: https://github.com/hailpam/${{ REPO_NAMING }}.git    # repo URL
+  REPO_HTTP_URL: https://github.com/hailpam/bndt-indicator.git    # repo URL
   PATH_TO_BUILD: docker/build                                         # set the path to the build directory
   CONTAINER_NAME: bndtclub.dtpi                                       # set this to the name of the container in the
 
