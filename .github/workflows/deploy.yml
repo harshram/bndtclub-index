@@ -1,0 +1,55 @@
+
+name: Deploy on PR Merge
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REPO_NAMING: bndt-indicator
+  REPO_HTTP_URL: https://github.com/hailpam/bndt-indicator.git        # repo URL
+  PATH_TO_BUILD: docker/build                                         # set the path to the build directory
+  CONTAINER_IMG_NAME: bndtclub.dtpi                                   # set this to the name of the image
+  CONTAINER_RNT_NAME: bndtclub-dtpi                                   # set this to the name of the runtime
+
+jobs:
+  deploy:
+    name: Deploy Docker Container
+    runs-on: ubuntu-latest
+    environment: Contabo                                              # Reference the environment where your secrets are stored
+
+    steps:
+    # Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Set up SSH connection
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    
+    # Connect to the remote machine and execute the deployment
+    - name: Deploy to Remote Server
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+        echo ">>> 1. Clone"
+        cd #{{ env.PATH_TO_BUILD }}                                    # Navigate to your project directory
+        git clone ${{ env.REPO_HTTP_URL }}                             # Pull the latest changes
+        cd ${{ env.REPO_NAMING }}
+        pwd
+        ls -la
+        echo ">>> 2. Docker DOWN"
+        docker stop ${{ env.CONTAINER_RNT_NAME }}                      # Stop existing containers (if running)
+        docker rm ${{ env.CONTAINER_RNT_NAME }}                        # Remove existing containers (if running)
+        echo ">>> 3. Docker BUILD"
+        docker build --no-cache -t ${{ env.CONTAINER_IMG_NAME }} .     # Build the updated Docker containers
+        echo ">>> 4. Docker UP"
+        docker-compose up -d ${{ env.CONTAINER_RNT_NAME }}             # Start the containers in detached mode
+        cd ..
+        pwd
+        rm -Rf ${{ env.REPO_NAMING }}
+        ls -la
+        pwd
+        EOF
