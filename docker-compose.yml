@@ -1,0 +1,8 @@
+
+services:
+  streamlit:
+    image: bndtclub.dtpi:latest
+    container_name: bndtclub-dtpi
+    ports:
+      - "127.0.0.1:8501:8501"
+    restart: unless-stopped
