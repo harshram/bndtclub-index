@@ -16,6 +16,7 @@ jobs:
   deploy:
     name: Deploy Docker Container
     runs-on: ubuntu-latest
+    environment: Contabo                                              # Reference the environment where your secrets are stored
 
     steps:
     # Checkout the repository
@@ -32,12 +33,12 @@ jobs:
     - name: Deploy to Remote Server
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
-        cd docker/build                                               # Navigate to your project directory
-        git clone https://github.com/hailpam/bndt-indicator.git       # Pull the latest changes
-        cd bndt-indicator
-        docker-compose down                                           # Stop existing containers (if running)
-        docker build --no-cache -t bndtclub.dtpi .                    # Build the updated Docker containers
-        docker-compose up -d                                          # Start the containers in detached mode
+        cd #{{ env.PATH_TO_BUILD }}                                    # Navigate to your project directory
+        git clone ${{ env.REPO_HTTP_URL }}                             # Pull the latest changes
+        cd ${{ env.REPO_NAMING }}
+        docker-compose down                                             # Stop existing containers (if running)
+        docker build --no-cache -t #{{ env.CONTAINER_NAME }} .          # Build the updated Docker containers
+        docker-compose up -d                                            # Start the containers in detached mode
         cd ..
-        rm -Rf bndt-indicator
+        rm -Rf ${{ env.REPO_NAMING }}
         EOF
