@@ -12,4 +12,5 @@ services:
 # Define the network
 networks:
   web_network:
+    name: docker_web_network
     driver: bridge
